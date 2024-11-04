@@ -5,18 +5,36 @@ import 'package:numberpicker/numberpicker.dart';
 import '../../../core/styles/app_icons.dart';
 
 class TimePickerCustom extends StatefulWidget {
-  const TimePickerCustom({super.key, required this.title});
+  const TimePickerCustom(
+      {super.key,
+      required this.title,
+      required this.isError,
+      this.isRequest = false,
+      required this.onChanged});
 
   @override
   _TimePickerCustomState createState() => _TimePickerCustomState();
   final String title;
+  final bool isError;
+  final bool isRequest;
+  final ValueChanged onChanged;
 }
 
 class _TimePickerCustomState extends State<TimePickerCustom> {
+  // ignore: prefer_typing_uninitialized_variables
   var hour = 0;
+  // ignore: prefer_typing_uninitialized_variables
   var minute = 0;
-  var timeFormat = "AM";
+  // ignore: prefer_typing_uninitialized_variables
+  var timeFormat;
   bool isVisible = false;
+  String formattedTime = "";
+  void updateTime() {
+    formattedTime =
+        "${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $timeFormat";
+    widget.onChanged(formattedTime);
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -27,17 +45,23 @@ class _TimePickerCustomState extends State<TimePickerCustom> {
           onTap: () {
             setState(() {
               isVisible ? isVisible = false : isVisible = true;
+              if (formattedTime == "") widget.onChanged("false");
             });
           },
           child: Container(
               width: size.width,
-              decoration: const BoxDecoration(
-                color: Color(0xfff4f4f4),
-                borderRadius: BorderRadius.all(
+              decoration: BoxDecoration(
+                color: const Color(0xfff4f4f4),
+                borderRadius: const BorderRadius.all(
                   Radius.circular(4),
                 ),
-                border: Border.fromBorderSide(
-                    BorderSide(color: Color(0xffe8e8e8), width: 1)),
+                border: Border.all(
+                    color: widget.isRequest
+                        ? !widget.isError
+                            ? const Color(0xffe8e8e8)
+                            : Colors.red
+                        : const Color(0xffe8e8e8),
+                    width: 1),
               ),
               padding: EdgeInsets.all(12),
               child: Row(
@@ -46,7 +70,7 @@ class _TimePickerCustomState extends State<TimePickerCustom> {
                   const Gap(5),
                   Padding(
                     padding: EdgeInsets.all(8),
-                    child: hour != null && minute != null && timeFormat != null
+                    child: timeFormat != null
                         ? Text(
                             " ${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, "0")} ${timeFormat}",
                           )
@@ -76,7 +100,7 @@ class _TimePickerCustomState extends State<TimePickerCustom> {
                     NumberPicker(
                       minValue: 0,
                       maxValue: 12,
-                      value: hour,
+                      value: hour as int,
                       zeroPad: true,
                       infiniteLoop: true,
                       itemWidth: 80,
@@ -84,6 +108,7 @@ class _TimePickerCustomState extends State<TimePickerCustom> {
                       onChanged: (value) {
                         setState(() {
                           hour = value;
+                          updateTime();
                         });
                       },
                       textStyle:
@@ -101,7 +126,7 @@ class _TimePickerCustomState extends State<TimePickerCustom> {
                     NumberPicker(
                       minValue: 0,
                       maxValue: 59,
-                      value: minute,
+                      value: minute as int,
                       zeroPad: true,
                       infiniteLoop: true,
                       itemWidth: 80,
@@ -109,6 +134,7 @@ class _TimePickerCustomState extends State<TimePickerCustom> {
                       onChanged: (value) {
                         setState(() {
                           minute = value;
+                          updateTime();
                         });
                       },
                       textStyle:
@@ -129,6 +155,7 @@ class _TimePickerCustomState extends State<TimePickerCustom> {
                           onTap: () {
                             setState(() {
                               timeFormat = "AM";
+                              updateTime();
                             });
                           },
                           child: Container(
@@ -157,6 +184,7 @@ class _TimePickerCustomState extends State<TimePickerCustom> {
                           onTap: () {
                             setState(() {
                               timeFormat = "PM";
+                              updateTime();
                             });
                           },
                           child: Container(

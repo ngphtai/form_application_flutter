@@ -6,3 +6,10 @@ abstract class DetailPageEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
+
+class LoadDetailPost extends DetailPageEvent {
+  int id;
+  LoadDetailPost(this.id);
+  @override
+  List<Object> get props => [id];
+}

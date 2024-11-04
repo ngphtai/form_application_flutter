@@ -1,26 +1,18 @@
-import 'package:dsoft_form_application/data/model/entities/post_entity.dart';
+import 'package:dsoft_form_application/domain/models/item_model.dart';
+import 'package:dsoft_form_application/domain/models/meta_data_model.dart';
 
-class PostModel {
-  late final int id;
-  late final String title;
-  late final String body;
+class PostsModel {
+  final MetaDataModel metaData;
+  final List<ItemModel> itemModels;
 
-  PostModel({required this.id, required this.title, required this.body});
+  PostsModel({required this.metaData, required this.itemModels});
 
-  factory PostModel.fromJson(Map<String, dynamic> json) {
-    return PostModel(
-      id: json['id'],
-      title: json['title'],
-      body: json['body'],
-    );
-  }
-
-  @override
-  PostEntity toEntity() {
-    return PostEntity(
-      id: id,
-      title: title,
-      body: body,
+  factory PostsModel.fromJson(Map<String, dynamic> json) {
+    return PostsModel(
+      metaData: MetaDataModel.fromJson(json['metadata']),
+      itemModels: (json['items'] as List)
+          .map((item) => ItemModel.fromJSon(json['items']))
+          .toList(),
     );
   }
 }

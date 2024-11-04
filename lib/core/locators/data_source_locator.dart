@@ -1,10 +1,10 @@
 part of 'locators.dart';
 
-// final diHomeRemoteDataSource = di<HomeRemoteDataSource>();
+final diPostsRemoteDataResource = di<PostsRemoteDataResource>();
 
 /// setup locator related to remote data source
 void setUpRemoteDataSource() {
-  // di.registerSingletonWithDependencies<HomeRemoteDataSource>(
-  //     HomeRemoteDataSourceImpl.new,
-  //     dependsOn: [CustomHttpClient]);
+  di.registerSingletonWithDependencies<PostsRemoteDataResource>(
+      PostsRemoteDataResourceImpl.new,
+      dependsOn: [CustomHttpClient]);
 }

@@ -4,7 +4,7 @@ part of 'constants.dart';
 /// to request API.
 class APIConstants {
   APIConstants._();
+  static const baseUrl = "https://bc4wtw0t-5000.asse.devtunnels.ms/";
 
-  /// Config path of url login
-  static const pathLogin = "auth/login";
+  static const methodPost = "posts";
 }

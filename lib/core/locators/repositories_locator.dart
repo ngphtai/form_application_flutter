@@ -1,10 +1,10 @@
 part of 'locators.dart';
 
 ///creating [GetIt] for [HomeRepository]
-// final diHomeRepository = di<HomeRepository>();
+final diPostsRepository = di<PostsRepository>();
 
 /// setup locator related to repositories
 void setUpRepositoriesLocator() {
-  // di.registerSingletonWithDependencies<HomeRepository>(HomeRepositoryImpl.new,
-  //     dependsOn: [HomeRemoteDataSource]);
+  di.registerSingletonWithDependencies<PostsRepository>(PostRepositoryImpl.new,
+      dependsOn: [PostsRemoteDataResource]);
 }

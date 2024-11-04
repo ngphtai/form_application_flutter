@@ -7,10 +7,18 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 class PickImage extends StatefulWidget {
-  const PickImage({Key? key}) : super(key: key);
+  const PickImage({
+    Key? key,
+    this.isRequest = false,
+    required this.isError,
+    required this.onChanged,
+  }) : super(key: key);
 
   @override
   _PickImageState createState() => _PickImageState();
+  final bool? isRequest;
+  final bool isError;
+  final ValueChanged onChanged;
 }
 
 class _PickImageState extends State<PickImage> {
@@ -24,13 +32,18 @@ class _PickImageState extends State<PickImage> {
 
     return Container(
       width: size.width,
-      decoration: const BoxDecoration(
-        color: Color(0xfff4f4f4),
-        borderRadius: BorderRadius.all(
+      decoration: BoxDecoration(
+        color: const Color(0xfff4f4f4),
+        borderRadius: const BorderRadius.all(
           Radius.circular(4),
         ),
-        border: Border.fromBorderSide(
-            BorderSide(color: Color(0xffe8e8e8), width: 1)),
+        border: Border.all(
+            color: widget.isRequest == true
+                ? widget.isError == false
+                    ? const Color(0xffe8e8e8)
+                    : Colors.red
+                : const Color(0xffe8e8e8),
+            width: 1),
       ),
       child: GestureDetector(
         onTap: () async {
@@ -41,6 +54,7 @@ class _PickImageState extends State<PickImage> {
             //TODO  save to hive
             if (imageFiles.isEmpty) {
               print("error");
+              widget.onChanged(listMediaPath);
               return;
             } else {
               setState(() {
@@ -55,6 +69,8 @@ class _PickImageState extends State<PickImage> {
 
                 AppLogger.instance.d(
                     "Check status: $listNameFile,$listNameFile,$listSizeFile ALo ALO ALO");
+
+                widget.onChanged(listMediaPath);
               });
               print("HAVE FILE IS: $imageFiles ");
 
@@ -113,30 +129,33 @@ class _PickImageState extends State<PickImage> {
                       // double fileSizeMB = listSizeFile[index] / (1024 * 1024);
                       String fileSizeText = "${fileSizeMB.toString()} MB";
 
-                      return Row(
-                        children: [
-                          Image.asset(
-                            AppIcons.folder2,
-                            height: 32,
-                            width: 32,
-                          ),
-                          const Gap(8),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                displayName,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w500),
-                              ),
-                              Text(
-                                fileSizeText,
-                                style: const TextStyle(
-                                    color: Color(0xff8C8C8C), fontSize: 12),
-                              ),
-                            ],
-                          ),
-                        ],
+                      return Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 0, 0, 4),
+                        child: Row(
+                          children: [
+                            Image.asset(
+                              AppIcons.folder2,
+                              height: 32,
+                              width: 32,
+                            ),
+                            const Gap(8),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  displayName,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w500),
+                                ),
+                                Text(
+                                  fileSizeText,
+                                  style: const TextStyle(
+                                      color: Color(0xff8C8C8C), fontSize: 12),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       );
                     }),
                   ),

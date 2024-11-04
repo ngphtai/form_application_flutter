@@ -1,25 +1,39 @@
-import 'package:dsoft_form_application/core/locators/locators.dart';
 import 'package:dsoft_form_application/core/styles/app_examples.dart';
-import 'package:dsoft_form_application/presentation/form_screen/compoment/checkbox_button.dart';
-import 'package:dsoft_form_application/presentation/form_screen/compoment/checkbox_question_button.dart';
+import 'package:dsoft_form_application/domain/models/post_model.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/checkbox_button.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/checkbox_button_bloc.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/checkbox_question_button.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/checkbox_question_button_bloc.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/custom_drop_button_bloc.dart';
 
-import 'package:dsoft_form_application/presentation/form_screen/compoment/date_picker.dart';
-import 'package:dsoft_form_application/presentation/form_screen/compoment/radio_button.dart';
-import 'package:dsoft_form_application/presentation/form_screen/compoment/radio_question_button.dart';
-import 'package:dsoft_form_application/presentation/form_screen/compoment/share_container.dart';
-import 'package:dsoft_form_application/presentation/form_screen/compoment/custom_drop_button_.dart';
-import 'package:dsoft_form_application/presentation/form_screen/compoment/time_picker_custom.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/date_picker.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/date_picker_bloc.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/pick_image_bloc.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/radio_button.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/radio_button_bloc.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/radio_question_button.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/radio_question_button_bloc.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/share_container.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/custom_drop_button_.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/text_field_bloc.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/text_field_customs.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/time_picker_custom.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/time_picker_customs_bloc.dart';
 import 'package:dsoft_form_application/shared/widget/app_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 
-import 'compoment/pick_image.dart';
+import 'component/pick_image.dart';
 
-// ignore: must_be_immutable
 class FormPageScreen2 extends StatelessWidget {
-  FormPageScreen2({Key? key}) : super(key: key);
+  FormPageScreen2({Key? key, required this.post}) : super(key: key);
   final DateTime? datePicker = null;
+
+  final List<bool> listValid = List.filled(10, false);
+
+  final PostsModel post;
 
   @override
   Widget build(BuildContext context) {
@@ -33,110 +47,276 @@ class FormPageScreen2 extends StatelessWidget {
           SingleChildScrollView(
             child: Column(
               children: [
-                ShareContainer(
-                  widget: Container(
-                    padding: const EdgeInsets.fromLTRB(2, 0, 2, 0),
-                    decoration: const BoxDecoration(
-                      color: Color(0xfff4f4f4),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(4),
-                      ),
-                      border: Border.fromBorderSide(
-                          BorderSide(color: Color(0xffe8e8e8), width: 1)),
+                BlocProvider(
+                  create: (context) => TextFieldBLoc(),
+                  child: BlocBuilder<TextFieldBLoc, TextFieldState>(
+                    builder: (context, isValid) {
+                      // if (isRequest = true)
+                      if (true) {
+                        if (isValid is TextFieldValid) {
+                          listValid[0] = true;
+                        }
+                        if (isValid is TextFieldInValid ||
+                            isValid is TextFieldInit) {
+                          listValid[0] = false;
+                        }
+                      } else {
+                        listValid[0] = true;
+                      }
+                      return ShareContainer(
+                        widget: TextFieldCustoms(
+                          MaxLine: 1,
+                          onChanged: (value) {
+                            context.read<TextFieldBLoc>().validate(value);
+                          },
+                          isError: isValid is TextFieldInit
+                              ? false
+                              : isValid is TextFieldValid
+                                  ? false
+                                  : true,
+                          isRequest: true,
+                        ),
+                        title: "Họ tên",
+                        isRequest: true,
+                      );
+                    },
+                  ),
+                ),
+                BlocProvider(
+                  create: (context) => TextFieldBLoc(),
+                  child: BlocBuilder<TextFieldBLoc, TextFieldState>(
+                    builder: (context, isValid) {
+                      // if (isRequest = true)
+                      if (false) {
+                        if (isValid is TextFieldValid) {
+                          listValid[0] = true;
+                        }
+                        if (isValid is TextFieldInValid ||
+                            isValid is TextFieldInit) {
+                          listValid[0] = false;
+                        }
+                      } else {
+                        listValid[1] = true;
+                      }
+                      return ShareContainer(
+                        widget: TextFieldCustoms(
+                          MaxLine: 5,
+                          onChanged: (value) {
+                            context.read<TextFieldBLoc>().validate(value);
+                          },
+                          isError: isValid is TextFieldInit
+                              ? false
+                              : isValid is TextFieldValid
+                                  ? false
+                                  : true,
+                          // isRequest: true, //test
+                        ),
+                        title:
+                            "Chia sẻ cảm nhận của bạn về giải bóng đá năm nay",
+                      );
+                    },
+                  ),
+                ),
+
+                //TODO
+                BlocProvider(
+                  create: (context) => RadioButtonBloc(),
+                  child: BlocBuilder<RadioButtonBloc, bool>(
+                    builder: (context, isValid) {
+                      // if (isRequest = true)
+                      if (false) {
+                        listValid[2] = isValid;
+                      } else {
+                        listValid[2] = true;
+                      }
+                      return ShareContainer(
+                        widget: RadioButton(
+                          listRadio: AppExamples.listRadio,
+                          nameGroup: "to-chuc",
+                          onChanged: (value) {
+                            context
+                                .read<RadioButtonBloc>()
+                                .Validate(value as String);
+                          },
+                          isError: isValid == true ? false : true,
+                          // isRequest: true, // test
+                        ),
+                        textInputControl: null,
+                        title:
+                            "Bạn đánh giá mức độ tổ chức giải đấu năm nay như thế nào?",
+                      );
+                    },
+                  ),
+                ),
+                BlocProvider(
+                  create: (context) => CheckboxButtonBloc(),
+                  child: BlocBuilder<CheckboxButtonBloc, bool>(
+                    builder: (context, isValid) {
+                      // if (isRequest = true)
+                      if (false) {
+                        listValid[3] = isValid;
+                      } else {
+                        listValid[3] = true;
+                      }
+                      return ShareContainer(
+                        widget: CheckboxButton(
+                          listCheckbox: AppExamples.listCheckBox,
+                          onChanged: (value) {
+                            context.read<CheckboxButtonBloc>().validate(value);
+                          },
+                          // isRequest: true, //test
+                          isError: isValid == true ? false : true,
+                        ),
+                        title:
+                            "Những yếu tố nào dưới đây bạn nghĩ cần được cải thiện cho giải đấu năm sau? (Chọn nhiều đáp án nếu cần)",
+                      );
+                    },
+                  ),
+                ),
+                BlocProvider(
+                  create: (context) => CustomDropButtonBloc(),
+                  child: BlocBuilder<CustomDropButtonBloc, bool>(
+                    builder: (context, isValid) {
+                      // if (isRequest = true)
+                      if (true) {
+                        listValid[4] = isValid;
+                      } else {
+                        listValid[4] = true;
+                      }
+                      return ShareContainer(
+                        widget: CustomDropButton(
+                          listDropDown: AppExamples.listDropDown,
+                          onChanged: (value) {
+                            context
+                                .read<CustomDropButtonBloc>()
+                                .Validate(value);
+                          },
+                          isError: isValid == true ? false : true,
+                          isRequest: true,
+                        ),
+                        title: "Bạn đã tham gia vào vai trò nào trong giải đấu",
+                        isRequest: true,
+                      );
+                    },
+                  ),
+                ),
+                BlocProvider(
+                  create: (context) => PickImageBloc(),
+                  child: BlocBuilder<PickImageBloc, bool>(
+                    builder: (context, isValid) {
+                      // if (isRequest = true)
+                      if (false) {
+                        listValid[5] = isValid;
+                      } else {
+                        listValid[5] = true;
+                      }
+                      return ShareContainer(
+                        widget: PickImage(
+                          isError: isValid == true ? false : true,
+                          // isRequest: true, //test
+                          onChanged: (value) {
+                            context.read<PickImageBloc>().validate(value);
+                          },
+                        ),
+                        title:
+                            "Vui lòng tải lên hình ảnh hoặc video bạn muốn chia sẻ về giải đấu",
+                      );
+                    },
+                  ),
+                ),
+                BlocProvider(
+                  create: (context) => RadioQuestionButtonBloc(),
+                  child: ShareContainer(
+                    widget: RadioQuestionButton(
+                      isRequest: true,
+                      listQuestion: AppExamples.listQuestions,
+                      onChanged: (value) {
+                        if (value = true) {
+                          listValid[6] = value;
+                        } else {
+                          listValid[6] = true;
+                        }
+                      },
                     ),
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: "Lựa chọn",
-                        hintStyle:
-                            TextStyle(color: Colors.grey[400], fontSize: 14),
-                        border: InputBorder.none,
-                        contentPadding: const EdgeInsets.only(left: 10),
-                      ),
+                    title: "Đánh giá các khía cạnh sau của giải đấu",
+                    isRequest: true,
+                  ),
+                ),
+                BlocProvider(
+                  create: (context) => CheckboxQuestionButtonBloc(),
+                  child: ShareContainer(
+                    widget: CheckboxQuestionButton(
+                      isRequest: true,
+                      listCheckBox: AppExamples.listCheckBoxQuestions,
+                      onChanged: (value) {
+                        //TODO fix that isRequested
+                        // if (isRequest = true)
+                        if (true) {
+                          listValid[7] = false;
+                        } else {
+                          listValid[7] = true;
+                        }
+                      },
                     ),
+                    title:
+                        "Bạn đã tham gia vào những sự kiện nào trong khuôn khổ giải đấu?(Chọn tất cả những gì áp dụng)",
                   ),
-                  title: "Họ tên",
-                  isRequest: true,
                 ),
-                ShareContainer(
-                  widget: Container(
-                    padding: const EdgeInsets.fromLTRB(2, 8, 2, 8),
-                    decoration: const BoxDecoration(
-                      color: Color(0xfff4f4f4),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(4),
-                      ),
-                      border: Border.fromBorderSide(
-                          BorderSide(color: Color(0xffe8e8e8), width: 1)),
-                    ),
-                    child: TextField(
-                      decoration: InputDecoration(
-                          hintText: "Lựa chọn",
-                          hintStyle:
-                              TextStyle(color: Colors.grey[400], fontSize: 14),
-                          border: InputBorder.none,
-                          contentPadding: const EdgeInsets.only(left: 10)),
-                      maxLines: 5,
-                    ),
+                BlocProvider(
+                  create: (context) => DatePickerBloc(),
+                  child: BlocBuilder<DatePickerBloc, bool>(
+                    builder: (context, isValid) {
+                      // if (isRequest = true)
+
+                      if (true) {
+                        listValid[8] = isValid;
+                      } else {
+                        listValid[8] = true;
+                      }
+                      return ShareContainer(
+                        widget: DatePicker(
+                          isError: isValid ? false : true,
+                          isRequest: true,
+                          onChanged: (value) {
+                            if (value == null) {
+                              context.read<DatePickerBloc>().Error(false);
+                            } else {
+                              context.read<DatePickerBloc>().validate(value);
+                            }
+                          },
+                        ),
+                        title: "Ngày bạn tham gia trận đấu cuối cùng",
+                        isRequest: true,
+                      );
+                    },
                   ),
-                  title: "Chia sẻ cảm nhận của bạn về giải bóng đá năm nay",
                 ),
-                ShareContainer(
-                  widget: RadioButton(
-                    listRadio: AppExamples.listRadio,
-                    nameGroup: "to-chuc",
-                    onChanged: (value) {},
+                BlocProvider(
+                  create: (context) => TimePickerCustomBloc(),
+                  child: BlocBuilder<TimePickerCustomBloc, bool>(
+                    builder: (context, isValid) {
+                      // if (isRequest = true)
+                      if (false) {
+                        listValid[9] = isValid;
+                      } else {
+                        listValid[9] = true;
+                      }
+                      return ShareContainer(
+                        widget: TimePickerCustom(
+                          onChanged: (value) {
+                            context
+                                .read<TimePickerCustomBloc>()
+                                .validate(value);
+                          },
+                          isError: isValid ? false : true,
+                          // isRequest: true, //test
+                          title: ("Chọn giờ"),
+                        ),
+                        title:
+                            "Vui lòng nhập giờ mà bạn có mặt tại sân vào trận đấu cuối cùng",
+                      );
+                    },
                   ),
-                  textInputControl: null,
-                  title:
-                      "Bạn đánh giá mức độ tổ chức giải đấu năm nay như thế nào?",
-                ),
-                ShareContainer(
-                  widget: CheckboxButton(
-                      listCheckbox: AppExamples.listCheckBox,
-                      onChanged: (value) {}),
-                  title:
-                      "Những yếu tố nào dưới đây bạn nghĩ cần được cải thiện cho giải đấu năm sau? (Chọn nhiều đáp án nếu cần)",
-                ),
-                ShareContainer(
-                  widget: CustomDropButton(
-                    listDropDown: AppExamples.listDropDown,
-                    // onChanged: (value) {},
-                  ),
-                  title: "Bạn đã tham gia vào vai trò nào trong giải đấu",
-                  isRequest: true,
-                ),
-                const ShareContainer(
-                  widget: PickImage(),
-                  title:
-                      "Vui lòng tải lên hình ảnh hoặc video bạn muốn chia sẻ về giải đấu",
-                ),
-                ShareContainer(
-                  widget: RadioQuestionButton(
-                    listQuestion: AppExamples.listQuestions,
-                    onChanged: (value) {},
-                  ),
-                  title: "Đánh giá các khía cạnh sau của giải đấu",
-                  isRequest: true,
-                ),
-                ShareContainer(
-                  widget: CheckboxQuestionButton(
-                    listCheckBox: AppExamples.listCheckBoxQuestions,
-                    onChanged: (value) {},
-                  ),
-                  title:
-                      "Bạn đã tham gia vào những sự kiện nào trong khuôn khổ giải đấu?(Chọn tất cả những gì áp dụng)",
-                ),
-                const ShareContainer(
-                  widget: DatePicker(),
-                  title: "Ngày bạn tham gia trận đấu cuối cùng",
-                  isRequest: true,
-                ),
-                const ShareContainer(
-                  widget: TimePickerCustom(
-                    title: ("Chọn giờ"),
-                  ),
-                  title:
-                      "Vui lòng nhập giờ mà bạn có mặt tại sân vào trận đấu cuối cùng",
                 ),
                 const Gap(50)
               ],
@@ -198,8 +378,23 @@ class FormPageScreen2 extends StatelessWidget {
                       ),
                       GestureDetector(
                         onTap: () {
-                          context
-                              .go('/homePage/detailPage/formPage/successPage');
+                          if (listValid.any((valid) => !valid)) {
+                            // Show error message
+                            print(listValid);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content: Text(
+                                      'Please fill in all fields correctly')),
+                            );
+                          } else {
+                            // Proceed with submission
+                            // Perform the submission logic here
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content:
+                                      Text('Form submitted successfully!')),
+                            );
+                          }
                         },
                         child: Container(
                           padding: const EdgeInsets.all(10),

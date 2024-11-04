@@ -1,3 +1,4 @@
+import 'package:dsoft_form_application/presentation/home_screen/bloc/home_page_bloc.dart';
 import 'package:dsoft_form_application/presentation/splash_screen/components/splash_place_holder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,7 +23,7 @@ class App extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => diSplashBloc),
-        // BlocProvider(create: (_) => diHomeBloc),
+        // BlocProvider(create: (_) => diHomePageBloc),
         // BlocProvider(create: (_) => diAppStatusCubit),
         BlocProvider(create: (_) => diThemeCubit..initialize()),
       ],

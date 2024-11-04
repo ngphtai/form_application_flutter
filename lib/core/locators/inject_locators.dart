@@ -6,8 +6,14 @@ GetIt di = GetIt.instance;
 
 /// This function registers the widgets/objects in [GetIt]
 void setUpLocator() {
+  // Libs
+  setUpLibsLocator();
+
   // Cubits need load before
   setUpCubitLocatorBefore();
+
+  // Errors
+  setUpErrorsLocator();
 
   // Shared preference
   setUpSharedPrefLocator();

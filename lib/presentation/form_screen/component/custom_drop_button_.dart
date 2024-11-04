@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 
 class CustomDropButton extends StatefulWidget {
-  const CustomDropButton({Key? key, required this.listDropDown})
+  const CustomDropButton(
+      {Key? key,
+      required this.listDropDown,
+      this.isRequest = false,
+      required this.isError,
+      required this.onChanged})
       : super(key: key);
 
   @override
   _CustomDropButtonState createState() => _CustomDropButtonState();
   final List<String> listDropDown;
+  final bool? isRequest;
+  final bool isError;
+  final ValueChanged onChanged;
 }
 
 class _CustomDropButtonState extends State<CustomDropButton> {
@@ -14,37 +22,39 @@ class _CustomDropButtonState extends State<CustomDropButton> {
 
   bool isDropdownVisible = false;
 
-  void _showOptionsBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (BuildContext context) {
-        return Container(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              for (String item in widget.listDropDown)
-                ListTile(
-                  title: Text(item),
-                  onTap: () {
-                    setState(() {
-                      selectedValue = item;
-                    });
-                    Navigator.pop(context);
-                  },
-                ),
-            ],
-          ),
-        );
-      },
-    );
-  }
+  // void _showOptionsBottomSheet(BuildContext context) {
+  //   showModalBottomSheet(
+  //     // sheet select
+  //     context: context,
+  //     shape: const RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+  //     ),
+  //     builder: (BuildContext context) {
+  //       return Container(
+  //         padding: const EdgeInsets.all(16),
+  //         child: Column(
+  //           mainAxisSize: MainAxisSize.min,
+  //           children: [
+  //             for (String item in widget.listDropDown)
+  //               ListTile(
+  //                 title: Text(item),
+  //                 onTap: () {
+  //                   setState(() {
+  //                     selectedValue = item;
+  //                   });
+  //                   Navigator.pop(context);
+  //                 },
+  //               ),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
+    // main
     Size size = MediaQuery.of(context).size;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,12 +65,17 @@ class _CustomDropButtonState extends State<CustomDropButton> {
             setState(() {
               isDropdownVisible = !isDropdownVisible;
             });
+            widget.onChanged("");
           },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
             decoration: BoxDecoration(
               border: Border.all(
-                  color: selectedValue == null ? Colors.red : Color(0xffe8e8e8),
+                  color: widget.isRequest == true
+                      ? !widget.isError
+                          ? const Color(0xffe8e8e8)
+                          : Colors.red
+                      : const Color(0xffe8e8e8),
                   width: 1),
               borderRadius: BorderRadius.circular(8),
               color: Colors.grey[200],
@@ -88,9 +103,9 @@ class _CustomDropButtonState extends State<CustomDropButton> {
           visible: isDropdownVisible,
           child: Container(
             decoration: BoxDecoration(
-              border: Border.all(color: Color(0xffe8e8e8), width: 1),
+              border: Border.all(color: const Color(0xffe8e8e8), width: 1),
               borderRadius: BorderRadius.circular(8),
-              color: Color(0xFFf4f4f4),
+              color: const Color(0xFFf4f4f4),
             ),
             child: Column(
               children: widget.listDropDown.map((item) {
@@ -100,6 +115,7 @@ class _CustomDropButtonState extends State<CustomDropButton> {
                       selectedValue = item;
                       isDropdownVisible = false;
                     });
+                    widget.onChanged(selectedValue); // check valid in here
                   },
                   child: Container(
                     width: size.width,
