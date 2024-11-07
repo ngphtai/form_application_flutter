@@ -1,4 +1,7 @@
-class MetaDataModel {
+import 'package:dsoft_form_application/data/model/entities/metadata_model_entity.dart';
+import 'package:dsoft_form_application/domain/models/mapper_entity.dart';
+
+class MetaDataModel extends MapperEntity<MetadataModelEntity> {
   final String id;
   final bool isFilled;
   final String title;
@@ -34,5 +37,21 @@ class MetaDataModel {
         count: json['count'],
         confirmationMessage: json['confirmationMessage'],
         customClosedFormMessage: json['customClosedFormMessage']);
+  }
+
+  @override
+  MetadataModelEntity toEntity() {
+    return MetadataModelEntity(
+      id: id,
+      isFilled: isFilled,
+      title: title,
+      imageURLDescription: imageURLDescription,
+      description: description,
+      publishedUrl: publishedUrl,
+      editorEmails: editorEmails,
+      count: count,
+      confirmationMessage: confirmationMessage,
+      customClosedFormMessage: customClosedFormMessage,
+    );
   }
 }

@@ -1,34 +1,47 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
 class TextFieldBLoc extends Cubit<TextFieldState> {
   TextFieldBLoc() : super(TextFieldInit());
 
-  void validate(String value) {
+  String values = '';
+  //for request = true
+  void validate(String value, bool isRequest) {
     if (value.isNotEmpty) {
-      emit(TextFieldValid());
+      values = value;
+      emit(TextFieldValid(value));
     }
-    if (value == "") {
+    if (value == "" && isRequest) {
       emit(TextFieldInValid());
+    } else if (value == "" && !isRequest) {
+      emit(NonValid());
     }
   }
+
+  String? get Value => values;
 }
 
 class TextFieldState extends Equatable {
-  late bool state;
+  String? state;
   TextFieldState(this.state);
   @override
   List<Object?> get props => [state];
 }
 
 class TextFieldInit extends TextFieldState {
-  TextFieldInit() : super(true);
+  TextFieldInit() : super('');
 }
 
 class TextFieldValid extends TextFieldState {
-  TextFieldValid() : super(true);
+  TextFieldValid(value) : super(value);
 }
 
 class TextFieldInValid extends TextFieldState {
-  TextFieldInValid() : super(false);
+  TextFieldInValid() : super(null);
+}
+
+class NonValid extends TextFieldState {
+  NonValid() : super('');
 }

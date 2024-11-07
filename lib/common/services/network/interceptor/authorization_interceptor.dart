@@ -1,3 +1,5 @@
+// ignore_for_file: unused_field
+
 import 'package:dio/dio.dart';
 import 'package:dsoft_form_application/common/constant/constants.dart';
 

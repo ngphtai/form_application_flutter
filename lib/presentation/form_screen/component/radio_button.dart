@@ -1,20 +1,22 @@
+import 'package:dsoft_form_application/presentation/form_screen/component/radio_button_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 // ignore: must_be_immutable
 class RadioButton extends StatefulWidget {
   final List<String> listRadio;
   final String nameGroup;
-  final ValueChanged<String?> onChanged;
   String? selected;
   final bool? isRequest;
-  final bool isError;
+  final RadioButtonBloc radioButtonBloc;
+  bool isError;
   RadioButton({
     Key? key,
     required this.listRadio,
     required this.nameGroup,
-    required this.onChanged,
     this.isRequest = false,
-    this.isError = false,
+    required this.radioButtonBloc,
+    required this.isError,
   }) : super(key: key);
 
   @override
@@ -24,35 +26,48 @@ class RadioButton extends StatefulWidget {
 class _CustomRadioButtonState extends State<RadioButton> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(
-          Radius.circular(4),
-        ),
-        border: Border.fromBorderSide(BorderSide(
-            color: widget.isRequest == true
-                ? !widget.isError
-                    ? Colors.white
-                    : Colors.red
-                : Colors.white,
-            width: 1)),
-      ),
-      child: Column(
-        children: widget.listRadio.map((option) {
-          return RadioListTile<String>(
-            title: Text(option),
-            value: option,
-            groupValue: widget.selected,
-            activeColor: Colors.red,
-            overlayColor: WidgetStatePropertyAll(Colors.red[100]),
-            onChanged: (value) {
-              setState(() {
-                widget.selected = value;
-              });
-              widget.onChanged(value);
-            },
+    return BlocProvider(
+      create: (context) => widget.radioButtonBloc,
+      child: BlocBuilder<RadioButtonBloc, String?>(
+        builder: (context, selectedValue) {
+          // Kiểm tra lỗi nếu không có giá trị
+          if (selectedValue == "initial") {
+            widget.isError = false;
+          } else if (selectedValue == "error")
+            widget.isError = true;
+          else
+            widget.isError = false;
+
+          return Container(
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(4)),
+              border: Border.fromBorderSide(BorderSide(
+                color: widget.isRequest == true
+                    ? (!widget.isError ? Colors.white : Colors.red)
+                    : Colors.white,
+                width: 1,
+              )),
+            ),
+            child: Column(
+              children: widget.listRadio.map((option) {
+                return RadioListTile<String>(
+                  title: Text(option),
+                  value: option,
+                  groupValue: widget.selected,
+                  activeColor: Colors.red,
+                  onChanged: (value) {
+                    setState(() {
+                      widget.selected = value;
+                      context
+                          .read<RadioButtonBloc>()
+                          .validate(widget.selected!);
+                    });
+                  },
+                );
+              }).toList(),
+            ),
           );
-        }).toList(),
+        },
       ),
     );
   }

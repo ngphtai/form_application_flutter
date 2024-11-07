@@ -1,7 +1,5 @@
-import 'package:dsoft_form_application/domain/models/post_model.dart';
 import 'package:dsoft_form_application/presentation/detail_screen/detail_page_screen.dart';
 
-import 'package:dsoft_form_application/presentation/form_screen/form_page_screen2.dart';
 import 'package:dsoft_form_application/presentation/home_screen/home_page_screen.dart';
 import 'package:dsoft_form_application/presentation/splash_screen/splash_screen.dart';
 import 'package:dsoft_form_application/presentation/success_screen/success_page_screen.dart';

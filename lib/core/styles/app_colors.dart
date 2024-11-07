@@ -1,7 +1,5 @@
 // ignore_for_file: unused_field, public_member_api_docs
 
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 
 /// [AppColors] contains various the color.

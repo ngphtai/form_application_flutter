@@ -7,6 +7,7 @@ abstract class DetailPageEvent extends Equatable {
   List<Object> get props => [];
 }
 
+// ignore: must_be_immutable
 class LoadDetailPost extends DetailPageEvent {
   int id;
   LoadDetailPost(this.id);

@@ -29,8 +29,6 @@ class PostsServiceable {
   Future<Either<AppError, PostsModel>> getDetailPost(int index) async {
     var result = await _getDetailPost.call(index);
 
-    AppLogger.instance.i("data in getDetail ${result.toString()}");
-
     return result.fold((_) {
       AppLogger.instance.e(_.toString());
       return Left(_);

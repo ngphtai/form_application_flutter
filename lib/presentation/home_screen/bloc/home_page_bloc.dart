@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:dsoft_form_application/core/locators/locators.dart';
-import 'package:dsoft_form_application/domain/models/posts_model.dart';
+
 import 'package:equatable/equatable.dart';
 
 import '../../../domain/models/post_model.dart';

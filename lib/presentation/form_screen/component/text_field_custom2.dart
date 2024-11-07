@@ -1,10 +1,9 @@
+import 'package:dsoft_form_application/presentation/form_screen/component/text_field_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'text_field_bloc.dart';
-
-class TextFieldCustoms extends StatefulWidget {
-  TextFieldCustoms(
+class TextFieldCustom2 extends StatefulWidget {
+  TextFieldCustom2(
       {Key? key,
       required this.maxLine,
       this.isRequest = false,
@@ -21,7 +20,7 @@ class TextFieldCustoms extends StatefulWidget {
   final TextFieldBLoc textFieldBLoc;
 }
 
-class _TextFieldCustomsState extends State<TextFieldCustoms> {
+class _TextFieldCustomsState extends State<TextFieldCustom2> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(

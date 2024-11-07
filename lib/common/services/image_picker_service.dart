@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 
 @immutable
+// ignore: must_be_immutable
 class ImagePickerHelper {
   List<File> selectedImages = [];
   static final ImagePicker _imagePicker = ImagePicker();

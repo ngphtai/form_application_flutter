@@ -1,4 +1,7 @@
-class ItemModel {
+import 'package:dsoft_form_application/data/model/entities/item_model_entity.dart';
+import 'package:dsoft_form_application/domain/models/mapper_entity.dart';
+
+class ItemModel extends MapperEntity<ItemModelEntity> {
   final String type;
   final String helpText;
   final String title;
@@ -41,4 +44,25 @@ class ItemModel {
         lowerBound: json['lowerBound'],
         includesYear: json['includesYear']);
   }
+
+  @override
+  ItemModelEntity toEntity() {
+    return ItemModelEntity(
+      null, // result
+      type: type,
+      helpText: helpText,
+      title: title,
+      index: index,
+      id: id,
+      isRequired: isRequired,
+      choices: choices,
+      upperBound: upperBound,
+      rightLabel: rightLabel,
+      leftLabel: leftLabel,
+      lowerBound: lowerBound,
+      includesYear: includesYear,
+    );
+  }
+
+  toDomain(ItemModel item) {}
 }

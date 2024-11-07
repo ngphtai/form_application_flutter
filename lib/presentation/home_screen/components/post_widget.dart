@@ -34,7 +34,7 @@ class PostWidget extends StatelessWidget {
                   colors: const [Colors.red],
                   strokeWidth: 4.0,
                   pathBackgroundColor: Colors.red[200],
-                  backgroundColor: Colors.white,
+                  backgroundColor: Color(0xfff7f7f7),
                 ),
               ),
             );

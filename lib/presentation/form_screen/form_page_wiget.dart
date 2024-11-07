@@ -1,4 +1,9 @@
+import 'dart:ffi';
+
+import 'package:dsoft_form_application/app.dart';
 import 'package:dsoft_form_application/common/extensions/conver_string_to_enum.dart';
+import 'package:dsoft_form_application/common/logger/app_logger.dart';
+import 'package:dsoft_form_application/domain/models/item_model.dart';
 import 'package:dsoft_form_application/domain/models/post_model.dart';
 import 'package:dsoft_form_application/presentation/detail_screen/bloc/detail_page_bloc.dart';
 import 'package:dsoft_form_application/presentation/form_screen/bloc/form_page_bloc.dart';
@@ -6,6 +11,8 @@ import 'package:dsoft_form_application/presentation/form_screen/component/custom
 import 'package:dsoft_form_application/presentation/form_screen/component/pick_image_bloc.dart';
 import 'package:dsoft_form_application/presentation/form_screen/component/radio_question_button_bloc.dart';
 import 'package:dsoft_form_application/presentation/form_screen/component/share_container.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/text_field_custom2.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/text_field_custom_without_bloc.dart';
 import 'package:dsoft_form_application/shared/widget/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -49,11 +56,43 @@ class _FormPageWidgetState extends State<FormPageWidget> {
 
   final DateTime? datePicker = null;
 
-  final List<bool> listValid = List.filled(10, false);
+  bool checkValidToSubmit = false;
+  // khai báo danh sách bloc
+  // Map<int, Cubit> textFieldsBloc = {};
+  Map<int, TextEditingController> textEditControllers = {};
+  Map<int, bool> isRequired = {};
+  Map<int, bool> isError = {};
+  Map<int, Cubit> radioButtonsBloc = {};
+  Map<int, Cubit> customDropBloc = {};
+  Map<int, Cubit> checkBoxBloc = {};
+  Map<int, Cubit> radioQuestionBloc = {};
+  Map<int, Cubit> pickImageBloc = {};
+  Map<int, Cubit> checkboxQuestionBloc = {};
+  Map<int, Cubit> datePickerBloc = {};
+  Map<int, Cubit> timePickerBloc = {};
+  Map<int, Cubit> dropdownBloc = {};
+
+  bool isClosed = false;
+  @override
+  void dispose() {
+    // textFieldsBloc;
+    radioButtonsBloc;
+    customDropBloc;
+    checkBoxBloc;
+    radioQuestionBloc;
+    pickImageBloc;
+    checkboxQuestionBloc;
+    datePickerBloc;
+    timePickerBloc;
+    isClosed = true;
+    print("close widget form page");
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    var size = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: SharedAppBar(
         title: context.select<DetailPageBloc, String>((bloc) {
@@ -86,6 +125,7 @@ class _FormPageWidgetState extends State<FormPageWidget> {
                 );
               }
               if (state is DetailPageLoaded) {
+                initializeBlocs(state.post.itemModels);
                 return Column(children: [
                   Expanded(
                     child: ListView.builder(
@@ -97,6 +137,7 @@ class _FormPageWidgetState extends State<FormPageWidget> {
 
                         final item = state.post.itemModels[index];
 
+                        //Convert string to enum
                         String jsonType = state.post.itemModels[index].type;
 
                         FormType? formType = jsonType.toFormType();
@@ -105,235 +146,123 @@ class _FormPageWidgetState extends State<FormPageWidget> {
                           //simple text
                           case FormType.TEXT:
                             {
-                              return BlocProvider(
-                                create: (context) => TextFieldBLoc(),
-                                child:
-                                    BlocBuilder<TextFieldBLoc, TextFieldState>(
-                                  builder: (context, isValid) {
-                                    if (isRequired = true) {
-                                      if (isValid is TextFieldValid) {
-                                        listValid[0] = true;
-                                      }
-                                      if (isValid is TextFieldInValid ||
-                                          isValid is TextFieldInit) {
-                                        listValid[0] = false;
-                                      }
-                                    } else {
-                                      listValid[0] = true;
-                                    }
-                                    return ShareContainer(
-                                      widget: TextFieldCustoms(
-                                        MaxLine: 1,
-                                        onChanged: (value) {
-                                          context
-                                              .read<TextFieldBLoc>()
-                                              .validate(value);
-                                        },
-                                        isError: isValid is TextFieldInit
-                                            ? false
-                                            : isValid is TextFieldValid
-                                                ? false
-                                                : true,
-                                        isRequest: isRequired,
-                                      ),
-                                      title: item.title,
-                                      isRequest: isRequired,
-                                    );
-                                  },
-                                ),
-                              );
+                              return ShareContainer(
+                                  widget: TextFieldCustomWithoutBloc(
+                                      maxLine: 1,
+                                      isError:
+                                          isError[item.index] as bool ?? false,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          print(value);
+                                          if (isRequired &&
+                                              textEditControllers[item.index]!
+                                                  .text
+                                                  .isNotEmpty) {
+                                            isError[item.index] = false;
+                                          } else {
+                                            isError[item.index] = true;
+                                          }
+                                        });
+                                      },
+                                      textController:
+                                          textEditControllers[item.index]!,
+                                      isRequest: isRequired),
+                                  title: item.title,
+                                  isRequest: isRequired);
                             }
                           //multi text
                           case FormType.PARAGRAPH_TEXT:
                             {
-                              return BlocProvider(
-                                create: (context) => TextFieldBLoc(),
-                                child:
-                                    BlocBuilder<TextFieldBLoc, TextFieldState>(
-                                  builder: (context, isValid) {
-                                    if (isRequired = true) {
-                                      if (isValid is TextFieldValid) {
-                                        listValid[0] = true;
+                              return ShareContainer(
+                                widget: TextFieldCustomWithoutBloc(
+                                  maxLine: 1,
+                                  isError:
+                                      isError[item.index] as bool? ?? false,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      // Kiểm tra điều kiện để cập nhật isError
+                                      if (isRequired && value.isNotEmpty) {
+                                        isError[item.index] = false;
+                                      } else {
+                                        isError[item.index] = true;
                                       }
-                                      if (isValid is TextFieldInValid ||
-                                          isValid is TextFieldInit) {
-                                        listValid[0] = false;
-                                      }
-                                    } else {
-                                      listValid[0] = true;
-                                    }
-                                    return ShareContainer(
-                                      widget: TextFieldCustoms(
-                                        MaxLine: 5,
-                                        onChanged: (value) {
-                                          context
-                                              .read<TextFieldBLoc>()
-                                              .validate(value);
-                                        },
-                                        isError: isValid is TextFieldInit
-                                            ? false
-                                            : isValid is TextFieldValid
-                                                ? false
-                                                : true,
-                                        isRequest: isRequired,
-                                      ),
-                                      title: item.title,
-                                      isRequest: isRequired,
-                                    );
+                                    });
                                   },
+                                  textController:
+                                      textEditControllers[item.index]!,
+                                  isRequest: isRequired,
                                 ),
+                                title: item.title,
+                                isRequest: isRequired,
                               );
                             }
                           case FormType.MULTIPLE_CHOICE:
                             {
-                              return BlocProvider(
-                                create: (context) => RadioButtonBloc(),
-                                child: BlocBuilder<RadioButtonBloc, bool>(
-                                  builder: (context, isValid) {
-                                    if (isRequired = true) {
-                                      listValid[2] = isValid;
-                                    } else {
-                                      listValid[2] = true;
-                                    }
-                                    return ShareContainer(
-                                      widget: RadioButton(
-                                        listRadio: item.choices ??
-                                            ["câu hỏi bị trống!"],
-                                        nameGroup: item.title,
-                                        onChanged: (value) {
-                                          context
-                                              .read<RadioButtonBloc>()
-                                              .Validate(value as String);
-                                        },
-                                        isError: isValid == true ? false : true,
-                                        isRequest: isRequired,
-                                      ),
-                                      textInputControl: null,
-                                      title: item.title,
-                                    );
-                                  },
+                              return ShareContainer(
+                                widget: RadioButton(
+                                  listRadio:
+                                      item.choices ?? ["câu hỏi bị trống!"],
+                                  nameGroup: item.title,
+                                  isRequest: isRequired,
+                                  isError: isError[item.index] ?? false,
+                                  radioButtonBloc: radioButtonsBloc[item.index]
+                                      as RadioButtonBloc,
                                 ),
+                                textInputControl: null,
+                                title: item.title,
+                                isRequest: isRequired,
                               );
                             }
                           case FormType.CHECKBOX:
                             {
-                              return BlocProvider(
-                                create: (context) => CheckboxButtonBloc(),
-                                child: BlocBuilder<CheckboxButtonBloc, bool>(
-                                  builder: (context, isValid) {
-                                    if (isRequired = true) {
-                                      listValid[3] = isValid;
-                                    } else {
-                                      listValid[3] = true;
-                                    }
-                                    return ShareContainer(
-                                      widget: CheckboxButton(
-                                        listCheckbox: item.choices ?? [],
-                                        onChanged: (value) {
-                                          context
-                                              .read<CheckboxButtonBloc>()
-                                              .validate(value);
-                                        },
-                                        isRequest: isRequired,
-                                        isError: isValid == true ? false : true,
-                                      ),
-                                      title: item.title,
-                                    );
-                                  },
+                              return ShareContainer(
+                                widget: CheckboxButton(
+                                  listCheckbox: item.choices ?? [],
+                                  checkboxButtonBloc: checkBoxBloc[item.index]
+                                      as CheckboxButtonBloc,
+                                  isRequest: isRequired,
                                 ),
+                                title: item.title,
+                                isRequest: isRequired,
                               );
                             }
                           case FormType.LIST:
                             {
-                              return BlocProvider(
-                                create: (context) => CustomDropButtonBloc(),
-                                child: BlocBuilder<CustomDropButtonBloc, bool>(
-                                  builder: (context, isValid) {
-                                    if (isRequired = true) {
-                                      listValid[4] = isValid;
-                                    } else {
-                                      listValid[4] = true;
-                                    }
-                                    return ShareContainer(
-                                      widget: CustomDropButton(
-                                        listDropDown:
-                                            item.choices ?? ["có lỗi!"],
-                                        onChanged: (value) {
-                                          context
-                                              .read<CustomDropButtonBloc>()
-                                              .Validate(value);
-                                        },
-                                        isError: isValid == true ? false : true,
-                                        isRequest: isRequired,
-                                      ),
-                                      title: item.title,
-                                      isRequest: isRequired,
-                                    );
-                                  },
+                              return ShareContainer(
+                                widget: CustomDropButton(
+                                  listDropDown: item.choices ?? ["có lỗi!"],
+                                  isRequest: isRequired,
+                                  customDropButtonBloc: dropdownBloc[item.index]
+                                      as CustomDropButtonBloc,
                                 ),
+                                title: item.title,
+                                isRequest: isRequired,
                               );
                             }
                           case FormType.TIME:
                             {
-                              return BlocProvider(
-                                create: (context) => TimePickerCustomBloc(),
-                                child: BlocBuilder<TimePickerCustomBloc, bool>(
-                                  builder: (context, isValid) {
-                                    if (isRequired = true) {
-                                      listValid[9] = isValid;
-                                    } else {
-                                      listValid[9] = true;
-                                    }
-                                    return ShareContainer(
-                                      widget: TimePickerCustom(
-                                        onChanged: (value) {
-                                          context
-                                              .read<TimePickerCustomBloc>()
-                                              .validate(value);
-                                        },
-                                        isError: isValid ? false : true,
-                                        isRequest: isRequired,
-                                        title: ("Chọn giờ"),
-                                      ),
-                                      title: item.title,
-                                      isRequest: isRequired,
-                                    );
-                                  },
+                              return ShareContainer(
+                                widget: TimePickerCustom(
+                                  isRequest: isRequired,
+                                  title: ("Chọn giờ"),
+                                  timePickerCustomBloc:
+                                      timePickerBloc[item.index]
+                                          as TimePickerCustomBloc,
                                 ),
+                                title: item.title,
+                                isRequest: isRequired,
                               );
                             }
                           case FormType.DATE:
                             {
-                              return BlocProvider(
-                                create: (context) => DatePickerBloc(),
-                                child: BlocBuilder<DatePickerBloc, bool>(
-                                  builder: (context, isValid) {
-                                    if (isRequired = true) {
-                                      listValid[8] = isValid;
-                                    } else {
-                                      listValid[8] = true;
-                                    }
-                                    return ShareContainer(
-                                      widget: DatePicker(
-                                        isError: isValid ? false : true,
-                                        isRequest: true,
-                                        onChanged: (value) {
-                                          if (value == null) {
-                                            context
-                                                .read<DatePickerBloc>()
-                                                .Error(false);
-                                          } else {
-                                            context
-                                                .read<DatePickerBloc>()
-                                                .validate(value);
-                                          }
-                                        },
-                                      ),
-                                      title: item.title,
-                                      isRequest: isRequired,
-                                    );
-                                  },
+                              return ShareContainer(
+                                widget: DatePicker(
+                                  isRequest: true,
+                                  datePickerBloc: datePickerBloc[item.index]
+                                      as DatePickerBloc,
                                 ),
+                                title: item.title,
+                                isRequest: isRequired,
                               );
                             }
                           default:
@@ -346,117 +275,233 @@ class _FormPageWidgetState extends State<FormPageWidget> {
                     height: size.height * 0.1,
                   )
                 ]);
-              } else
+              } else {
                 return Text("loading");
+              }
             },
           ),
 
           //Button action
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Column(
-              children: [
-                Container(
-                  height: 20,
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.white.withOpacity(0.5),
-                        spreadRadius: 5,
-                        blurRadius: 7,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  color: const Color(0xFFffffff),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          context.pop(context);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(10),
-                          margin: const EdgeInsets.all(5),
-                          width: size.width * 0.45,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFffffff),
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(8)),
-                            border: Border.all(
-                              color: Colors.red,
-                              width: 1,
-                            ),
+          BlocBuilder<DetailPageBloc, DetailPageState>(
+            builder: (context, state) {
+              return Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Column(
+                  children: [
+                    Container(
+                      height: 20,
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.white.withOpacity(0.5),
+                            spreadRadius: 5,
+                            blurRadius: 7,
+                            offset: const Offset(0, 3),
                           ),
-                          child: const Center(
-                            child: Text(
-                              "Trở về",
-                              style: TextStyle(
+                        ],
+                      ),
+                    ),
+                    Container(
+                      color: const Color(0xFFffffff),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              context.pop(context);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(10),
+                              margin: const EdgeInsets.all(5),
+                              width: size.width * 0.45,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFffffff),
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(8)),
+                                border: Border.all(
                                   color: Colors.red,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          if (listValid.any((valid) => !valid)) {
-                            // Show error message
-                            print(listValid);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                  content: Text(
-                                      'Please fill in all fields correctly')),
-                            );
-                          } else {
-                            // Proceed with submission
-                            // Perform the submission logic here
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                  content:
-                                      Text('Form submitted successfully!')),
-                            );
-                          }
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(10),
-                          margin: const EdgeInsets.all(5),
-                          width: size.width * 0.45,
-                          decoration: BoxDecoration(
-                            color: Colors.red,
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(8)),
-                            border: Border.all(
-                              color: Colors.red,
-                              width: 1,
-                            ),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              "Gửi",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
+                                  width: 1,
+                                ),
+                              ),
+                              child: const Center(
+                                child: Text(
+                                  "Trở về",
+                                  style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600),
+                                ),
                               ),
                             ),
                           ),
-                        ),
+                          GestureDetector(
+                            onTap: () {
+                              if (state is DetailPageLoaded) {
+                                state.post.itemModels.forEach((element) {});
+
+                                checkValidToSubmit = true;
+                                //Text
+                                for (var entry in textEditControllers.entries) {
+                                  final key = entry.key;
+                                  final controller = entry.value;
+                                  print(
+                                      "key: $key, controller: ${controller.text}");
+                                  if ((controller.text.isEmpty ||
+                                          controller.text == "") &&
+                                      (isRequired[key] == true)) {
+                                    checkValidToSubmit = false;
+                                    isError[key] = true;
+                                    showMessenger(context);
+                                    break;
+                                  } else if (controller.text.isNotEmpty) {
+                                    isError[key] = false;
+                                    checkValidToSubmit = true;
+                                  }
+                                }
+
+                                // radio box
+                                for (var entry in radioButtonsBloc.entries) {
+                                  final key = entry.key;
+                                  final radioButtonsBloc = entry.value;
+                                  if (radioButtonsBloc is RadioButtonBloc) {
+                                    final String? values =
+                                        radioButtonsBloc.values;
+
+                                    if (values == null &&
+                                        isRequired[key] == true) {
+                                      radioButtonsBloc.validate("error");
+                                      checkValidToSubmit = false;
+                                      isError[key] = true;
+                                      showMessenger(context);
+                                      break;
+                                    } else {
+                                      checkValidToSubmit = true;
+                                    }
+                                  }
+                                }
+
+                                // In ra giá trị cuối cùng để kiểm tra
+                                print(
+                                    "Final checkValidToSubmit: $checkValidToSubmit");
+
+                                // Hiển thị SnackBar dựa vào kết quả validate
+                                showMessenger(context);
+                              }
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(10),
+                              margin: const EdgeInsets.all(5),
+                              width: size.width * 0.45,
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(8)),
+                                border: Border.all(
+                                  color: Colors.red,
+                                  width: 1,
+                                ),
+                              ),
+                              child: const Center(
+                                child: Text(
+                                  "Gửi",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              );
+            },
           ),
         ],
       ),
     );
+  }
+
+  void showMessenger(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(checkValidToSubmit
+            ? "Đã lưu thành công"
+            : "Vui lòng điền đầy đủ thông tin"),
+        backgroundColor: checkValidToSubmit ? Colors.green : Colors.red,
+      ),
+    );
+  }
+
+  // bool validateAllBloc() {
+  //   final List<Cubit> blocs = [
+  //     ...textFieldsBloc.values,
+  //     ...radioButtonsBloc.values,
+  //     ...checkBoxBloc.values,
+  //     ...datePickerBloc.values,
+  //     ...timePickerBloc.values,
+  //     ...dropdownBloc.values
+  //   ];
+  //   for (var bloc in blocs) {
+  //     if (bloc.state != null) {
+  //       return true; // Nếu có ít nhất một state có giá trị, trả về true
+  //     }
+  //   }
+
+  //   return false; // Nếu tất cả các state đều là null, trả về false
+  // }
+
+  void initializeBlocs(List<ItemModel> items) {
+    //Convert string to enum
+
+    for (var item in items) {
+      isError[item.index] = isError[item.index] ?? false;
+
+      isRequired[item.index] = isRequired[item.index] ?? item.isRequired!;
+
+      String jsonType = item.type;
+
+      FormType? formType = jsonType.toFormType();
+      switch (formType) {
+        case FormType.TEXT:
+          // textFieldsBloc[item.index] = TextFieldBLoc();
+          textEditControllers[item.index] = TextEditingController();
+          break;
+        case FormType.PARAGRAPH_TEXT:
+          // textFieldsBloc[item.index] = TextFieldBLoc();
+          textEditControllers[item.index] = TextEditingController();
+          break;
+        case FormType.MULTIPLE_CHOICE:
+          radioButtonsBloc[item.index] = RadioButtonBloc();
+          break;
+        case FormType.CHECKBOX:
+          checkBoxBloc[item.index] = CheckboxButtonBloc();
+          break;
+        case FormType.DATE:
+          datePickerBloc[item.index] = DatePickerBloc();
+          break;
+        case FormType.TIME:
+          timePickerBloc[item.index] = TimePickerCustomBloc();
+          break;
+        case FormType.LIST:
+          dropdownBloc[item.index] = CustomDropButtonBloc();
+        // thiếu pick image, widget question
+        case null:
+          break;
+      }
+    }
+    // AppLogger.instance.d("textFieldsBloc: $textFieldsBloc");
+    // AppLogger.instance.d("radioButtonsBloc: $radioButtonsBloc");
+    // AppLogger.instance.d("checkBoxBloc: $checkBoxBloc");
+    // AppLogger.instance.d("datePickerBloc: $datePickerBloc");
+    // AppLogger.instance.d("timePickerBloc: $timePickerBloc");
+    // AppLogger.instance.d("dropdownBloc: $dropdownBloc");
+    // AppLogger.instance.d("Build bloc success!");
   }
 }

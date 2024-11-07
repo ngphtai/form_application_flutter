@@ -6,7 +6,6 @@ import '../../common/constant/app_errors/api_error.dart';
 import '../../common/constant/app_errors/app_error.dart';
 import '../../common/constant/app_errors/app_orther_error.dart';
 import '../../common/constant/app_errors/network_error.dart';
-import '../../common/services/app_status_service.dart';
 // import '../../core/language/generated/l10n.dart';
 
 /// {@template remote_http_exception}

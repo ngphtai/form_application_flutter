@@ -33,7 +33,6 @@ class PostsRemoteDataResourceImpl extends PostsRemoteDataResource {
     try {
       String url = "${APIConstants.methodPost}/${index}";
       var response = await customHttpClient.get(url);
-      print("Raw response is $response");
 
       // var response = response.data;
 

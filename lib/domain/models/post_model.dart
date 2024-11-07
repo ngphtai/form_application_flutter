@@ -1,7 +1,9 @@
+import 'package:dsoft_form_application/data/model/entities/post_model_entity.dart';
 import 'package:dsoft_form_application/domain/models/item_model.dart';
+import 'package:dsoft_form_application/domain/models/mapper_entity.dart';
 import 'package:dsoft_form_application/domain/models/meta_data_model.dart';
 
-class PostsModel {
+class PostsModel extends MapperEntity<PostModelEntity> {
   final MetaDataModel metaData;
   final List<ItemModel> itemModels;
 
@@ -13,6 +15,14 @@ class PostsModel {
       itemModels: (json['items'] as List)
           .map((item) => ItemModel.fromJSon(json['items']))
           .toList(),
+    );
+  }
+
+  @override
+  PostModelEntity toEntity() {
+    return PostModelEntity(
+      metaData: metaData.toEntity(),
+      items: itemModels.map((item) => item.toEntity()).toList(),
     );
   }
 }

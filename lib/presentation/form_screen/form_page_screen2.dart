@@ -47,159 +47,159 @@ class FormPageScreen2 extends StatelessWidget {
           SingleChildScrollView(
             child: Column(
               children: [
-                BlocProvider(
-                  create: (context) => TextFieldBLoc(),
-                  child: BlocBuilder<TextFieldBLoc, TextFieldState>(
-                    builder: (context, isValid) {
-                      // if (isRequest = true)
-                      if (true) {
-                        if (isValid is TextFieldValid) {
-                          listValid[0] = true;
-                        }
-                        if (isValid is TextFieldInValid ||
-                            isValid is TextFieldInit) {
-                          listValid[0] = false;
-                        }
-                      } else {
-                        listValid[0] = true;
-                      }
-                      return ShareContainer(
-                        widget: TextFieldCustoms(
-                          MaxLine: 1,
-                          onChanged: (value) {
-                            context.read<TextFieldBLoc>().validate(value);
-                          },
-                          isError: isValid is TextFieldInit
-                              ? false
-                              : isValid is TextFieldValid
-                                  ? false
-                                  : true,
-                          isRequest: true,
-                        ),
-                        title: "Họ tên",
-                        isRequest: true,
-                      );
-                    },
-                  ),
-                ),
-                BlocProvider(
-                  create: (context) => TextFieldBLoc(),
-                  child: BlocBuilder<TextFieldBLoc, TextFieldState>(
-                    builder: (context, isValid) {
-                      // if (isRequest = true)
-                      if (false) {
-                        if (isValid is TextFieldValid) {
-                          listValid[0] = true;
-                        }
-                        if (isValid is TextFieldInValid ||
-                            isValid is TextFieldInit) {
-                          listValid[0] = false;
-                        }
-                      } else {
-                        listValid[1] = true;
-                      }
-                      return ShareContainer(
-                        widget: TextFieldCustoms(
-                          MaxLine: 5,
-                          onChanged: (value) {
-                            context.read<TextFieldBLoc>().validate(value);
-                          },
-                          isError: isValid is TextFieldInit
-                              ? false
-                              : isValid is TextFieldValid
-                                  ? false
-                                  : true,
-                          // isRequest: true, //test
-                        ),
-                        title:
-                            "Chia sẻ cảm nhận của bạn về giải bóng đá năm nay",
-                      );
-                    },
-                  ),
-                ),
+                // BlocProvider(
+                //   create: (context) => TextFieldBLoc(),
+                //   child: BlocBuilder<TextFieldBLoc, TextFieldState>(
+                //     builder: (context, isValid) {
+                //       // if (isRequest = true)
+                //       if (true) {
+                //         if (isValid is TextFieldValid) {
+                //           listValid[0] = true;
+                //         }
+                //         if (isValid is TextFieldInValid ||
+                //             isValid is TextFieldInit) {
+                //           listValid[0] = false;
+                //         }
+                //       } else {
+                //         listValid[0] = true;
+                //       }
+                //       return ShareContainer(
+                //         widget: TextFieldCustoms(
+                //           maxLine: 1,
+                //           onChanged: (value) {
+                //             context.read<TextFieldBLoc>().validate(value);
+                //           },
+                //           isError: isValid is TextFieldInit
+                //               ? false
+                //               : isValid is TextFieldValid
+                //                   ? false
+                //                   : true,
+                //           isRequest: true,
+                //         ),
+                //         title: "Họ tên",
+                //         isRequest: true,
+                //       );
+                //     },
+                //   ),
+                // ),
+                // BlocProvider(
+                //   create: (context) => TextFieldBLoc(),
+                //   child: BlocBuilder<TextFieldBLoc, TextFieldState>(
+                //     builder: (context, isValid) {
+                //       // if (isRequest = true)
+                //       if (false) {
+                //         if (isValid is TextFieldValid) {
+                //           listValid[0] = true;
+                //         }
+                //         if (isValid is TextFieldInValid ||
+                //             isValid is TextFieldInit) {
+                //           listValid[0] = false;
+                //         }
+                //       } else {
+                //         listValid[1] = true;
+                //       }
+                //       return ShareContainer(
+                //         widget: TextFieldCustoms(
+                //           maxLine: 5,
+                //           onChanged: (value) {
+                //             context.read<TextFieldBLoc>().validate(value);
+                //           },
+                //           isError: isValid is TextFieldInit
+                //               ? false
+                //               : isValid is TextFieldValid
+                //                   ? false
+                //                   : true,
+                //           // isRequest: true, //test
+                //         ),
+                //         title:
+                //             "Chia sẻ cảm nhận của bạn về giải bóng đá năm nay",
+                //       );
+                //     },
+                //   ),
+                // ),
 
                 //TODO
-                BlocProvider(
-                  create: (context) => RadioButtonBloc(),
-                  child: BlocBuilder<RadioButtonBloc, bool>(
-                    builder: (context, isValid) {
-                      // if (isRequest = true)
-                      if (false) {
-                        listValid[2] = isValid;
-                      } else {
-                        listValid[2] = true;
-                      }
-                      return ShareContainer(
-                        widget: RadioButton(
-                          listRadio: AppExamples.listRadio,
-                          nameGroup: "to-chuc",
-                          onChanged: (value) {
-                            context
-                                .read<RadioButtonBloc>()
-                                .Validate(value as String);
-                          },
-                          isError: isValid == true ? false : true,
-                          // isRequest: true, // test
-                        ),
-                        textInputControl: null,
-                        title:
-                            "Bạn đánh giá mức độ tổ chức giải đấu năm nay như thế nào?",
-                      );
-                    },
-                  ),
-                ),
-                BlocProvider(
-                  create: (context) => CheckboxButtonBloc(),
-                  child: BlocBuilder<CheckboxButtonBloc, bool>(
-                    builder: (context, isValid) {
-                      // if (isRequest = true)
-                      if (false) {
-                        listValid[3] = isValid;
-                      } else {
-                        listValid[3] = true;
-                      }
-                      return ShareContainer(
-                        widget: CheckboxButton(
-                          listCheckbox: AppExamples.listCheckBox,
-                          onChanged: (value) {
-                            context.read<CheckboxButtonBloc>().validate(value);
-                          },
-                          // isRequest: true, //test
-                          isError: isValid == true ? false : true,
-                        ),
-                        title:
-                            "Những yếu tố nào dưới đây bạn nghĩ cần được cải thiện cho giải đấu năm sau? (Chọn nhiều đáp án nếu cần)",
-                      );
-                    },
-                  ),
-                ),
-                BlocProvider(
-                  create: (context) => CustomDropButtonBloc(),
-                  child: BlocBuilder<CustomDropButtonBloc, bool>(
-                    builder: (context, isValid) {
-                      // if (isRequest = true)
-                      if (true) {
-                        listValid[4] = isValid;
-                      } else {
-                        listValid[4] = true;
-                      }
-                      return ShareContainer(
-                        widget: CustomDropButton(
-                          listDropDown: AppExamples.listDropDown,
-                          onChanged: (value) {
-                            context
-                                .read<CustomDropButtonBloc>()
-                                .Validate(value);
-                          },
-                          isError: isValid == true ? false : true,
-                          isRequest: true,
-                        ),
-                        title: "Bạn đã tham gia vào vai trò nào trong giải đấu",
-                        isRequest: true,
-                      );
-                    },
-                  ),
-                ),
+                // BlocProvider(
+                //   create: (context) => RadioButtonBloc(),
+                //   child: BlocBuilder<RadioButtonBloc, bool>(
+                //     builder: (context, isValid) {
+                //       // if (isRequest = true)
+                //       if (false) {
+                //         listValid[2] = isValid;
+                //       } else {
+                //         listValid[2] = true;
+                //       }
+                //       return ShareContainer(
+                //         widget: RadioButton(
+                //           listRadio: AppExamples.listRadio,
+                //           nameGroup: "to-chuc",
+                //           onChanged: (value) {
+                //             context
+                //                 .read<RadioButtonBloc>()
+                //                 .Validate(value as String);
+                //           },
+                //           isError: isValid == true ? false : true,
+                //           // isRequest: true, // test
+                //         ),
+                //         textInputControl: null,
+                //         title:
+                //             "Bạn đánh giá mức độ tổ chức giải đấu năm nay như thế nào?",
+                //       );
+                //     },
+                //   ),
+                // ),
+                // BlocProvider(
+                //   create: (context) => CheckboxButtonBloc(),
+                //   child: BlocBuilder<CheckboxButtonBloc, bool>(
+                //     builder: (context, isValid) {
+                //       // if (isRequest = true)
+                //       if (false) {
+                //         listValid[3] = isValid;
+                //       } else {
+                //         listValid[3] = true;
+                //       }
+                //       return ShareContainer(
+                //         widget: CheckboxButton(
+                //           listCheckbox: AppExamples.listCheckBox,
+                //           onChanged: (value) {
+                //             context.read<CheckboxButtonBloc>().validate(value);
+                //           },
+                //           // isRequest: true, //test
+                //           isError: isValid == true ? false : true,
+                //         ),
+                //         title:
+                //             "Những yếu tố nào dưới đây bạn nghĩ cần được cải thiện cho giải đấu năm sau? (Chọn nhiều đáp án nếu cần)",
+                //       );
+                //     },
+                //   ),
+                // ),
+                // BlocProvider(
+                //   create: (context) => CustomDropButtonBloc(),
+                //   child: BlocBuilder<CustomDropButtonBloc, bool>(
+                //     builder: (context, isValid) {
+                //       // if (isRequest = true)
+                //       if (true) {
+                //         listValid[4] = isValid;
+                //       } else {
+                //         listValid[4] = true;
+                //       }
+                //       return ShareContainer(
+                //         widget: CustomDropButton(
+                //           listDropDown: AppExamples.listDropDown,
+                //           onChanged: (value) {
+                //             context
+                //                 .read<CustomDropButtonBloc>()
+                //                 .Validate(value);
+                //           },
+                //           isError: isValid == true ? false : true,
+                //           isRequest: true,
+                //         ),
+                //         title: "Bạn đã tham gia vào vai trò nào trong giải đấu",
+                //         isRequest: true,
+                //       );
+                //     },
+                //   ),
+                // ),
                 BlocProvider(
                   create: (context) => PickImageBloc(),
                   child: BlocBuilder<PickImageBloc, bool>(
@@ -262,62 +262,62 @@ class FormPageScreen2 extends StatelessWidget {
                         "Bạn đã tham gia vào những sự kiện nào trong khuôn khổ giải đấu?(Chọn tất cả những gì áp dụng)",
                   ),
                 ),
-                BlocProvider(
-                  create: (context) => DatePickerBloc(),
-                  child: BlocBuilder<DatePickerBloc, bool>(
-                    builder: (context, isValid) {
-                      // if (isRequest = true)
+                // // BlocProvider(
+                // //   create: (context) => DatePickerBloc(),
+                // //   child: BlocBuilder<DatePickerBloc, bool>(
+                // //     builder: (context, isValid) {
+                // //       // if (isRequest = true)
 
-                      if (true) {
-                        listValid[8] = isValid;
-                      } else {
-                        listValid[8] = true;
-                      }
-                      return ShareContainer(
-                        widget: DatePicker(
-                          isError: isValid ? false : true,
-                          isRequest: true,
-                          onChanged: (value) {
-                            if (value == null) {
-                              context.read<DatePickerBloc>().Error(false);
-                            } else {
-                              context.read<DatePickerBloc>().validate(value);
-                            }
-                          },
-                        ),
-                        title: "Ngày bạn tham gia trận đấu cuối cùng",
-                        isRequest: true,
-                      );
-                    },
-                  ),
-                ),
-                BlocProvider(
-                  create: (context) => TimePickerCustomBloc(),
-                  child: BlocBuilder<TimePickerCustomBloc, bool>(
-                    builder: (context, isValid) {
-                      // if (isRequest = true)
-                      if (false) {
-                        listValid[9] = isValid;
-                      } else {
-                        listValid[9] = true;
-                      }
-                      return ShareContainer(
-                        widget: TimePickerCustom(
-                          onChanged: (value) {
-                            context
-                                .read<TimePickerCustomBloc>()
-                                .validate(value);
-                          },
-                          isError: isValid ? false : true,
-                          // isRequest: true, //test
-                          title: ("Chọn giờ"),
-                        ),
-                        title:
-                            "Vui lòng nhập giờ mà bạn có mặt tại sân vào trận đấu cuối cùng",
-                      );
-                    },
-                  ),
-                ),
+                // //       if (true) {
+                // //         listValid[8] = isValid;
+                // //       } else {
+                // //         listValid[8] = true;
+                // //       }
+                // //       return ShareContainer(
+                // //         widget: DatePicker(
+                // //           isError: isValid ? false : true,
+                // //           isRequest: true,
+                // //           onChanged: (value) {
+                // //             if (value == null) {
+                // //               context.read<DatePickerBloc>().Error(false);
+                // //             } else {
+                // //               context.read<DatePickerBloc>().validate(value);
+                // //             }
+                // //           },
+                // //         ),
+                // //         title: "Ngày bạn tham gia trận đấu cuối cùng",
+                // //         isRequest: true,
+                // //       );
+                // //     },
+                // //   ),
+                // // ),
+                // BlocProvider(
+                //   create: (context) => TimePickerCustomBloc(),
+                //   child: BlocBuilder<TimePickerCustomBloc, bool>(
+                //     builder: (context, isValid) {
+                //       // if (isRequest = true)
+                //       if (false) {
+                //         listValid[9] = isValid;
+                //       } else {
+                //         listValid[9] = true;
+                //       }
+                //       return ShareContainer(
+                //         widget: TimePickerCustom(
+                //           onChanged: (value) {
+                //             context
+                //                 .read<TimePickerCustomBloc>()
+                //                 .validate(value);
+                //           },
+                //           isError: isValid ? false : true,
+                //           // isRequest: true, //test
+                //           title: ("Chọn giờ"),
+                //         ),
+                //         title:
+                //             "Vui lòng nhập giờ mà bạn có mặt tại sân vào trận đấu cuối cùng",
+                //       );
+                //     },
+                //   ),
+                // ),
                 const Gap(50)
               ],
             ),
