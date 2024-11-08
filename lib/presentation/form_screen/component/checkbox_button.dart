@@ -3,14 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CheckboxButton extends StatefulWidget {
-  const CheckboxButton({
+  CheckboxButton({
     super.key,
     required this.listCheckbox,
     this.isRequest = false,
     required this.checkboxButtonBloc,
+    required this.isError,
   });
   final List<String> listCheckbox;
-
+  bool isError;
   final bool isRequest;
   final CheckboxButtonBloc checkboxButtonBloc;
   @override
@@ -22,12 +23,9 @@ class _CheckboxButtonState extends State<CheckboxButton> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-        create: (context) => CheckboxButtonBloc(),
+        create: (context) => widget.checkboxButtonBloc,
         child:
             BlocBuilder<CheckboxButtonBloc, bool>(builder: (context, isValid) {
-          bool isError = isValid == '' ? true : false;
-          if (isValid == "initial") isError = false; // khởi tạo thì error
-
           return Container(
             decoration: BoxDecoration(
               color: const Color(0xfff4f4f4),
@@ -35,9 +33,11 @@ class _CheckboxButtonState extends State<CheckboxButton> {
                 Radius.circular(4),
               ),
               border: Border.fromBorderSide(BorderSide(
-                  // color: widget.isRequest == true?
-                  color: isError ? Colors.red : const Color(0xffe8e8e8),
-                  // : const Color(0xffe8e8e8),
+                  color: widget.isRequest == true
+                      ? widget.isError
+                          ? Colors.red
+                          : const Color(0xffe8e8e8)
+                      : const Color(0xffe8e8e8),
                   width: 1)),
             ),
             child: Column(
@@ -55,9 +55,15 @@ class _CheckboxButtonState extends State<CheckboxButton> {
                       } else {
                         selectedCheckboxes.remove(options);
                       }
+                      print(selectedCheckboxes);
                       context
                           .read<CheckboxButtonBloc>()
-                          .validate(value! ? selectedCheckboxes : []);
+                          .validate(selectedCheckboxes);
+                      if (selectedCheckboxes.isEmpty) {
+                        widget.isError = true;
+                      } else {
+                        widget.isError = false;
+                      }
                     });
                   },
                   title: Text(options.toString()),

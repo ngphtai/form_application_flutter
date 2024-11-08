@@ -19,50 +19,22 @@ class CustomDropButton extends StatefulWidget {
   final CustomDropButtonBloc customDropButtonBloc;
 }
 
-class _CustomDropButtonState extends State<CustomDropButton> {
+class _CustomDropButtonState extends State<CustomDropButton>
+    with AutomaticKeepAliveClientMixin {
   String? selectedValue;
 
   bool isDropdownVisible = false;
 
-  // void _showOptionsBottomSheet(BuildContext context) {
-  //   showModalBottomSheet(
-  //     // sheet select
-  //     context: context,
-  //     shape: const RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-  //     ),
-  //     builder: (BuildContext context) {
-  //       return Container(
-  //         padding: const EdgeInsets.all(16),
-  //         child: Column(
-  //           mainAxisSize: MainAxisSize.min,
-  //           children: [
-  //             for (String item in widget.listDropDown)
-  //               ListTile(
-  //                 title: Text(item),
-  //                 onTap: () {
-  //                   setState(() {
-  //                     selectedValue = item;
-  //                   });
-  //                   Navigator.pop(context);
-  //                 },
-  //               ),
-  //           ],
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     // main
     Size size = MediaQuery.of(context).size;
     return BlocProvider(
         create: (context) => widget.customDropButtonBloc,
-        child: BlocBuilder<CustomDropButtonBloc, bool>(
-            builder: (context, isValid) {
-          final bool isError = isValid == true ? false : true;
+        child: BlocBuilder<CustomDropButtonBloc, CustomDropButtonState>(
+            builder: (context, state) {
+          print(state);
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -72,7 +44,7 @@ class _CustomDropButtonState extends State<CustomDropButton> {
                   setState(() {
                     isDropdownVisible = !isDropdownVisible;
                   });
-                  context.read<CustomDropButtonBloc>().Validate("");
+                  context.read<CustomDropButtonBloc>().validate("");
                 },
                 child: Container(
                   padding:
@@ -80,7 +52,7 @@ class _CustomDropButtonState extends State<CustomDropButton> {
                   decoration: BoxDecoration(
                     border: Border.all(
                         color: widget.isRequest == true
-                            ? !isError
+                            ? !state.isError
                                 ? const Color(0xffe8e8e8)
                                 : Colors.red
                             : const Color(0xffe8e8e8),
@@ -123,11 +95,16 @@ class _CustomDropButtonState extends State<CustomDropButton> {
                           setState(() {
                             selectedValue = item;
                             isDropdownVisible = false;
+                            if (selectedValue != null) {
+                              state.isError = false;
+                            } else if (selectedValue == null) {
+                              state.isError = true;
+                            }
+                            print(selectedValue);
+                            context
+                                .read<CustomDropButtonBloc>()
+                                .validate(selectedValue!);
                           });
-                          // check valid in here
-                          context
-                              .read<CustomDropButtonBloc>()
-                              .Validate(selectedValue!);
                         },
                         child: Container(
                           width: size.width,
@@ -144,5 +121,38 @@ class _CustomDropButtonState extends State<CustomDropButton> {
             ],
           );
         }));
+
+    // void _showOptionsBottomSheet(BuildContext context) {
+    //   showModalBottomSheet(
+    //     // sheet select
+    //     context: context,
+    //     shape: const RoundedRectangleBorder(
+    //       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+    //     ),
+    //     builder: (BuildContext context) {
+    //       return Container(
+    //         padding: const EdgeInsets.all(16),
+    //         child: Column(
+    //           mainAxisSize: MainAxisSize.min,
+    //           children: [
+    //             for (String item in widget.listDropDown)
+    //               ListTile(
+    //                 title: Text(item),
+    //                 onTap: () {
+    //                   setState(() {
+    //                     selectedValue = item;
+    //                   });
+    //                   Navigator.pop(context);
+    //                 },
+    //               ),
+    //           ],
+    //         ),
+    //       );
+    //     },
+    //   );
+    // }
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

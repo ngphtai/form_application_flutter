@@ -11,14 +11,12 @@ import 'package:dsoft_form_application/presentation/form_screen/component/custom
 import 'package:dsoft_form_application/presentation/form_screen/component/pick_image_bloc.dart';
 import 'package:dsoft_form_application/presentation/form_screen/component/radio_question_button_bloc.dart';
 import 'package:dsoft_form_application/presentation/form_screen/component/share_container.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/text_field_custom2.dart';
 import 'package:dsoft_form_application/presentation/form_screen/component/text_field_custom_without_bloc.dart';
 import 'package:dsoft_form_application/shared/widget/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 
@@ -39,28 +37,26 @@ import 'component/text_field_customs.dart';
 import 'component/time_picker_custom.dart';
 import 'component/time_picker_customs_bloc.dart';
 
-class FormPageWidget extends StatefulWidget {
+// class FormPageWidget extends StatefulWidget {
+//   FormPageWidget({Key? key, required this.postId}) : super(key: key);
+//   final int postId;
+
+//   @override
+//   State<FormPageWidget> createState() => _FormPageWidgetState();
+// }
+
+// class _FormPageWidgetState extends State<FormPageWidget> {
+
+class FormPageWidget extends StatelessWidget {
   FormPageWidget({Key? key, required this.postId}) : super(key: key);
-  final int postId;
-
-  @override
-  State<FormPageWidget> createState() => _FormPageWidgetState();
-}
-
-class _FormPageWidgetState extends State<FormPageWidget> {
-  @override
-  void initState() {
-    super.initState();
-    context.read<DetailPageBloc>().add(LoadDetailPost(widget.postId));
-  }
 
   final DateTime? datePicker = null;
-
+  final int postId;
   bool checkValidToSubmit = false;
   // khai báo danh sách bloc
   // Map<int, Cubit> textFieldsBloc = {};
   Map<int, TextEditingController> textEditControllers = {};
-  Map<int, bool> isRequired = {};
+  Map<int, bool?> isRequired = {};
   Map<int, bool> isError = {};
   Map<int, Cubit> radioButtonsBloc = {};
   Map<int, Cubit> customDropBloc = {};
@@ -70,25 +66,8 @@ class _FormPageWidgetState extends State<FormPageWidget> {
   Map<int, Cubit> checkboxQuestionBloc = {};
   Map<int, Cubit> datePickerBloc = {};
   Map<int, Cubit> timePickerBloc = {};
-  Map<int, Cubit> dropdownBloc = {};
 
   bool isClosed = false;
-  @override
-  void dispose() {
-    // textFieldsBloc;
-    radioButtonsBloc;
-    customDropBloc;
-    checkBoxBloc;
-    radioQuestionBloc;
-    pickImageBloc;
-    checkboxQuestionBloc;
-    datePickerBloc;
-    timePickerBloc;
-    isClosed = true;
-    print("close widget form page");
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -152,17 +131,15 @@ class _FormPageWidgetState extends State<FormPageWidget> {
                                       isError:
                                           isError[item.index] as bool ?? false,
                                       onChanged: (value) {
-                                        setState(() {
-                                          print(value);
-                                          if (isRequired &&
-                                              textEditControllers[item.index]!
-                                                  .text
-                                                  .isNotEmpty) {
-                                            isError[item.index] = false;
-                                          } else {
-                                            isError[item.index] = true;
-                                          }
-                                        });
+                                        print(value);
+                                        if (isRequired &&
+                                            textEditControllers[item.index]!
+                                                .text
+                                                .isNotEmpty) {
+                                          isError[item.index] = false;
+                                        } else {
+                                          isError[item.index] = true;
+                                        }
                                       },
                                       textController:
                                           textEditControllers[item.index]!,
@@ -175,18 +152,16 @@ class _FormPageWidgetState extends State<FormPageWidget> {
                             {
                               return ShareContainer(
                                 widget: TextFieldCustomWithoutBloc(
-                                  maxLine: 1,
+                                  maxLine: 5,
                                   isError:
                                       isError[item.index] as bool? ?? false,
                                   onChanged: (value) {
-                                    setState(() {
-                                      // Kiểm tra điều kiện để cập nhật isError
-                                      if (isRequired && value.isNotEmpty) {
-                                        isError[item.index] = false;
-                                      } else {
-                                        isError[item.index] = true;
-                                      }
-                                    });
+                                    // Kiểm tra điều kiện để cập nhật isError
+                                    if (isRequired && value.isNotEmpty) {
+                                      isError[item.index] = false;
+                                    } else {
+                                      isError[item.index] = true;
+                                    }
                                   },
                                   textController:
                                       textEditControllers[item.index]!,
@@ -221,6 +196,7 @@ class _FormPageWidgetState extends State<FormPageWidget> {
                                   checkboxButtonBloc: checkBoxBloc[item.index]
                                       as CheckboxButtonBloc,
                                   isRequest: isRequired,
+                                  isError: isError[item.index] ?? false,
                                 ),
                                 title: item.title,
                                 isRequest: isRequired,
@@ -230,10 +206,11 @@ class _FormPageWidgetState extends State<FormPageWidget> {
                             {
                               return ShareContainer(
                                 widget: CustomDropButton(
-                                  listDropDown: item.choices ?? ["có lỗi!"],
+                                  listDropDown: item.choices ?? [],
                                   isRequest: isRequired,
-                                  customDropButtonBloc: dropdownBloc[item.index]
-                                      as CustomDropButtonBloc,
+                                  customDropButtonBloc:
+                                      customDropBloc[item.index]
+                                          as CustomDropButtonBloc,
                                 ),
                                 title: item.title,
                                 isRequest: isRequired,
@@ -241,17 +218,22 @@ class _FormPageWidgetState extends State<FormPageWidget> {
                             }
                           case FormType.TIME:
                             {
-                              return ShareContainer(
-                                widget: TimePickerCustom(
-                                  isRequest: isRequired,
-                                  title: ("Chọn giờ"),
-                                  timePickerCustomBloc:
+                              return BlocProvider<TimePickerCustomBloc>(
+                                  create: (context) =>
                                       timePickerBloc[item.index]
                                           as TimePickerCustomBloc,
-                                ),
-                                title: item.title,
-                                isRequest: isRequired,
-                              );
+                                  child: ShareContainer(
+                                    widget: TimePickerCustom(
+                                      isRequest: true,
+                                      title: ("Chọn giờ"),
+                                      timePickerCustomBloc:
+                                          timePickerBloc[item.index]
+                                              as TimePickerCustomBloc,
+                                      isError: isError[item.index] ?? false,
+                                    ),
+                                    title: item.title,
+                                    isRequest: isRequired,
+                                  ));
                             }
                           case FormType.DATE:
                             {
@@ -342,44 +324,117 @@ class _FormPageWidgetState extends State<FormPageWidget> {
                                 state.post.itemModels.forEach((element) {});
 
                                 checkValidToSubmit = true;
-                                //Text
-                                for (var entry in textEditControllers.entries) {
-                                  final key = entry.key;
-                                  final controller = entry.value;
-                                  print(
-                                      "key: $key, controller: ${controller.text}");
-                                  if ((controller.text.isEmpty ||
-                                          controller.text == "") &&
-                                      (isRequired[key] == true)) {
-                                    checkValidToSubmit = false;
-                                    isError[key] = true;
-                                    showMessenger(context);
-                                    break;
-                                  } else if (controller.text.isNotEmpty) {
-                                    isError[key] = false;
-                                    checkValidToSubmit = true;
-                                  }
-                                }
+                                // //Text
+                                // for (var entry in textEditControllers.entries) {
+                                //   final key = entry.key;
+                                //   final controller = entry.value;
 
-                                // radio box
-                                for (var entry in radioButtonsBloc.entries) {
-                                  final key = entry.key;
-                                  final radioButtonsBloc = entry.value;
-                                  if (radioButtonsBloc is RadioButtonBloc) {
-                                    final String? values =
-                                        radioButtonsBloc.values;
+                                //   if ((controller.text.isEmpty ||
+                                //           controller.text == "") &&
+                                //       (isRequired[key] == true)) {
+                                //     checkValidToSubmit = false;
+                                //     isError[key] = true;
+                                //     break;
+                                //   } else if (controller.text.isNotEmpty) {
+                                //     isError[key] = false;
+                                //     checkValidToSubmit = true;
+                                //   }
+                                // }
 
-                                    if (values == null &&
-                                        isRequired[key] == true) {
-                                      radioButtonsBloc.validate("error");
-                                      checkValidToSubmit = false;
+                                // // radio box
+                                // for (var entry in radioButtonsBloc.entries) {
+                                //   final key = entry.key;
+                                //   final radioButtonsBloc = entry.value;
+                                //   if (radioButtonsBloc is RadioButtonBloc) {
+                                //     final String? values =
+                                //         radioButtonsBloc.values;
+
+                                //     if (values == null &&
+                                //         isRequired[key] == true) {
+                                //       radioButtonsBloc.validate("error");
+                                //       checkValidToSubmit = false;
+                                //       isError[key] = true;
+
+                                //       break;
+                                //     } else {
+                                //       checkValidToSubmit = true;
+                                //     }
+                                //   }
+                                // }
+
+                                // //Checkbox
+                                // //can't change color error when click submit
+                                // for (var entry in checkBoxBloc.entries) {
+                                //   final key = entry.key;
+
+                                //   final checkBoxBloc =
+                                //       entry.value as CheckboxButtonBloc;
+
+                                //   final List<String> values =
+                                //       checkBoxBloc.getValue;
+
+                                //   if (isRequired[key] == true &&
+                                //       (values.isEmpty || values == [])) {
+                                //     isError[key] = true;
+                                //     checkBoxBloc.validate([]);
+                                //     checkValidToSubmit = false;
+                                //     print(isError[key]);
+                                //     showMessenger(context);
+                                //     break;
+                                //   } else if (values != []) {
+                                //     checkValidToSubmit = true;
+                                //     isError[key] = false;
+                                //   }
+                                // }
+
+                                // //LIST (DropDown)
+                                // for (var entry in customDropBloc.entries) {
+                                //   final key = entry.key;
+                                //   final bloc =
+                                //       entry.value as CustomDropButtonBloc;
+
+                                //   final String value = bloc.state.isSelected;
+                                //   print("value: $value");
+                                //   if (value.isEmpty) {
+                                //     if (isRequired[key] == true) {
+                                //       bloc.validate('');
+                                //       bloc.state.isError = true;
+                                //       checkValidToSubmit = false;
+                                //       break;
+                                //     } else {
+                                //       bloc.state.isError = false;
+                                //       checkValidToSubmit = true;
+                                //     }
+                                //   } else if (value.isNotEmpty) {
+                                //     checkValidToSubmit = true;
+                                //     bloc.state.isError = false;
+                                //   }
+                                // }
+
+                                //TIME
+                                for (var entry in timePickerBloc.entries) {
+                                  final key = entry.key;
+                                  final bloc =
+                                      entry.value as TimePickerCustomBloc;
+
+                                  final String? value = bloc.getState;
+                                  print("values is $value");
+                                  print("state is ${bloc.state}");
+
+                                  if (value!.isEmpty) {
+                                    if (true) {
                                       isError[key] = true;
-                                      showMessenger(context);
+                                      checkValidToSubmit = false;
+                                      bloc.changeValue("false");
                                       break;
                                     } else {
+                                      isError[key] = false;
                                       checkValidToSubmit = true;
                                     }
+                                  } else {
+                                    checkValidToSubmit = true;
                                   }
+                                  print("state is ${bloc.state.toString()}");
                                 }
 
                                 // In ra giá trị cuối cùng để kiểm tra
@@ -439,31 +494,12 @@ class _FormPageWidgetState extends State<FormPageWidget> {
     );
   }
 
-  // bool validateAllBloc() {
-  //   final List<Cubit> blocs = [
-  //     ...textFieldsBloc.values,
-  //     ...radioButtonsBloc.values,
-  //     ...checkBoxBloc.values,
-  //     ...datePickerBloc.values,
-  //     ...timePickerBloc.values,
-  //     ...dropdownBloc.values
-  //   ];
-  //   for (var bloc in blocs) {
-  //     if (bloc.state != null) {
-  //       return true; // Nếu có ít nhất một state có giá trị, trả về true
-  //     }
-  //   }
-
-  //   return false; // Nếu tất cả các state đều là null, trả về false
-  // }
-
   void initializeBlocs(List<ItemModel> items) {
     //Convert string to enum
-
     for (var item in items) {
       isError[item.index] = isError[item.index] ?? false;
 
-      isRequired[item.index] = isRequired[item.index] ?? item.isRequired!;
+      isRequired[item.index] = (isRequired[item.index] ?? item.isRequired);
 
       String jsonType = item.type;
 
@@ -490,18 +526,12 @@ class _FormPageWidgetState extends State<FormPageWidget> {
           timePickerBloc[item.index] = TimePickerCustomBloc();
           break;
         case FormType.LIST:
-          dropdownBloc[item.index] = CustomDropButtonBloc();
+          customDropBloc[item.index] = CustomDropButtonBloc();
+
         // thiếu pick image, widget question
         case null:
           break;
       }
     }
-    // AppLogger.instance.d("textFieldsBloc: $textFieldsBloc");
-    // AppLogger.instance.d("radioButtonsBloc: $radioButtonsBloc");
-    // AppLogger.instance.d("checkBoxBloc: $checkBoxBloc");
-    // AppLogger.instance.d("datePickerBloc: $datePickerBloc");
-    // AppLogger.instance.d("timePickerBloc: $timePickerBloc");
-    // AppLogger.instance.d("dropdownBloc: $dropdownBloc");
-    // AppLogger.instance.d("Build bloc success!");
   }
 }

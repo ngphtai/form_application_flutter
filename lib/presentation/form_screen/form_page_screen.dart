@@ -17,7 +17,9 @@ class _FormPageScreenState extends State<FormPageScreen> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => FormPageBloc()),
-        BlocProvider(create: (context) => DetailPageBloc())
+        BlocProvider(
+            create: (context) => DetailPageBloc()
+              ..add(LoadDetailPost(int.parse(widget.postId)))),
       ],
       child: FormPageWidget(
         postId: int.parse(widget.postId),

@@ -23,9 +23,11 @@ class RadioButton extends StatefulWidget {
   _CustomRadioButtonState createState() => _CustomRadioButtonState();
 }
 
-class _CustomRadioButtonState extends State<RadioButton> {
+class _CustomRadioButtonState extends State<RadioButton>
+    with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return BlocProvider(
       create: (context) => widget.radioButtonBloc,
       child: BlocBuilder<RadioButtonBloc, String?>(
@@ -56,12 +58,15 @@ class _CustomRadioButtonState extends State<RadioButton> {
                   groupValue: widget.selected,
                   activeColor: Colors.red,
                   onChanged: (value) {
-                    setState(() {
-                      widget.selected = value;
-                      context
-                          .read<RadioButtonBloc>()
-                          .validate(widget.selected!);
-                    });
+                    if (value != "error") {
+                      setState(() {
+                        widget.selected = value;
+                        context
+                            .read<RadioButtonBloc>()
+                            .validate(widget.selected!);
+                        print("valid update: ${selectedValue}");
+                      });
+                    }
                   },
                 );
               }).toList(),
@@ -71,4 +76,7 @@ class _CustomRadioButtonState extends State<RadioButton> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
