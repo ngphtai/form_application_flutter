@@ -1,24 +1,24 @@
 import 'package:dsoft_form_application/core/styles/app_examples.dart';
 import 'package:dsoft_form_application/domain/models/post_model.dart';
 import 'package:dsoft_form_application/presentation/form_screen/component/checkbox_button.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/checkbox_button_bloc.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/bloc/checkbox_button_bloc.dart';
 import 'package:dsoft_form_application/presentation/form_screen/component/checkbox_question_button.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/checkbox_question_button_bloc.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/custom_drop_button_bloc.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/bloc/checkbox_question_button_bloc.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/bloc/custom_drop_button_bloc.dart';
 
 import 'package:dsoft_form_application/presentation/form_screen/component/date_picker.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/date_picker_bloc.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/pick_image_bloc.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/bloc/date_picker_bloc.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/bloc/pick_image_bloc.dart';
 import 'package:dsoft_form_application/presentation/form_screen/component/radio_button.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/radio_button_bloc.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/bloc/radio_button_bloc.dart';
 import 'package:dsoft_form_application/presentation/form_screen/component/radio_question_button.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/radio_question_button_bloc.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/bloc/radio_question_button_bloc.dart';
 import 'package:dsoft_form_application/presentation/form_screen/component/share_container.dart';
 import 'package:dsoft_form_application/presentation/form_screen/component/custom_drop_button_.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/text_field_bloc.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/text_field_customs.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/zzztext_field_bloc.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/zzztext_field_customs.dart';
 import 'package:dsoft_form_application/presentation/form_screen/component/time_picker_custom.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/time_picker_customs_bloc.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/bloc/time_picker_custom_bloc.dart';
 import 'package:dsoft_form_application/shared/widget/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -248,15 +248,15 @@ class FormPageScreen2 extends StatelessWidget {
                     widget: CheckboxQuestionButton(
                       isRequest: true,
                       listCheckBox: AppExamples.listCheckBoxQuestions,
-                      onChanged: (value) {
-                        //TODO fix that isRequested
-                        // if (isRequest = true)
-                        if (true) {
-                          listValid[7] = false;
-                        } else {
-                          listValid[7] = true;
-                        }
-                      },
+                      // onChanged: (value) {
+                      //   //TODO fix that isRequested
+                      //   // if (isRequest = true)
+                      //   if (true) {
+                      //     listValid[7] = false;
+                      //   } else {
+                      //     listValid[7] = true;
+                      //   }
+                      // },
                     ),
                     title:
                         "Bạn đã tham gia vào những sự kiện nào trong khuôn khổ giải đấu?(Chọn tất cả những gì áp dụng)",

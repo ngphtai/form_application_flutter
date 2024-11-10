@@ -25,7 +25,6 @@ class AppRouter {
                 path: "${Routers.detailPage}/:postId",
                 builder: (context, state) {
                   String postId = state.pathParameters['postId']!;
-
                   return DetailPageScreen(postId: postId);
                 },
                 routes: [

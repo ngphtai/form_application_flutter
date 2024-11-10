@@ -11,5 +11,5 @@ class CheckboxButtonBloc extends Cubit<bool> {
   }
 
   //get value
-  List<String> get getValue => values;
+  List<String> getValue() => values;
 }

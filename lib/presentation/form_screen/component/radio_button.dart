@@ -1,4 +1,4 @@
-import 'package:dsoft_form_application/presentation/form_screen/component/radio_button_bloc.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/bloc/radio_button_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -30,15 +30,20 @@ class _CustomRadioButtonState extends State<RadioButton>
     super.build(context);
     return BlocProvider(
       create: (context) => widget.radioButtonBloc,
-      child: BlocBuilder<RadioButtonBloc, String?>(
-        builder: (context, selectedValue) {
+      child: BlocBuilder<RadioButtonBloc, RadioButtonState>(
+        builder: (context, state) {
           // Kiểm tra lỗi nếu không có giá trị
-          if (selectedValue == "initial") {
+          if (state is RadioButtonInitial) {
             widget.isError = false;
-          } else if (selectedValue == "error")
-            widget.isError = true;
-          else
-            widget.isError = false;
+          } else {
+            bool value = context.read<RadioButtonBloc>().values == null;
+
+            if (value) {
+              widget.isError = true;
+            } else {
+              widget.isError = false;
+            }
+          }
 
           return Container(
             decoration: BoxDecoration(
@@ -64,7 +69,7 @@ class _CustomRadioButtonState extends State<RadioButton>
                         context
                             .read<RadioButtonBloc>()
                             .validate(widget.selected!);
-                        print("valid update: ${selectedValue}");
+                        print("valid update: ${state}");
                       });
                     }
                   },

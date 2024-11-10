@@ -19,7 +19,6 @@ class APIError extends AppError {
     this.codeStatus,
     this.codeDetail,
     this.message = "", // TODO: Add default error when do not find error
-
   });
 
   @override

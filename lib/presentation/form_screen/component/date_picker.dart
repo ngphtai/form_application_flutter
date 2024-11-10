@@ -1,7 +1,8 @@
 import 'package:dsoft_form_application/core/styles/app_icons.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/date_picker_bloc.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/bloc/date_picker_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 
 // ignore: must_be_immutable
@@ -9,6 +10,7 @@ class DatePicker extends StatefulWidget {
   DatePicker({
     Key? key,
     this.isRequest = false,
+    required this.isError,
     required this.datePickerBloc,
   }) : super(key: key);
 
@@ -17,62 +19,74 @@ class DatePicker extends StatefulWidget {
   final bool? isRequest;
   final DatePickerBloc datePickerBloc;
   DateTime? datePicker;
+
+  bool isError;
 }
 
-class _DatePickerState extends State<DatePicker> {
+class _DatePickerState extends State<DatePicker>
+    with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-    return BlocProvider(
-      create: (context) => DatePickerBloc(),
-      child: BlocBuilder<DatePickerBloc, bool>(builder: (context, isValid) {
-        final bool isError = isValid == true ? false : true;
-        return SizedBox(
-          width: size.width,
-          child: GestureDetector(
-              onTap: () async {
-                await _selectDate(context);
+    super.build(context);
+    return BlocBuilder<DatePickerBloc, DatePickerState>(
+        builder: (context, state) {
+      //check error
+      if (state is DatePickerInitial) {
+        widget.isError = false;
+      } else if (state is DatePickerChangedValue) {
+        DateTime? date = context.read<DatePickerBloc>().getValue;
+        print("date $date");
+        if (date == null) {
+          widget.isError = true;
+        } else {
+          widget.isError = false;
+        }
+      }
+      return SizedBox(
+        width: 1000.w,
+        child: GestureDetector(
+            onTap: () async {
+              await _selectDate(context);
 
-                _onChanged(widget.datePicker);
-                print("ontap ${widget.datePicker}");
-              },
-              child: Container(
-                  width: size.width,
-                  decoration: BoxDecoration(
-                    color: const Color(0xfff4f4f4),
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(4),
-                    ),
-                    border: Border.all(
-                        color: widget.isRequest == true
-                            ? isError
-                                ? Colors.red
-                                : const Color(0xffe8e8e8)
-                            : const Color(0xffe8e8e8),
-                        width: 1),
+              context.read<DatePickerBloc>().validate(widget.datePicker);
+              print("ontap ${widget.datePicker}");
+            },
+            child: Container(
+                width: 1000.w,
+                decoration: BoxDecoration(
+                  color: const Color(0xfff4f4f4),
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(4),
                   ),
-                  padding: const EdgeInsets.all(12),
-                  child: Row(
-                    children: [
-                      Image.asset(AppIcons.calendar, fit: BoxFit.fitHeight),
-                      const Gap(5),
-                      Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: widget.datePicker != null
-                            ? Text(
-                                "${widget.datePicker!.day}/${widget.datePicker!.month}/${widget.datePicker!.year}")
-                            : const Text(
-                                "Tháng, ngày, năm ",
-                                style: TextStyle(
-                                  color: Color(0xff8C8C8C),
-                                ),
+                  border: Border.all(
+                      color: widget.isRequest == true
+                          ? widget.isError
+                              ? Colors.red
+                              : const Color(0xffe8e8e8)
+                          : const Color(0xffe8e8e8),
+                      width: 1),
+                ),
+                padding: const EdgeInsets.all(12),
+                child: Row(
+                  children: [
+                    Image.asset(AppIcons.calendar, fit: BoxFit.fitHeight),
+                    const Gap(5),
+                    Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: widget.datePicker != null
+                          ? Text(
+                              "${widget.datePicker!.day}/${widget.datePicker!.month}/${widget.datePicker!.year}")
+                          : const Text(
+                              "Tháng, ngày, năm ",
+                              style: TextStyle(
+                                color: Color(0xff8C8C8C),
                               ),
-                      )
-                    ],
-                  ))),
-        );
-      }),
-    );
+                            ),
+                    )
+                  ],
+                ))),
+      );
+    });
   }
 
   _selectDate(BuildContext context) async {
@@ -91,18 +105,16 @@ class _DatePickerState extends State<DatePicker> {
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
-                foregroundColor: Colors.red, // Màu nút "OK" và "Cancel"
+                foregroundColor: Colors.red,
               ),
             ),
-            dialogBackgroundColor: Colors.white, // Màu nền
+            dialogBackgroundColor: Colors.white,
             datePickerTheme: DatePickerThemeData(
-              dayStyle: const TextStyle(
-                  color: Colors.black), // Màu chữ của ngày trong lịch
-              todayForegroundColor: MaterialStateProperty.all(
-                  Color(0xffe8e8e8e8)), // Màu của ngày hôm nay
-
-              headerForegroundColor: Colors.red, // Màu của tiêu đề (tháng, năm)
-              yearStyle: TextStyle(color: Colors.black), // Màu chữ của năm
+              dayStyle: const TextStyle(color: Colors.black),
+              todayForegroundColor:
+                  MaterialStateProperty.all(Color(0xffe8e8e8e8)),
+              headerForegroundColor: Colors.red,
+              yearStyle: TextStyle(color: Colors.black),
             ),
           ),
           child: child!,
@@ -113,18 +125,14 @@ class _DatePickerState extends State<DatePicker> {
     if (widget.datePicker != selected) {
       setState(() {
         widget.datePicker = selected;
+        context.read<DatePickerBloc>().validate(widget.datePicker);
       });
     }
-    print(widget.datePicker);
+    print("change date if not same old date $selected");
   }
 
-  void _onChanged(DateTime? datePicker) {
-    if (datePicker == null) {
-      context.read<DatePickerBloc>().Error(false);
-    } else {
-      context.read<DatePickerBloc>().validate(datePicker);
-    }
-  }
+  @override
+  bool get wantKeepAlive => true;
 }
   // _openDate() async {
   //   MaterialDateRangePickerDialog.showDatePicker(

@@ -1,4 +1,4 @@
-import 'package:dsoft_form_application/presentation/form_screen/component/checkbox_question_button_bloc.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/bloc/checkbox_question_button_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -7,7 +7,6 @@ class CheckboxQuestionButton extends StatefulWidget {
   CheckboxQuestionButton(
       {super.key,
       required this.listCheckBox,
-      required this.onChanged,
       this.isRequest = false,
       this.isError = false});
 
@@ -15,7 +14,7 @@ class CheckboxQuestionButton extends StatefulWidget {
   _CheckboxQuestionButtonState createState() => _CheckboxQuestionButtonState();
 
   final List<String> listCheckBox;
-  final ValueChanged onChanged;
+
   final bool? isRequest;
   bool isError;
 }
@@ -25,10 +24,21 @@ class _CheckboxQuestionButtonState extends State<CheckboxQuestionButton> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CheckboxQuestionButtonBloc, bool>(
-      builder: (context, isValid) {
-        widget.isError = isValid ? false : true;
-        widget.onChanged(isValid);
+    return BlocBuilder<CheckboxQuestionButtonBloc, CheckBoxQuestionButtonState>(
+      builder: (context, state) {
+        if (state is CheckBoxQuestionButtonInitial) {
+          widget.isError = false;
+        } else {
+          List<String> value =
+              context.read<CheckboxQuestionButtonBloc>().getValue;
+          print("value $value");
+          if (value.isNotEmpty) {
+            widget.isError = false;
+          } else {
+            widget.isError = true;
+          }
+        }
+
         return Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(4)),

@@ -7,9 +7,9 @@ import 'package:dsoft_form_application/domain/models/item_model.dart';
 import 'package:dsoft_form_application/domain/models/post_model.dart';
 import 'package:dsoft_form_application/presentation/detail_screen/bloc/detail_page_bloc.dart';
 import 'package:dsoft_form_application/presentation/form_screen/bloc/form_page_bloc.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/custom_drop_button_bloc.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/pick_image_bloc.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/radio_question_button_bloc.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/bloc/custom_drop_button_bloc.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/bloc/pick_image_bloc.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/bloc/radio_question_button_bloc.dart';
 import 'package:dsoft_form_application/presentation/form_screen/component/share_container.dart';
 import 'package:dsoft_form_application/presentation/form_screen/component/text_field_custom_without_bloc.dart';
 import 'package:dsoft_form_application/shared/widget/app_bar.dart';
@@ -22,37 +22,28 @@ import 'package:loading_indicator/loading_indicator.dart';
 
 import '../../common/enums/form_page_enums.dart';
 import 'component/checkbox_button.dart';
-import 'component/checkbox_button_bloc.dart';
+import 'component/bloc/checkbox_button_bloc.dart';
 import 'component/checkbox_question_button.dart';
-import 'component/checkbox_question_button_bloc.dart';
+import 'component/bloc/checkbox_question_button_bloc.dart';
 import 'component/custom_drop_button_.dart';
 import 'component/date_picker.dart';
-import 'component/date_picker_bloc.dart';
+import 'component/bloc/date_picker_bloc.dart';
 import 'component/pick_image.dart';
 import 'component/radio_button.dart';
-import 'component/radio_button_bloc.dart';
+import 'component/bloc/radio_button_bloc.dart';
 import 'component/radio_question_button.dart';
-import 'component/text_field_bloc.dart';
-import 'component/text_field_customs.dart';
+import 'component/zzztext_field_bloc.dart';
+import 'component/zzztext_field_customs.dart';
 import 'component/time_picker_custom.dart';
-import 'component/time_picker_customs_bloc.dart';
+import 'component/bloc/time_picker_custom_bloc.dart';
 
-// class FormPageWidget extends StatefulWidget {
-//   FormPageWidget({Key? key, required this.postId}) : super(key: key);
-//   final int postId;
-
-//   @override
-//   State<FormPageWidget> createState() => _FormPageWidgetState();
-// }
-
-// class _FormPageWidgetState extends State<FormPageWidget> {
-
+// ignore: must_be_immutable
 class FormPageWidget extends StatelessWidget {
   FormPageWidget({Key? key, required this.postId}) : super(key: key);
 
   final DateTime? datePicker = null;
   final int postId;
-  bool checkValidToSubmit = false;
+  bool checkValidToSubmit = true;
   // khai báo danh sách bloc
   // Map<int, Cubit> textFieldsBloc = {};
   Map<int, TextEditingController> textEditControllers = {};
@@ -190,16 +181,20 @@ class FormPageWidget extends StatelessWidget {
                             }
                           case FormType.CHECKBOX:
                             {
-                              return ShareContainer(
-                                widget: CheckboxButton(
-                                  listCheckbox: item.choices ?? [],
-                                  checkboxButtonBloc: checkBoxBloc[item.index]
-                                      as CheckboxButtonBloc,
+                              return BlocProvider(
+                                create: (context) => checkBoxBloc[item.index]
+                                    as CheckboxButtonBloc,
+                                child: ShareContainer(
+                                  widget: CheckboxButton(
+                                    listCheckbox: item.choices ?? [],
+                                    checkboxButtonBloc: checkBoxBloc[item.index]
+                                        as CheckboxButtonBloc,
+                                    isRequest: isRequired,
+                                    isError: isError[item.index] ?? false,
+                                  ),
+                                  title: item.title,
                                   isRequest: isRequired,
-                                  isError: isError[item.index] ?? false,
                                 ),
-                                title: item.title,
-                                isRequest: isRequired,
                               );
                             }
                           case FormType.LIST:
@@ -237,18 +232,23 @@ class FormPageWidget extends StatelessWidget {
                             }
                           case FormType.DATE:
                             {
-                              return ShareContainer(
-                                widget: DatePicker(
-                                  isRequest: true,
-                                  datePickerBloc: datePickerBloc[item.index]
-                                      as DatePickerBloc,
+                              return BlocProvider(
+                                create: (context) => datePickerBloc[item.index]
+                                    as DatePickerBloc,
+                                child: ShareContainer(
+                                  widget: DatePicker(
+                                    isError: isError[item.index] ?? false,
+                                    isRequest: true,
+                                    datePickerBloc: datePickerBloc[item.index]
+                                        as DatePickerBloc,
+                                  ),
+                                  title: item.title,
+                                  isRequest: isRequired,
                                 ),
-                                title: item.title,
-                                isRequest: isRequired,
                               );
                             }
                           default:
-                            return SizedBox.shrink();
+                            return const SizedBox.shrink();
                         }
                       },
                     ),
@@ -258,7 +258,7 @@ class FormPageWidget extends StatelessWidget {
                   )
                 ]);
               } else {
-                return Text("loading");
+                return const Text("");
               }
             },
           ),
@@ -321,128 +321,29 @@ class FormPageWidget extends StatelessWidget {
                           GestureDetector(
                             onTap: () {
                               if (state is DetailPageLoaded) {
-                                state.post.itemModels.forEach((element) {});
+                                checkValidToSubmit = checkTextControllers();
 
-                                checkValidToSubmit = true;
-                                // //Text
-                                // for (var entry in textEditControllers.entries) {
-                                //   final key = entry.key;
-                                //   final controller = entry.value;
+                                checkValidToSubmit = checkValidToSubmit &&
+                                    checkRadioButtonsBloc();
 
-                                //   if ((controller.text.isEmpty ||
-                                //           controller.text == "") &&
-                                //       (isRequired[key] == true)) {
-                                //     checkValidToSubmit = false;
-                                //     isError[key] = true;
-                                //     break;
-                                //   } else if (controller.text.isNotEmpty) {
-                                //     isError[key] = false;
-                                //     checkValidToSubmit = true;
-                                //   }
-                                // }
+                                checkValidToSubmit =
+                                    checkValidToSubmit && checkCheckBoxBloc();
 
-                                // // radio box
-                                // for (var entry in radioButtonsBloc.entries) {
-                                //   final key = entry.key;
-                                //   final radioButtonsBloc = entry.value;
-                                //   if (radioButtonsBloc is RadioButtonBloc) {
-                                //     final String? values =
-                                //         radioButtonsBloc.values;
+                                checkValidToSubmit =
+                                    checkValidToSubmit && checkCustomDropBloc();
 
-                                //     if (values == null &&
-                                //         isRequired[key] == true) {
-                                //       radioButtonsBloc.validate("error");
-                                //       checkValidToSubmit = false;
-                                //       isError[key] = true;
+                                checkValidToSubmit =
+                                    checkValidToSubmit && checkTimePickerBloc();
 
-                                //       break;
-                                //     } else {
-                                //       checkValidToSubmit = true;
-                                //     }
-                                //   }
-                                // }
+                                checkValidToSubmit =
+                                    checkValidToSubmit && checkDatePickerBloc();
 
-                                // //Checkbox
-                                // //can't change color error when click submit
-                                // for (var entry in checkBoxBloc.entries) {
-                                //   final key = entry.key;
-
-                                //   final checkBoxBloc =
-                                //       entry.value as CheckboxButtonBloc;
-
-                                //   final List<String> values =
-                                //       checkBoxBloc.getValue;
-
-                                //   if (isRequired[key] == true &&
-                                //       (values.isEmpty || values == [])) {
-                                //     isError[key] = true;
-                                //     checkBoxBloc.validate([]);
-                                //     checkValidToSubmit = false;
-                                //     print(isError[key]);
-                                //     showMessenger(context);
-                                //     break;
-                                //   } else if (values != []) {
-                                //     checkValidToSubmit = true;
-                                //     isError[key] = false;
-                                //   }
-                                // }
-
-                                // //LIST (DropDown)
-                                // for (var entry in customDropBloc.entries) {
-                                //   final key = entry.key;
-                                //   final bloc =
-                                //       entry.value as CustomDropButtonBloc;
-
-                                //   final String value = bloc.state.isSelected;
-                                //   print("value: $value");
-                                //   if (value.isEmpty) {
-                                //     if (isRequired[key] == true) {
-                                //       bloc.validate('');
-                                //       bloc.state.isError = true;
-                                //       checkValidToSubmit = false;
-                                //       break;
-                                //     } else {
-                                //       bloc.state.isError = false;
-                                //       checkValidToSubmit = true;
-                                //     }
-                                //   } else if (value.isNotEmpty) {
-                                //     checkValidToSubmit = true;
-                                //     bloc.state.isError = false;
-                                //   }
-                                // }
-
-                                //TIME
-                                for (var entry in timePickerBloc.entries) {
-                                  final key = entry.key;
-                                  final bloc =
-                                      entry.value as TimePickerCustomBloc;
-
-                                  final String? value = bloc.getState;
-                                  print("values is $value");
-                                  print("state is ${bloc.state}");
-
-                                  if (value!.isEmpty) {
-                                    if (true) {
-                                      isError[key] = true;
-                                      checkValidToSubmit = false;
-                                      bloc.changeValue("false");
-                                      break;
-                                    } else {
-                                      isError[key] = false;
-                                      checkValidToSubmit = true;
-                                    }
-                                  } else {
-                                    checkValidToSubmit = true;
-                                  }
-                                  print("state is ${bloc.state.toString()}");
+                                // Hiển thị thông báo dựa trên kết quả
+                                if (checkValidToSubmit) {
+                                  showMessenger(context);
+                                } else {
+                                  showMessenger(context);
                                 }
-
-                                // In ra giá trị cuối cùng để kiểm tra
-                                print(
-                                    "Final checkValidToSubmit: $checkValidToSubmit");
-
-                                // Hiển thị SnackBar dựa vào kết quả validate
-                                showMessenger(context);
                               }
                             },
                             child: Container(
@@ -533,5 +434,115 @@ class FormPageWidget extends StatelessWidget {
           break;
       }
     }
+  }
+
+  bool checkTextControllers() {
+    bool isValid = true;
+    for (var entry in textEditControllers.entries) {
+      final key = entry.key;
+      final controller = entry.value;
+      print("controller ${controller.text}");
+      if ((controller.text.isEmpty || controller.text == "") &&
+          isRequired[key] == true) {
+        isError[key] = true;
+        isValid = false;
+      } else {
+        isError[key] = false;
+      }
+    }
+    return isValid;
+  }
+
+  bool checkRadioButtonsBloc() {
+    bool isValid = true;
+    for (var entry in radioButtonsBloc.entries) {
+      final key = entry.key;
+      final radioButtonsBloc = entry.value;
+      if (radioButtonsBloc is RadioButtonBloc) {
+        final String? values = radioButtonsBloc.values;
+        print("submit values radio is $values");
+        if (values == null && isRequired[key] == true) {
+          radioButtonsBloc.validate("");
+          isError[key] = true;
+          isValid = false;
+        } else {
+          isError[key] = false;
+        }
+      }
+    }
+    return isValid;
+  }
+
+  bool checkCheckBoxBloc() {
+    bool isValid = true;
+    for (var entry in checkBoxBloc.entries) {
+      final key = entry.key;
+      final checkBoxBloc = entry.value as CheckboxButtonBloc;
+      final List<String> values = checkBoxBloc.getValue();
+      print("submit value checkbox is  $values");
+      if (isRequired[key] == true && values == []) {
+        isError[key] = true;
+        checkBoxBloc.validate(["error"]);
+        isValid = false;
+        print(checkBoxBloc.state);
+      } else {
+        isError[key] = false;
+      }
+    }
+    return isValid;
+  }
+
+  bool checkCustomDropBloc() {
+    bool isValid = true;
+    for (var entry in customDropBloc.entries) {
+      final key = entry.key;
+      final bloc = entry.value as CustomDropButtonBloc;
+      final String value = bloc.state.isSelected;
+      print("submit value drop button is  $value");
+      if (value.isEmpty && isRequired[key] == true) {
+        bloc.validate('');
+        bloc.state.isError = true;
+        isValid = false;
+      } else {
+        bloc.state.isError = false;
+      }
+    }
+    return isValid;
+  }
+
+  bool checkTimePickerBloc() {
+    bool isValid = true;
+    for (var entry in timePickerBloc.entries) {
+      final key = entry.key;
+      final bloc = entry.value as TimePickerCustomBloc;
+      final String? value = bloc.getState;
+      print("submit Time picker $value");
+      if ((value?.isEmpty ?? true) && isRequired[key] == true) {
+        isError[key] = true;
+        bloc.changeValue("false");
+        isValid = false;
+      } else {
+        isError[key] = false;
+      }
+    }
+    return isValid;
+  }
+
+  bool checkDatePickerBloc() {
+    bool isValid = true;
+    for (var entry in datePickerBloc.entries) {
+      final key = entry.key;
+      final bloc = entry.value as DatePickerBloc;
+      final DateTime? value = bloc.getValue;
+      print("submit date picker is $value");
+      if (value == null && isRequired[key] == true) {
+        bloc.validate(null);
+        isError[key] = true;
+        isValid = false;
+      } else {
+        isError[key] = false;
+      }
+    }
+    return isValid;
   }
 }

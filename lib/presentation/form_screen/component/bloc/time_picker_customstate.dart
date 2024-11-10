@@ -1,4 +1,4 @@
-part of 'time_picker_customs_bloc.dart';
+part of 'time_picker_custom_bloc.dart';
 
 @immutable
 abstract class TimePickerState extends Equatable {

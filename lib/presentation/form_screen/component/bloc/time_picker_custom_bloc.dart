@@ -2,8 +2,10 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-part 'time_picker_state.dart';
+part 'time_picker_customstate.dart';
 
+@immutable
+// ignore: must_be_immutable
 class TimePickerCustomBloc extends Cubit<TimePickerState> {
   late String? text = "";
 

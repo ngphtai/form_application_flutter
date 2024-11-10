@@ -1,6 +1,6 @@
 // ignore_for_file: must_be_immutable
 
-import 'package:dsoft_form_application/presentation/form_screen/component/time_picker_customs_bloc.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/bloc/time_picker_custom_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
@@ -73,7 +73,7 @@ class _TimePickerCustomState extends State<TimePickerCustom>
                     Radius.circular(4),
                   ),
                   border: Border.all(
-                      color: true
+                      color: widget.isRequest
                           ? !widget.isError
                               ? const Color(0xffe8e8e8)
                               : Colors.red
