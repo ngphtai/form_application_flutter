@@ -6,6 +6,5 @@ class LocalConstants {
   /// [] Hive type with id is 0
   static const hiveTypeId0 = 0;
 
-  /// [boxAuthUserInfo] is name of auth user info box in local database.
-  static const boxAuthUserInfo = "box_auth_user_info";
+  static const boxPostInfo = "box_post_info";
 }

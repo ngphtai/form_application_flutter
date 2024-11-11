@@ -31,7 +31,7 @@ class _CheckboxQuestionButtonState extends State<CheckboxQuestionButton> {
         } else {
           List<String> value =
               context.read<CheckboxQuestionButtonBloc>().getValue;
-          print("value $value");
+          // print("value in checkbox is $value");
           if (value.isNotEmpty) {
             widget.isError = false;
           } else {

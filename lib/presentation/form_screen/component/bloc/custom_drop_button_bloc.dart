@@ -15,7 +15,7 @@ class CustomDropButtonBloc extends Cubit<CustomDropButtonState> {
           emit(CustomDropButtonState(isError: true, isSelected: ""));
       }
     } catch (e) {
-      print(e.toString());
+      print('Error in custom drop button: ${e.toString()}');
     }
   }
 }

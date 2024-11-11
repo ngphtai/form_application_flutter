@@ -54,7 +54,7 @@ class _TimePickerCustomState extends State<TimePickerCustom>
           widget.isError = false;
         }
       }
-      print("update values is $value");
+      // print("update values in time is $value");
 
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,

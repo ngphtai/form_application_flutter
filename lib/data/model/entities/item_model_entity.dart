@@ -2,6 +2,8 @@ import 'package:dsoft_form_application/data/model/mapper_domain.dart';
 import 'package:dsoft_form_application/domain/models/item_model.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+part 'item_model_entity.g.dart';
+
 @HiveType(typeId: 1)
 class ItemModelEntity extends MapperDomain<ItemModel> {
   @HiveField(0)
@@ -30,7 +32,7 @@ class ItemModelEntity extends MapperDomain<ItemModel> {
   final bool? includesYear;
   //propety to save result
   @HiveField(12)
-  final List<String>? result;
+  late List<String>? result;
 
   ItemModelEntity(this.result,
       {required this.type,

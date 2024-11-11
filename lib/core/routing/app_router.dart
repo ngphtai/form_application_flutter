@@ -1,3 +1,4 @@
+import 'package:dsoft_form_application/domain/models/meta_data_model.dart';
 import 'package:dsoft_form_application/presentation/detail_screen/detail_page_screen.dart';
 
 import 'package:dsoft_form_application/presentation/home_screen/home_page_screen.dart';
@@ -36,9 +37,21 @@ class AppRouter {
                       },
                       routes: [
                         GoRoute(
+                          name: "SuccessPage",
                           path: Routers.successPage,
-                          builder: (context, state) =>
-                              const SuccessPageScreen(),
+                          builder: (context, state) {
+                            // final metaDataModel = state.extra as MetaDataModel;
+
+                            String title =
+                                state.uri.queryParameters['title'] ?? '';
+                            String title2 =
+                                state.uri.queryParameters['title2'] ?? '';
+                            String content =
+                                state.uri.queryParameters['content'] ?? '';
+
+                            return SuccessPageScreen(
+                                title: title, title2: title2, content: content);
+                          },
                         )
                       ])
                 ])

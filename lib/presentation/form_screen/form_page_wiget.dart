@@ -2,7 +2,10 @@ import 'dart:ffi';
 
 import 'package:dsoft_form_application/app.dart';
 import 'package:dsoft_form_application/common/extensions/conver_string_to_enum.dart';
+import 'package:dsoft_form_application/common/extensions/url_conver.dart';
 import 'package:dsoft_form_application/common/logger/app_logger.dart';
+import 'package:dsoft_form_application/core/locators/locators.dart';
+import 'package:dsoft_form_application/data/model/entities/post_model_entity.dart';
 import 'package:dsoft_form_application/domain/models/item_model.dart';
 import 'package:dsoft_form_application/domain/models/post_model.dart';
 import 'package:dsoft_form_application/presentation/detail_screen/bloc/detail_page_bloc.dart';
@@ -10,8 +13,9 @@ import 'package:dsoft_form_application/presentation/form_screen/bloc/form_page_b
 import 'package:dsoft_form_application/presentation/form_screen/component/bloc/custom_drop_button_bloc.dart';
 import 'package:dsoft_form_application/presentation/form_screen/component/bloc/pick_image_bloc.dart';
 import 'package:dsoft_form_application/presentation/form_screen/component/bloc/radio_question_button_bloc.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/share_container.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/text_field_custom_without_bloc.dart';
+import '../../core/routing/route_path.dart';
+import 'component/share_container.dart';
+import 'component/text_field_custom_without_bloc.dart';
 import 'package:dsoft_form_application/shared/widget/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -19,7 +23,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loading_indicator/loading_indicator.dart';
-
 import '../../common/enums/form_page_enums.dart';
 import 'component/checkbox_button.dart';
 import 'component/bloc/checkbox_button_bloc.dart';
@@ -32,8 +35,7 @@ import 'component/pick_image.dart';
 import 'component/radio_button.dart';
 import 'component/bloc/radio_button_bloc.dart';
 import 'component/radio_question_button.dart';
-import 'component/zzztext_field_bloc.dart';
-import 'component/zzztext_field_customs.dart';
+
 import 'component/time_picker_custom.dart';
 import 'component/bloc/time_picker_custom_bloc.dart';
 
@@ -264,118 +266,142 @@ class FormPageWidget extends StatelessWidget {
           ),
 
           //Button action
-          BlocBuilder<DetailPageBloc, DetailPageState>(
-            builder: (context, state) {
-              return Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Column(
-                  children: [
-                    Container(
-                      height: 20,
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.white.withOpacity(0.5),
-                            spreadRadius: 5,
-                            blurRadius: 7,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      color: const Color(0xFFffffff),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              context.pop(context);
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.all(10),
-                              margin: const EdgeInsets.all(5),
-                              width: size.width * 0.45,
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFffffff),
-                                borderRadius:
-                                    const BorderRadius.all(Radius.circular(8)),
-                                border: Border.all(
-                                  color: Colors.red,
-                                  width: 1,
-                                ),
+          BlocBuilder<FormPageBloc, FormPageState>(
+            builder: (context, formState) {
+              print(formState);
+              return BlocBuilder<DetailPageBloc, DetailPageState>(
+                builder: (context, state) {
+                  return Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 20,
+                          decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.white.withOpacity(0.5),
+                                spreadRadius: 5,
+                                blurRadius: 7,
+                                offset: const Offset(0, 3),
                               ),
-                              child: const Center(
-                                child: Text(
-                                  "Trở về",
-                                  style: TextStyle(
+                            ],
+                          ),
+                        ),
+                        Container(
+                          color: const Color(0xFFffffff),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  context.pop(context);
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(10),
+                                  margin: const EdgeInsets.all(5),
+                                  width: size.width * 0.45,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFffffff),
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(8)),
+                                    border: Border.all(
                                       color: Colors.red,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                              ),
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              if (state is DetailPageLoaded) {
-                                checkValidToSubmit = checkTextControllers();
-
-                                checkValidToSubmit = checkValidToSubmit &&
-                                    checkRadioButtonsBloc();
-
-                                checkValidToSubmit =
-                                    checkValidToSubmit && checkCheckBoxBloc();
-
-                                checkValidToSubmit =
-                                    checkValidToSubmit && checkCustomDropBloc();
-
-                                checkValidToSubmit =
-                                    checkValidToSubmit && checkTimePickerBloc();
-
-                                checkValidToSubmit =
-                                    checkValidToSubmit && checkDatePickerBloc();
-
-                                // Hiển thị thông báo dựa trên kết quả
-                                if (checkValidToSubmit) {
-                                  showMessenger(context);
-                                } else {
-                                  showMessenger(context);
-                                }
-                              }
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.all(10),
-                              margin: const EdgeInsets.all(5),
-                              width: size.width * 0.45,
-                              decoration: BoxDecoration(
-                                color: Colors.red,
-                                borderRadius:
-                                    const BorderRadius.all(Radius.circular(8)),
-                                border: Border.all(
-                                  color: Colors.red,
-                                  width: 1,
-                                ),
-                              ),
-                              child: const Center(
-                                child: Text(
-                                  "Gửi",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: const Center(
+                                    child: Text(
+                                      "Trở về",
+                                      style: TextStyle(
+                                          color: Colors.red,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
+                              GestureDetector(
+                                onTap: () {
+                                  if (state is DetailPageLoaded) {
+                                    final PostModelEntity postEntity =
+                                        state.post.toEntity();
+                                    checkValidToSubmit =
+                                        checkTextControllers(postEntity);
+
+                                    checkValidToSubmit = checkValidToSubmit &&
+                                        checkRadioButtonsBloc(postEntity);
+
+                                    checkValidToSubmit = checkValidToSubmit &&
+                                        checkCheckBoxBloc(postEntity);
+
+                                    checkValidToSubmit = checkValidToSubmit &&
+                                        checkCustomDropBloc(postEntity);
+
+                                    checkValidToSubmit = checkValidToSubmit &&
+                                        checkTimePickerBloc(postEntity);
+
+                                    checkValidToSubmit = checkValidToSubmit &&
+                                        checkDatePickerBloc(postEntity);
+
+                                    // Hiển thị thông báo dựa trên kết quả
+                                    if (checkValidToSubmit) {
+                                      context
+                                          .read<FormPageBloc>()
+                                          .add(SaveForm((postEntity)));
+
+                                      String baseUrl =
+                                          "${Routers.homePage}/${Routers.detailPage}/$postId/${Routers.formPage}/${Routers.successPage}";
+                                      Map<String, dynamic> queryParams = {
+                                        "title": state.post.metaData.title,
+                                        "title2": state
+                                            .post.metaData.confirmationMessage,
+                                        "content": state.post.metaData
+                                            .customClosedFormMessage
+                                      };
+                                      String url = baseUrl.toUrl(queryParams);
+                                      context.go(url);
+
+                                      showMessenger(context);
+                                    }
+                                  } else {
+                                    showMessenger(context);
+                                  }
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(10),
+                                  margin: const EdgeInsets.all(5),
+                                  width: size.width * 0.45,
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(8)),
+                                    border: Border.all(
+                                      color: Colors.red,
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: const Center(
+                                    child: Text(
+                                      "Gửi",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  );
+                },
               );
             },
           ),
@@ -436,7 +462,7 @@ class FormPageWidget extends StatelessWidget {
     }
   }
 
-  bool checkTextControllers() {
+  bool checkTextControllers(PostModelEntity postEntity) {
     bool isValid = true;
     for (var entry in textEditControllers.entries) {
       final key = entry.key;
@@ -448,12 +474,15 @@ class FormPageWidget extends StatelessWidget {
         isValid = false;
       } else {
         isError[key] = false;
+        postEntity.items[key].result ??= [""];
+        postEntity.items[key].result![0] = controller.text;
+        // print("result ${postEntity.items[key].result![0]}");
       }
     }
     return isValid;
   }
 
-  bool checkRadioButtonsBloc() {
+  bool checkRadioButtonsBloc(PostModelEntity postEntity) {
     bool isValid = true;
     for (var entry in radioButtonsBloc.entries) {
       final key = entry.key;
@@ -467,13 +496,15 @@ class FormPageWidget extends StatelessWidget {
           isValid = false;
         } else {
           isError[key] = false;
+          postEntity.items[key].result ??= [""];
+          postEntity.items[key].result![0] = values ?? "";
         }
       }
     }
     return isValid;
   }
 
-  bool checkCheckBoxBloc() {
+  bool checkCheckBoxBloc(PostModelEntity postEntity) {
     bool isValid = true;
     for (var entry in checkBoxBloc.entries) {
       final key = entry.key;
@@ -487,12 +518,14 @@ class FormPageWidget extends StatelessWidget {
         print(checkBoxBloc.state);
       } else {
         isError[key] = false;
+        postEntity.items[key].result ??= [""];
+        postEntity.items[key].result = values;
       }
     }
     return isValid;
   }
 
-  bool checkCustomDropBloc() {
+  bool checkCustomDropBloc(PostModelEntity postEntity) {
     bool isValid = true;
     for (var entry in customDropBloc.entries) {
       final key = entry.key;
@@ -505,12 +538,14 @@ class FormPageWidget extends StatelessWidget {
         isValid = false;
       } else {
         bloc.state.isError = false;
+        postEntity.items[key].result ??= [""];
+        postEntity.items[key].result![0] = value;
       }
     }
     return isValid;
   }
 
-  bool checkTimePickerBloc() {
+  bool checkTimePickerBloc(PostModelEntity postEntity) {
     bool isValid = true;
     for (var entry in timePickerBloc.entries) {
       final key = entry.key;
@@ -523,12 +558,14 @@ class FormPageWidget extends StatelessWidget {
         isValid = false;
       } else {
         isError[key] = false;
+        postEntity.items[key].result ??= [""];
+        postEntity.items[key].result![0] = value.toString();
       }
     }
     return isValid;
   }
 
-  bool checkDatePickerBloc() {
+  bool checkDatePickerBloc(PostModelEntity postEntity) {
     bool isValid = true;
     for (var entry in datePickerBloc.entries) {
       final key = entry.key;
@@ -541,6 +578,8 @@ class FormPageWidget extends StatelessWidget {
         isValid = false;
       } else {
         isError[key] = false;
+        postEntity.items[key].result ??= [""];
+        postEntity.items[key].result![0] = value.toString();
       }
     }
     return isValid;

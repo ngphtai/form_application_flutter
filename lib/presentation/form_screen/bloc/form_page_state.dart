@@ -9,6 +9,11 @@ abstract class FormPageState extends Equatable {
 
 class FormPageInitial extends FormPageState {}
 
-class FormPageLoading extends FormPageState {}
+class FormPageSaveSuccess extends FormPageState {
+  final PostModelEntity postsEntity;
 
-class FormPageLoaded extends FormPageState {}
+  const FormPageSaveSuccess(this.postsEntity);
+
+  @override
+  List<Object> get props => [postsEntity];
+}

@@ -18,7 +18,6 @@ class DetailPageBloc extends Bloc<DetailPageEvent, DetailPageState> {
   Future<void> _loadDetailPost(
       LoadDetailPost event, Emitter<DetailPageState> emit) async {
     emit(DetailPageLoading());
-    print("id issssss ${event.id}");
     var result = await _postSeviceable.getDetailPost(event.id);
     return result.fold((left) {
       AppLogger.instance.e(left.toString());

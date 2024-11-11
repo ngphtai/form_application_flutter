@@ -1,4 +1,3 @@
-
 /// {@template mapper_domain}
 /// [MapperDomain] is base for all DTOs model and entities model
 /// This class have function convert from DTOs model and entities

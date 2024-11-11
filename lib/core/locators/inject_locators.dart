@@ -19,7 +19,7 @@ void setUpLocator() {
   setUpSharedPrefLocator();
 
   // Hive
-  // setUpHiveLocator();
+  setUpHiveLocator();
 
   // Services need load before
   setUpServicesLocatorBefore();
@@ -29,7 +29,7 @@ void setUpLocator() {
 
   // Data source
   // Local
-  // setUpLocalDataSource();
+  setUpLocalDataResource();
 
   // Remote
   setUpRemoteDataSource();

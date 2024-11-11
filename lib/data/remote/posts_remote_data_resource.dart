@@ -6,12 +6,12 @@ import 'package:dsoft_form_application/common/logger/app_logger.dart';
 import 'package:dsoft_form_application/core/locators/locators.dart';
 import 'package:dsoft_form_application/data/model/DTO/posts_response_model_dto.dart';
 
-abstract class PostsRemoteDataResource {
+abstract class PostRemoteDataResource {
   Future<List<PostsResponseModelDto>> getPosts();
   Future<PostsResponseModelDto> getDetailPost(int index);
 }
 
-class PostsRemoteDataResourceImpl extends PostsRemoteDataResource {
+class PostsRemoteDataResourceImpl extends PostRemoteDataResource {
   final customHttpClient = diCustomHttpClient;
   @override
   Future<List<PostsResponseModelDto>> getPosts() async {

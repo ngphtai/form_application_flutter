@@ -7,4 +7,11 @@ abstract class FormPageEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class LoadPost extends FormPageEvent {}
+class SaveForm extends FormPageEvent {
+  final PostModelEntity postsEntity;
+
+  SaveForm(this.postsEntity);
+
+  @override
+  List<Object> get props => [postsEntity];
+}

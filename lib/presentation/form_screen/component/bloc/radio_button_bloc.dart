@@ -4,9 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class RadioButtonBloc extends Cubit<RadioButtonState> {
   RadioButtonBloc() : super(RadioButtonInitial());
 
-  late String select = '';
+  String select = '';
   void validate(String value) {
-    print("Validate $value");
+    // print("Validate $value");
     if (value.isNotEmpty) {
       select = value;
       emit(RadioButtonValid(isValid: true));

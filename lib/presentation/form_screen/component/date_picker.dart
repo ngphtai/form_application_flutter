@@ -35,7 +35,7 @@ class _DatePickerState extends State<DatePicker>
         widget.isError = false;
       } else if (state is DatePickerChangedValue) {
         DateTime? date = context.read<DatePickerBloc>().getValue;
-        print("date $date");
+        // print("value date $date");
         if (date == null) {
           widget.isError = true;
         } else {
@@ -134,17 +134,3 @@ class _DatePickerState extends State<DatePicker>
   @override
   bool get wantKeepAlive => true;
 }
-  // _openDate() async {
-  //   MaterialDateRangePickerDialog.showDatePicker(
-  //     context,
-  //     title: "Chọn ngày: ",
-  //     selectDateActionCallback: (date) {
-  //       setState(() {
-  //         widget.datePicker = date;
-  //       });
-  //     },
-  //     autoClose: true,
-  //   );
-  //   print(widget.datePicker);
-  //   widget.onChanged(widget.datePicker);
-  // }

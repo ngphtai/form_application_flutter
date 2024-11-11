@@ -6,5 +6,5 @@ final diPostsRepository = di<PostsRepository>();
 /// setup locator related to repositories
 void setUpRepositoriesLocator() {
   di.registerSingletonWithDependencies<PostsRepository>(PostRepositoryImpl.new,
-      dependsOn: [PostsRemoteDataResource]);
+      dependsOn: [PostRemoteDataResource, PostLocalDataSource]);
 }

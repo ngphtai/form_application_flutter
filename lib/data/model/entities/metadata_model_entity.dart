@@ -3,6 +3,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../../domain/models/meta_data_model.dart';
 
+part 'metadata_model_entity.g.dart';
+
 @HiveType(typeId: 0)
 class MetadataModelEntity extends MapperDomain<MetaDataModel> {
   @HiveField(0)
