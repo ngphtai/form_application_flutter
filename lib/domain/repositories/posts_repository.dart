@@ -10,9 +10,13 @@ import 'package:either_dart/either.dart';
 import '../models/post_model.dart';
 
 abstract class PostsRepository extends Repository {
+  //remote
   Future<Either<AppError, List<PostsModel>>> fetchPosts();
   Future<Either<AppError, PostsModel>> getDetailPost(int index);
+  //local
   Future<Either<AppError, bool>> saveResultPostToLocal(PostModelEntity post);
+  Future<Either<AppError, List<PostsModel>?>> getPostsFromLocal();
+  Future<Either<AppError, PostsModel?>> getAnswerFromLocal(String id);
 }
 
 class PostRepositoryImpl extends PostsRepository {
@@ -54,7 +58,32 @@ class PostRepositoryImpl extends PostsRepository {
     try {
       final result = await postLocal.savePost(post);
       return Right(result);
-    } on AppOtherError catch (e) {
+    } on AppError catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
+  Future<Either<AppError, List<PostsModel>?>> getPostsFromLocal() async {
+    try {
+      final result = await postLocal.getPostsLocal();
+
+      final List<PostsModel>? postsModel =
+          result?.map((e) => e.toDomain()).toList();
+      return Right(postsModel);
+    } on AppError catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
+  Future<Either<AppError, PostsModel?>> getAnswerFromLocal(String id) async {
+    try {
+      final result = await postLocal.getAnswers(id);
+      final PostsModel? post = result?.toDomain();
+
+      return Right(post);
+    } on AppError catch (e) {
       return Left(e);
     }
   }

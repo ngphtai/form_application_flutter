@@ -20,7 +20,7 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
     try {
       emit(HomePageLoading());
 
-      final result = await _fetchPostSeviceable.fetchPostsToLocal();
+      final result = await _fetchPostSeviceable.fetchPostsFromRemote();
 
       result.fold(
         (error) => emit(HomePageLoadFailed()),

@@ -7,6 +7,7 @@ import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'common/constant/constants.dart';
 import 'core/locators/locators.dart';
 import 'core/styles/app_design_size.dart';
+import 'core/styles/app_theme.dart';
 import 'shared/states/theme/theme_cubit.dart';
 
 class App extends StatelessWidget {
@@ -35,7 +36,7 @@ class App extends StatelessWidget {
                 _initConfigureScreenUtils(context);
                 return _builderAppContent(
                   isMainContent: true,
-                  // state: state,
+                  state: state,
                 );
               },
             );
@@ -50,7 +51,7 @@ class App extends StatelessWidget {
   /// Build App content for default splash and main screen
   Widget _builderAppContent({
     required bool isMainContent,
-    // ThemeData? state,
+    ThemeData? state,
   }) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
@@ -79,7 +80,7 @@ class App extends StatelessWidget {
           : MaterialApp(
               debugShowCheckedModeBanner: false,
               builder: (c, w) => const SplashPlaceHolder(),
-              // theme: AppTheme.lightTheme,
+              theme: AppTheme.lightTheme,
             ),
     );
   }

@@ -16,4 +16,13 @@ class Routers {
 
   /// static variables.
   static const successPage = 'successPage';
+
+  /// static variables.
+  static const historyPage = '/historyPage';
+
+  /// static variables.
+  static const reviewDetailPage = 'reviewDetailPage';
+
+  /// static variables.
+  static const reviewFormPage = 'reviewFormPage';
 }

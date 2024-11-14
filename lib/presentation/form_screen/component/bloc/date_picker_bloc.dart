@@ -17,6 +17,7 @@ class DatePickerBloc extends Cubit<DatePickerState> {
   }
 
   DateTime? get getValue => selected;
+  set getValue(DateTime? value) => selected = value;
 }
 
 @immutable

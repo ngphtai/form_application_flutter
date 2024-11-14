@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
 
@@ -33,9 +35,26 @@ class AppLogger {
       _logger = Logger(
         output: MultiOutput(multiOutput),
         printer: PrettyPrinter(
-          printEmojis: false,
-          noBoxingByDefault: true,
-          colors: false,
+          printEmojis: true,
+          noBoxingByDefault: false,
+          levelEmojis: {
+            Level.fatal: '🚨',
+            Level.error: '🚨',
+            Level.warning: '⚠️',
+            Level.info: '❗',
+            Level.debug: '🛠️',
+          },
+          levelColors: {
+            Level.trace: AnsiColor.fg(AnsiColor.grey(0.5)),
+            Level.debug: const AnsiColor.none(),
+            Level.info: const AnsiColor.fg(115),
+            Level.warning: const AnsiColor.fg(208),
+            Level.error: const AnsiColor.fg(196),
+            Level.fatal: const AnsiColor.fg(199),
+          },
+          // s
+          excludePaths: ['package:logger/logger.dart'],
+          colors: true,
         ),
       );
     }

@@ -1,3 +1,4 @@
+import 'package:dsoft_form_application/common/logger/app_logger.dart';
 import 'package:dsoft_form_application/core/routing/route_path.dart';
 import 'package:dsoft_form_application/core/styles/app_images.dart';
 import 'package:dsoft_form_application/presentation/detail_screen/bloc/detail_page_bloc.dart';
@@ -45,7 +46,6 @@ class _ChildDetailPageScreenState extends State<ChildDetailPageScreen> {
       body: BlocBuilder<DetailPageBloc, DetailPageState>(
         builder: (context, state) {
           if (state is DetailPageInitial || state is DetailPageLoading) {
-            // Hiển thị LoadingIndicator với nền màu trắng
             return Center(
               child: Container(
                 color: Colors.white,
@@ -167,9 +167,16 @@ class _ChildDetailPageScreenState extends State<ChildDetailPageScreen> {
                               ),
                               GestureDetector(
                                 onTap: () {
-                                  context.go(
-                                    '/homePage/detailPage/${widget.postId}/formPage',
-                                  );
+                                  if (GoRouterState.of(context).name ==
+                                      Routers.reviewDetailPage) {
+                                    context.go(
+                                      '/historyPage/detailPage/${widget.postId}/formPage',
+                                    );
+                                  } else {
+                                    context.go(
+                                      '/homePage/detailPage/${widget.postId}/formPage',
+                                    );
+                                  }
                                 },
                                 child: Container(
                                   padding: const EdgeInsets.all(10),
@@ -183,14 +190,23 @@ class _ChildDetailPageScreenState extends State<ChildDetailPageScreen> {
                                       width: 1,
                                     ),
                                   ),
-                                  child: const Center(
-                                    child: Text(
-                                      "Điền form ngay",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600),
-                                    ),
+                                  child: Center(
+                                    child: GoRouterState.of(context).name ==
+                                            Routers.reviewDetailPage
+                                        ? const Text(
+                                            "Xem lại",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600),
+                                          )
+                                        : const Text(
+                                            "Điền form ngay",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600),
+                                          ),
                                   ),
                                 ),
                               ),

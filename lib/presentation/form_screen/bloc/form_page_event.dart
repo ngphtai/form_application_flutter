@@ -15,3 +15,11 @@ class SaveForm extends FormPageEvent {
   @override
   List<Object> get props => [postsEntity];
 }
+
+class LoadAnswerLocal extends FormPageEvent {
+  final String id;
+  LoadAnswerLocal(this.id);
+
+  @override
+  List<Object> get props => [];
+}

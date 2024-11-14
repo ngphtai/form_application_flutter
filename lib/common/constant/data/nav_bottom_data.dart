@@ -22,19 +22,19 @@ class NavBottomData {
         ),
         MainNavBottomItem(
           label: 'Second',
-          icon: Icon(Icons.home, size: _iconSize),
-          activeIcon: Icon(Icons.home, size: _iconSize),
+          icon: Icon(Icons.history, size: _iconSize),
+          activeIcon: Icon(Icons.history, size: _iconSize),
         ),
-        MainNavBottomItem(
-          label: 'Third',
-          icon: Icon(Icons.home, size: _iconSize),
-          activeIcon: Icon(Icons.home, size: _iconSize),
-        ),
-        MainNavBottomItem(
-          label: 'profile',
-          icon: Icon(Icons.home, size: _iconSize),
-          activeIcon: Icon(Icons.home, size: _iconSize),
-        ),
+        // MainNavBottomItem(
+        //   label: 'Third',
+        //   icon: Icon(Icons.home, size: _iconSize),
+        //   activeIcon: Icon(Icons.home, size: _iconSize),
+        // ),
+        // MainNavBottomItem(
+        //   label: 'profile',
+        //   icon: Icon(Icons.home, size: _iconSize),
+        //   activeIcon: Icon(Icons.home, size: _iconSize),
+        // ),
       ];
 
   /// This function to get length items data

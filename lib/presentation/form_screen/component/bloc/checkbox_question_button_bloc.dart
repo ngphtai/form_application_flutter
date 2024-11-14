@@ -5,6 +5,7 @@ class CheckboxQuestionButtonBloc extends Cubit<CheckBoxQuestionButtonState> {
   List<String> values = [];
 
   List<String> get getValue => values;
+  set setValue(List<String> value) => values = value;
 
   CheckboxQuestionButtonBloc() : super(CheckBoxQuestionButtonInitial());
   void validate(List<String> listOutput) {

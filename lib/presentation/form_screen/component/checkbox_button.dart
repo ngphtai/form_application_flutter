@@ -19,10 +19,12 @@ class CheckboxButton extends StatefulWidget {
   _CheckboxButtonState createState() => _CheckboxButtonState();
 }
 
-class _CheckboxButtonState extends State<CheckboxButton> {
+class _CheckboxButtonState extends State<CheckboxButton>
+    with AutomaticKeepAliveClientMixin {
   final List<String> selectedCheckboxes = [];
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return BlocBuilder<CheckboxButtonBloc, bool>(builder: (context, isValid) {
       return Container(
         decoration: BoxDecoration(
@@ -71,4 +73,7 @@ class _CheckboxButtonState extends State<CheckboxButton> {
       );
     });
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

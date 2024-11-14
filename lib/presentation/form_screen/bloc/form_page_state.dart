@@ -17,3 +17,11 @@ class FormPageSaveSuccess extends FormPageState {
   @override
   List<Object> get props => [postsEntity];
 }
+
+class FormPageLoaded extends FormPageState {
+  final PostsModel? post;
+
+  const FormPageLoaded(this.post);
+  @override
+  List<Object> get props => [post ?? []];
+}

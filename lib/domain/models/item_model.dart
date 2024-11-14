@@ -14,7 +14,7 @@ class ItemModel extends MapperEntity<ItemModelEntity> {
   final String? leftLabel;
   final int? lowerBound;
   final bool? includesYear;
-
+  late List<String>? result;
   ItemModel(
       {required this.type,
       required this.helpText,
@@ -27,7 +27,8 @@ class ItemModel extends MapperEntity<ItemModelEntity> {
       this.rightLabel,
       this.leftLabel,
       this.lowerBound,
-      this.includesYear});
+      this.includesYear,
+      this.result});
 
   factory ItemModel.fromJSon(Map<String, dynamic> json) {
     return ItemModel(
@@ -63,6 +64,4 @@ class ItemModel extends MapperEntity<ItemModelEntity> {
       includesYear: includesYear,
     );
   }
-
-  toDomain(ItemModel item) {}
 }

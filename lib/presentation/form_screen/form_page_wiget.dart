@@ -1,22 +1,16 @@
-import 'dart:ffi';
-
-import 'package:dsoft_form_application/app.dart';
 import 'package:dsoft_form_application/common/extensions/conver_string_to_enum.dart';
 import 'package:dsoft_form_application/common/extensions/url_conver.dart';
-import 'package:dsoft_form_application/common/logger/app_logger.dart';
-import 'package:dsoft_form_application/core/locators/locators.dart';
 import 'package:dsoft_form_application/data/model/entities/post_model_entity.dart';
-import 'package:dsoft_form_application/domain/models/item_model.dart';
-import 'package:dsoft_form_application/domain/models/post_model.dart';
-import 'package:dsoft_form_application/presentation/detail_screen/bloc/detail_page_bloc.dart';
-import 'package:dsoft_form_application/presentation/form_screen/bloc/form_page_bloc.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/bloc/custom_drop_button_bloc.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/bloc/pick_image_bloc.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/bloc/radio_question_button_bloc.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/screen/handle_event.dart';
+import '../../domain/models/item_model.dart';
+import '../detail_screen/bloc/detail_page_bloc.dart';
+import 'bloc/form_page_bloc.dart';
+import 'component/bloc/custom_drop_button_bloc.dart';
+import 'component/screen/text_button.dart';
 import '../../core/routing/route_path.dart';
 import 'component/share_container.dart';
 import 'component/text_field_custom_without_bloc.dart';
-import 'package:dsoft_form_application/shared/widget/app_bar.dart';
+import '../../shared/widget/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,28 +20,23 @@ import 'package:loading_indicator/loading_indicator.dart';
 import '../../common/enums/form_page_enums.dart';
 import 'component/checkbox_button.dart';
 import 'component/bloc/checkbox_button_bloc.dart';
-import 'component/checkbox_question_button.dart';
-import 'component/bloc/checkbox_question_button_bloc.dart';
 import 'component/custom_drop_button_.dart';
 import 'component/date_picker.dart';
 import 'component/bloc/date_picker_bloc.dart';
-import 'component/pick_image.dart';
 import 'component/radio_button.dart';
 import 'component/bloc/radio_button_bloc.dart';
-import 'component/radio_question_button.dart';
 
 import 'component/time_picker_custom.dart';
 import 'component/bloc/time_picker_custom_bloc.dart';
 
 // ignore: must_be_immutable
 class FormPageWidget extends StatelessWidget {
-  FormPageWidget({Key? key, required this.postId}) : super(key: key);
+  FormPageWidget({super.key, required this.postId});
 
   final DateTime? datePicker = null;
   final int postId;
   bool checkValidToSubmit = true;
   // khai báo danh sách bloc
-  // Map<int, Cubit> textFieldsBloc = {};
   Map<int, TextEditingController> textEditControllers = {};
   Map<int, bool?> isRequired = {};
   Map<int, bool> isError = {};
@@ -59,8 +48,7 @@ class FormPageWidget extends StatelessWidget {
   Map<int, Cubit> checkboxQuestionBloc = {};
   Map<int, Cubit> datePickerBloc = {};
   Map<int, Cubit> timePickerBloc = {};
-
-  bool isClosed = false;
+  List<ItemModel>? answers;
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -78,27 +66,48 @@ class FormPageWidget extends StatelessWidget {
       body: Stack(
         children: [
           BlocBuilder<DetailPageBloc, DetailPageState>(
-            builder: (context, state) {
-              print(state);
-              if (state is DetailPageInitial || state is DetailPageLoading) {
-                return Center(
-                  child: Container(
-                    color: Colors.white,
-                    height: 50.w,
-                    width: 50.w,
-                    child: LoadingIndicator(
-                      indicatorType: Indicator.circleStrokeSpin,
-                      colors: const [Colors.red],
-                      strokeWidth: 4.0,
-                      pathBackgroundColor: Colors.red[200],
-                      backgroundColor: Color(0xfff4f4f4),
-                    ),
+              builder: (context, state) {
+            if (state is DetailPageInitial || state is DetailPageLoading) {
+              return Center(
+                child: Container(
+                  color: Colors.white,
+                  height: 50.w,
+                  width: 50.w,
+                  child: LoadingIndicator(
+                    indicatorType: Indicator.circleStrokeSpin,
+                    colors: const [Colors.red],
+                    strokeWidth: 4.0,
+                    pathBackgroundColor: Colors.red[200],
+                    backgroundColor: Color(0xfff4f4f4),
                   ),
-                );
-              }
-              if (state is DetailPageLoaded) {
-                initializeBlocs(state.post.itemModels);
-                return Column(children: [
+                ),
+              );
+            }
+            if (state is DetailPageLoaded) {
+              initializeBlocs(state.post.itemModels);
+              return
+                  // BlocListener<FormPageBloc, FormPageState>(
+                  //     listener: (context, stateAnswers) {
+                  //       print("state history is $stateAnswers");
+                  //       if (stateAnswers is FormPageInitial) {
+                  //         String idMetaDataPost = state.post.metaData.id;
+                  //         // load answer
+                  //         if (GoRouterState.of(context).name ==
+                  //             Routers.reviewFormPage) {
+                  //           context
+                  //               .read<FormPageBloc>()
+                  //               .add(LoadAnswerLocal(idMetaDataPost));
+                  //         }
+                  //       }
+                  //       if (stateAnswers is FormPageLoaded) {
+                  //         answers = stateAnswers.post?.itemModels;
+                  //         print("answer $answers");
+                  //         loadAnswer();
+                  //       }
+                  //     },
+                  //     child:
+                  Column(
+                children: [
                   Expanded(
                     child: ListView.builder(
                       shrinkWrap: true,
@@ -258,17 +267,15 @@ class FormPageWidget extends StatelessWidget {
                   SizedBox(
                     height: size.height * 0.1,
                   )
-                ]);
-              } else {
-                return const Text("");
-              }
-            },
-          ),
-
+                ],
+              ); // xoá o day
+              // ));
+            }
+            return const Text("");
+          }),
           //Button action
           BlocBuilder<FormPageBloc, FormPageState>(
             builder: (context, formState) {
-              print(formState);
               return BlocBuilder<DetailPageBloc, DetailPageState>(
                 builder: (context, state) {
                   return Positioned(
@@ -313,14 +320,8 @@ class FormPageWidget extends StatelessWidget {
                                     ),
                                   ),
                                   child: const Center(
-                                    child: Text(
-                                      "Trở về",
-                                      style: TextStyle(
-                                          color: Colors.red,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                  ),
+                                      child: TextButtonCustom(
+                                          text: "Trở về", color: Colors.red)),
                                 ),
                               ),
                               GestureDetector(
@@ -353,7 +354,7 @@ class FormPageWidget extends StatelessWidget {
                                           .add(SaveForm((postEntity)));
 
                                       String baseUrl =
-                                          "${Routers.homePage}/${Routers.detailPage}/$postId/${Routers.formPage}/${Routers.successPage}";
+                                          "${Routers.homePage}/${Routers.detailPage}//${Routers.formPage}/${Routers.successPage}";
                                       Map<String, dynamic> queryParams = {
                                         "title": state.post.metaData.title,
                                         "title2": state
@@ -365,9 +366,9 @@ class FormPageWidget extends StatelessWidget {
                                       context.go(url);
 
                                       showMessenger(context);
+                                    } else {
+                                      showMessenger(context);
                                     }
-                                  } else {
-                                    showMessenger(context);
                                   }
                                 },
                                 child: Container(
@@ -383,15 +384,14 @@ class FormPageWidget extends StatelessWidget {
                                       width: 1,
                                     ),
                                   ),
-                                  child: const Center(
-                                    child: Text(
-                                      "Gửi",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
+                                  child: Center(
+                                    child: GoRouterState.of(context).name ==
+                                            Routers.reviewFormPage
+                                        ? const TextButtonCustom(
+                                            text: "Gửi lại",
+                                            color: Colors.white)
+                                        : const TextButtonCustom(
+                                            text: "Gửi", color: Colors.white),
                                   ),
                                 ),
                               ),
@@ -410,6 +410,7 @@ class FormPageWidget extends StatelessWidget {
     );
   }
 
+// hiển thị thông báo gửi
   void showMessenger(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -421,6 +422,7 @@ class FormPageWidget extends StatelessWidget {
     );
   }
 
+  // Khởi tạo các mảng chứa các giá trị bloc và controller
   void initializeBlocs(List<ItemModel> items) {
     //Convert string to enum
     for (var item in items) {
@@ -454,7 +456,7 @@ class FormPageWidget extends StatelessWidget {
           break;
         case FormType.LIST:
           customDropBloc[item.index] = CustomDropButtonBloc();
-
+          break;
         // thiếu pick image, widget question
         case null:
           break;
@@ -583,5 +585,13 @@ class FormPageWidget extends StatelessWidget {
       }
     }
     return isValid;
+  }
+
+  List<ItemModel> loadAnswer() {
+    textEditControllers.forEach((key, value) {
+      value.text = answers?[key].result?[0] ?? "";
+      print(value.text);
+    });
+    return answers ?? [];
   }
 }

@@ -21,13 +21,15 @@ class PickImage extends StatefulWidget {
   final ValueChanged onChanged;
 }
 
-class _PickImageState extends State<PickImage> {
+class _PickImageState extends State<PickImage>
+    with AutomaticKeepAliveClientMixin {
   final List<String> listMediaPath = [];
   final List<String> listNameFile = [];
   final List<double> listSizeFile = []; //size by MB
   bool isVisible = false;
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     Size size = MediaQuery.of(context).size;
 
     return Container(
@@ -167,4 +169,7 @@ class _PickImageState extends State<PickImage> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

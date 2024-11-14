@@ -63,6 +63,7 @@ class ItemModelEntity extends MapperDomain<ItemModel> {
       leftLabel: leftLabel,
       lowerBound: lowerBound,
       includesYear: includesYear,
+      result: result,
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:dsoft_form_application/common/logger/app_logger.dart';
 import 'package:dsoft_form_application/core/styles/app_icons.dart';
 import 'package:dsoft_form_application/core/styles/app_images.dart';
 import 'package:dsoft_form_application/presentation/home_screen/bloc/home_page_bloc.dart';
@@ -25,8 +26,7 @@ class PostWidget extends StatelessWidget {
         builder: (context, state) {
           if (state is HomePageInitial) {
             return Center(
-              child: Container(
-                color: Colors.white,
+              child: SizedBox(
                 height: 50.w,
                 width: 50.w,
                 child: LoadingIndicator(
@@ -34,7 +34,7 @@ class PostWidget extends StatelessWidget {
                   colors: const [Colors.red],
                   strokeWidth: 4.0,
                   pathBackgroundColor: Colors.red[200],
-                  backgroundColor: Color(0xfff7f7f7),
+                  backgroundColor: const Color(0xfff7f7f7),
                 ),
               ),
             );
@@ -123,7 +123,7 @@ class PostWidget extends StatelessWidget {
           }
           return Center(
             child: Container(
-              color: Colors.white,
+              color: const Color(0xfff7f7f7),
               height: 50.w,
               width: 50.w,
               child: LoadingIndicator(
@@ -131,7 +131,7 @@ class PostWidget extends StatelessWidget {
                 colors: const [Colors.red],
                 strokeWidth: 4.0,
                 pathBackgroundColor: Colors.red[200],
-                backgroundColor: Colors.white,
+                backgroundColor: const Color(0xfff7f7f7),
               ),
             ),
           );

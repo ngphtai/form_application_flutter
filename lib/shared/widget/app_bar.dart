@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:dsoft_form_application/core/styles/app_icons.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/routing/route_path.dart';
+
 class SharedAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String? title;
 
@@ -16,7 +18,11 @@ class SharedAppBar extends StatelessWidget implements PreferredSizeWidget {
           automaticallyImplyLeading: false,
           leading: GestureDetector(
             onTap: () {
-              context.pop(context);
+              if (GoRouterState.of(context).name == Routers.successPage) {
+                context.go(Routers.homePage);
+              } else {
+                context.pop();
+              }
             },
             child: const Column(
               children: [

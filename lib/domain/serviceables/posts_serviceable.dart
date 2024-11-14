@@ -7,14 +7,18 @@ import 'package:either_dart/either.dart';
 import '../models/post_model.dart';
 
 class PostsServiceable {
+  //remote
   final _fetchPost = diFetchPostUseCase;
   final _getDetailPost = diGetDetailPostUseCase;
+  //local
   final _saveResultPost = diSaveResultPostUseCase;
+  final _getPostsFromLocal = diGetPostsFromLocalUseCase;
+  final _getAnswerFromLocal = diGetAnswerFromLocalUseCase;
   PostsServiceable();
 
   Future<void> initialize() async {}
-
-  Future<Either<AppError, List<PostsModel>>> fetchPostsToLocal() async {
+  //remote
+  Future<Either<AppError, List<PostsModel>>> fetchPostsFromRemote() async {
     var result = await _fetchPost.call(dynamic);
 
     return result.fold(
@@ -39,9 +43,32 @@ class PostsServiceable {
     });
   }
 
+  //Local
   Future<Either<AppError, bool>> saveResultPostToLocal(
       PostModelEntity post) async {
     var result = await _saveResultPost.call(post);
+
+    return result.fold((context) {
+      AppLogger.instance.e(context.toString());
+      return Left(context);
+    }, (result) {
+      return Right(result);
+    });
+  }
+
+  Future<Either<AppError, List<PostsModel>?>> getPostsFromLocal() async {
+    var result = await _getPostsFromLocal.call(dynamic);
+
+    return result.fold((context) {
+      AppLogger.instance.e(context.toString());
+      return Left(context);
+    }, (result) {
+      return Right(result);
+    });
+  }
+
+  Future<Either<AppError, PostsModel?>> getAnswerFromLocal(String id) async {
+    var result = await _getAnswerFromLocal.call(id);
 
     return result.fold((context) {
       AppLogger.instance.e(context.toString());
