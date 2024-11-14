@@ -349,12 +349,16 @@ class FormPageWidget extends StatelessWidget {
 
                                     // Hiển thị thông báo dựa trên kết quả
                                     if (checkValidToSubmit) {
+                                      //save to local
                                       context
                                           .read<FormPageBloc>()
                                           .add(SaveForm((postEntity)));
-
+                                      // save to google form
+                                      context.read<FormPageBloc>().add(
+                                          SaveAnswerLocal(
+                                              (postEntity.toDomain())));
                                       String baseUrl =
-                                          "${Routers.homePage}/${Routers.detailPage}//${Routers.formPage}/${Routers.successPage}";
+                                          "${Routers.homePage}/${Routers.detailPage}/$postId/${Routers.formPage}/${Routers.successPage}";
                                       Map<String, dynamic> queryParams = {
                                         "title": state.post.metaData.title,
                                         "title2": state

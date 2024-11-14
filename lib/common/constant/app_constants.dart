@@ -4,7 +4,7 @@ part of 'constants.dart';
 /// They can be used instead of default variables or key of shared prefs in app.
 class AppConstants {
   /// App Name
-  static const appName = "";
+  static const appName = "D-soft Forms";
 
   /// Value of app default using in app, this value will be used when
   /// user has not selected a pref-language in app
@@ -34,4 +34,8 @@ class AppConstants {
 
   /// Folder name of output logger
   static const folderNameOutputLogger = "FaceLogOutputLogger";
+
+  static const credentials = 'assets/credentials.json';
+
+  static const spreadsheetId = '1dRDA_ovwIfmodIEp8gKLeRMQSE73g9_ndLpmSmvD_FQ';
 }

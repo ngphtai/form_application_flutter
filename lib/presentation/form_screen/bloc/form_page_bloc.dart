@@ -11,19 +11,34 @@ part 'form_page_state.dart';
 class FormPageBloc extends Bloc<FormPageEvent, FormPageState> {
   FormPageBloc() : super(FormPageInitial()) {
     on<SaveForm>(_saveForm);
+    on<SaveAnswerLocal>(_saveAnswersToGoogleSheet);
     on<LoadAnswerLocal>(_loadAnswerLocal);
   }
 
   final seviceable = diPostSeviceable;
   Future<void> _saveForm(SaveForm event, Emitter<FormPageState> emit) async {
     final result = await seviceable.saveResultPostToLocal(event.postsEntity);
-
-    if (result == true) {
+    result.fold((left) {
+      AppLogger.instance.e(left.toString());
+      AppLogger.instance.e("Post submit failed! ");
+    }, (result) {
       emit(FormPageSaveSuccess(event.postsEntity));
       AppLogger.instance.e("Post submit success!!!");
-    } else {
-      AppLogger.instance.e("Post submit failed! ");
-    }
+    });
+  }
+
+  Future<void> _saveAnswersToGoogleSheet(
+      SaveAnswerLocal event, Emitter<FormPageState> emit) async {
+    final result = await seviceable.saveAnswerToGoogleSheet(event.post);
+
+    result.fold(
+      (left) {
+        AppLogger.instance.e(left.toString());
+      },
+      (post) {
+        AppLogger.instance.w("Answer is saved in google sheet success!!");
+      },
+    );
   }
 
   Future<void> _loadAnswerLocal(

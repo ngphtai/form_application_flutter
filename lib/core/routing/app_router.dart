@@ -6,7 +6,6 @@ import '../../presentation/detail_screen/detail_page_screen.dart';
 import '../../presentation/home_screen/home_page_screen.dart';
 import '../../presentation/form_screen/form_page_screen.dart';
 import '../../presentation/splash_screen/splash_screen.dart';
-import '../../presentation/main_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'route_path.dart';

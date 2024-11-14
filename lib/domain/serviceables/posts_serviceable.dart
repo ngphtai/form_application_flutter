@@ -10,6 +10,7 @@ class PostsServiceable {
   //remote
   final _fetchPost = diFetchPostUseCase;
   final _getDetailPost = diGetDetailPostUseCase;
+  final _saveAnswerToGoogleSheet = diSaveAnswerToGoogleSheetUseCase;
   //local
   final _saveResultPost = diSaveResultPostUseCase;
   final _getPostsFromLocal = diGetPostsFromLocalUseCase;
@@ -40,6 +41,18 @@ class PostsServiceable {
       return Left(context);
     }, (postModel) {
       return Right(postModel);
+    });
+  }
+
+  Future<Either<AppError, bool>> saveAnswerToGoogleSheet(
+      PostsModel post) async {
+    var result = await _saveAnswerToGoogleSheet.call(post);
+
+    return result.fold((context) {
+      AppLogger.instance.e(context.toString());
+      return Left(context);
+    }, (result) {
+      return Right(result);
     });
   }
 

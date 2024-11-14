@@ -81,7 +81,7 @@ class PostLocalDataSourceImpl extends PostLocalDataSource {
     if (!isExist) return null;
 
     if (_postEntityBox != null) {
-      final keys = _postEntityBox.keys;
+      // final keys = _postEntityBox.keys;
 
       final post = await _postEntityBox.get(id);
 

@@ -5,14 +5,15 @@ import 'package:dsoft_form_application/domain/repositories/posts_repository.dart
 import 'package:dsoft_form_application/domain/usecases/usecase.dart';
 import 'package:either_dart/src/either.dart';
 
-class GetAnswerFromLocalUsecase extends UseCase<PostsModel, String> {
-  late final PostsRepository _postsRepository;
-  GetAnswerFromLocalUsecase() {
-    _postsRepository = diPostsRepository;
+class SaveAnswerToGoogleSheetUseCase extends UseCase<bool, PostsModel> {
+  late final PostsRepository _postRepository;
+
+  SaveAnswerToGoogleSheetUseCase() {
+    _postRepository = diPostsRepository;
   }
 
   @override
-  Future<Either<AppError, PostsModel>> call(String params) {
-    return _postsRepository.getAnswerFromLocal(params);
+  Future<Either<AppError, bool>> call(PostsModel params) {
+    return _postRepository.saveAnswerToGoogleSheet(params);
   }
 }

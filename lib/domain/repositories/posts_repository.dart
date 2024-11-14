@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:dsoft_form_application/common/constant/app_errors/app_error.dart';
-import 'package:dsoft_form_application/common/constant/app_errors/app_orther_error.dart';
 import 'package:dsoft_form_application/core/locators/locators.dart';
 import 'package:dsoft_form_application/data/model/entities/post_model_entity.dart';
 import 'package:dsoft_form_application/domain/repositories/repository.dart';
@@ -13,10 +12,11 @@ abstract class PostsRepository extends Repository {
   //remote
   Future<Either<AppError, List<PostsModel>>> fetchPosts();
   Future<Either<AppError, PostsModel>> getDetailPost(int index);
+  Future<Either<AppError, bool>> saveAnswerToGoogleSheet(PostsModel post);
   //local
   Future<Either<AppError, bool>> saveResultPostToLocal(PostModelEntity post);
   Future<Either<AppError, List<PostsModel>?>> getPostsFromLocal();
-  Future<Either<AppError, PostsModel?>> getAnswerFromLocal(String id);
+  Future<Either<AppError, PostsModel>> getAnswerFromLocal(String id);
 }
 
 class PostRepositoryImpl extends PostsRepository {
@@ -42,6 +42,18 @@ class PostRepositoryImpl extends PostsRepository {
       final detailPost = await _fetchPosts.getDetailPost(index);
 
       final PostsModel result = detailPost.toDomain();
+
+      return Right(result);
+    } on DioException catch (e) {
+      return LeftAPI(e);
+    }
+  }
+
+  @override
+  Future<Either<AppError, bool>> saveAnswerToGoogleSheet(
+      PostsModel post) async {
+    try {
+      final result = await _fetchPosts.saveAnswerToGoogleSheet(post);
 
       return Right(result);
     } on DioException catch (e) {
@@ -77,10 +89,10 @@ class PostRepositoryImpl extends PostsRepository {
   }
 
   @override
-  Future<Either<AppError, PostsModel?>> getAnswerFromLocal(String id) async {
+  Future<Either<AppError, PostsModel>> getAnswerFromLocal(String id) async {
     try {
       final result = await postLocal.getAnswers(id);
-      final PostsModel? post = result?.toDomain();
+      final PostsModel post = result!.toDomain();
 
       return Right(post);
     } on AppError catch (e) {

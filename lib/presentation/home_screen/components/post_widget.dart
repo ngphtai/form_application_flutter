@@ -1,4 +1,3 @@
-import 'package:dsoft_form_application/common/logger/app_logger.dart';
 import 'package:dsoft_form_application/core/styles/app_icons.dart';
 import 'package:dsoft_form_application/core/styles/app_images.dart';
 import 'package:dsoft_form_application/presentation/home_screen/bloc/home_page_bloc.dart';
