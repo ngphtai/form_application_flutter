@@ -2,6 +2,7 @@ import 'package:dsoft_form_application/common/logger/app_logger.dart';
 import 'package:dsoft_form_application/core/routing/route_path.dart';
 import 'package:dsoft_form_application/core/styles/app_images.dart';
 import 'package:dsoft_form_application/presentation/detail_screen/bloc/detail_page_bloc.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/screen/text_button.dart';
 import 'package:dsoft_form_application/shared/widget/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -155,12 +156,9 @@ class _ChildDetailPageScreenState extends State<ChildDetailPageScreen> {
                                     ),
                                   ),
                                   child: const Center(
-                                    child: Text(
-                                      "Trở về",
-                                      style: TextStyle(
-                                          color: Colors.red,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600),
+                                    child: TextButtonCustom(
+                                      text: "Trở về",
+                                      color: Colors.red,
                                     ),
                                   ),
                                 ),
@@ -191,23 +189,14 @@ class _ChildDetailPageScreenState extends State<ChildDetailPageScreen> {
                                     ),
                                   ),
                                   child: Center(
-                                    child: GoRouterState.of(context).name ==
-                                            Routers.reviewDetailPage
-                                        ? const Text(
-                                            "Xem lại",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w600),
-                                          )
-                                        : const Text(
-                                            "Điền form ngay",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w600),
-                                          ),
-                                  ),
+                                      child: GoRouterState.of(context).name ==
+                                              Routers.reviewDetailPage
+                                          ? const TextButtonCustom(
+                                              text: "Xem lại",
+                                              color: Colors.white)
+                                          : const TextButtonCustom(
+                                              text: "Điền form ngay",
+                                              color: Colors.white)),
                                 ),
                               ),
                             ],

@@ -4,18 +4,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'bloc/custom_drop_button_bloc.dart';
 
 class CustomDropButton extends StatefulWidget {
-  const CustomDropButton(
-      {Key? key,
-      required this.listDropDown,
-      this.isRequest = false,
-      required this.customDropButtonBloc})
-      : super(key: key);
+  const CustomDropButton({
+    Key? key,
+    required this.listDropDown,
+    this.isRequest = false,
+    required this.customDropButtonBloc,
+    required this.controller,
+  }) : super(key: key);
 
   @override
   _CustomDropButtonState createState() => _CustomDropButtonState();
   final List<String> listDropDown;
   final bool? isRequest;
-
+  final TextEditingController controller;
   final CustomDropButtonBloc customDropButtonBloc;
 }
 
@@ -34,8 +35,10 @@ class _CustomDropButtonState extends State<CustomDropButton>
         create: (context) => widget.customDropButtonBloc,
         child: BlocBuilder<CustomDropButtonBloc, CustomDropButtonState>(
             builder: (context, state) {
-          // print("state in cusstom drop button $state");
-
+          if (widget.controller.text.isNotEmpty) {
+            String value = widget.controller.text;
+            context.read<CustomDropButtonBloc>().validate(value);
+          }
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -64,14 +67,20 @@ class _CustomDropButtonState extends State<CustomDropButton>
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        selectedValue ?? 'Lựa chọn',
-                        style: TextStyle(
-                            color: selectedValue == null
-                                ? const Color(0xff8C8C8C)
-                                : Colors.black,
-                            fontWeight: FontWeight.w400),
-                      ),
+                      widget.controller.text.isEmpty
+                          ? Text(
+                              selectedValue ?? 'Lựa chọn',
+                              style: TextStyle(
+                                  color: selectedValue == null
+                                      ? const Color(0xff8C8C8C)
+                                      : Colors.black,
+                                  fontWeight: FontWeight.w400),
+                            )
+                          : Text(
+                              widget.controller.text,
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.w400),
+                            ),
                       Icon(isDropdownVisible
                           ? Icons.keyboard_arrow_up_outlined
                           : Icons.keyboard_arrow_down_outlined),

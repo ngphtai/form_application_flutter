@@ -5,7 +5,7 @@ part of 'constants.dart';
 class APIConstants {
   APIConstants._();
   static const baseUrl =
-      "https://9b0d2c9c-04fc-40f5-a341-c7b03a0904fd.mock.pstmn.io/";
+      "https://7aa7ae91-0c2e-46c9-b12c-82161fd665f4.mock.pstmn.io/";
 
   static const methodPost = "posts";
 }

@@ -1,13 +1,12 @@
 import 'package:dsoft_form_application/core/styles/app_icons.dart';
 import 'package:dsoft_form_application/core/styles/app_images.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/screen/loading_widget.dart';
 import 'package:dsoft_form_application/presentation/home_screen/bloc/home_page_bloc.dart';
 import 'package:dsoft_form_application/shared/widget/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
-import 'package:loading_indicator/loading_indicator.dart';
 
 import '../../../core/routing/route_path.dart';
 
@@ -24,19 +23,7 @@ class PostWidget extends StatelessWidget {
         bloc: context.read<HomePageBloc>()..add(GetPost()),
         builder: (context, state) {
           if (state is HomePageInitial) {
-            return Center(
-              child: SizedBox(
-                height: 50.w,
-                width: 50.w,
-                child: LoadingIndicator(
-                  indicatorType: Indicator.circleStrokeSpin,
-                  colors: const [Colors.red],
-                  strokeWidth: 4.0,
-                  pathBackgroundColor: Colors.red[200],
-                  backgroundColor: const Color(0xfff7f7f7),
-                ),
-              ),
-            );
+            return const LoadingWidget();
           }
           if (state is HomePageLoaded) {
             return ListView.builder(
@@ -120,20 +107,7 @@ class PostWidget extends StatelessWidget {
               child: Text("Load API Failed"),
             );
           }
-          return Center(
-            child: Container(
-              color: const Color(0xfff7f7f7),
-              height: 50.w,
-              width: 50.w,
-              child: LoadingIndicator(
-                indicatorType: Indicator.circleStrokeSpin,
-                colors: const [Colors.red],
-                strokeWidth: 4.0,
-                pathBackgroundColor: Colors.red[200],
-                backgroundColor: const Color(0xfff7f7f7),
-              ),
-            ),
-          );
+          return const LoadingWidget();
         },
       ),
     );

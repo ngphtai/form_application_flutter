@@ -1,36 +1,39 @@
-import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class CheckboxButtonBloc extends Cubit<bool> {
-  CheckboxButtonBloc() : super(true);
+class CheckboxButtonBloc extends Cubit<CheckboxButtonState> {
+  List<String> selected = [];
+  List<String> get values => selected;
+  set values(List<String> value) => selected = value;
 
-  List<String> values = [];
+  CheckboxButtonBloc() : super(CheckboxButtonInitial());
 
   void validate(List<String> value) {
-    values = value;
-    emit(value.isNotEmpty);
+    if (value.isNotEmpty) {
+      selected = value;
+      emit(CheckboxButtonValidate(value: true));
+    } else {
+      selected = [];
+      emit(CheckboxButtonValidate(value: false));
+    }
   }
 
-  List<String> getValue() => values;
+  void setError() {
+    emit(CheckboxButtonValidate(value: false));
+  }
 }
 
-// class RadioButtonBloc extends Cubit<RadioButtonState> {
-//   RadioButtonBloc() : super(RadioButtonInitial());
+abstract class CheckboxButtonState extends Equatable {
+  @override
+  List<Object?> get props => [];
+}
 
-//   late String select = '';
+class CheckboxButtonInitial extends CheckboxButtonState {}
 
-//   void validate(String value) {
-//     print("Radio button $value");
-//     if (value.isNotEmpty) {
-//       select = value;
-//       print(" select $select");
-//       emit(RadioButtonValid(isValid: true));
-//     } else {
-//       select = '';
-//       emit(RadioButtonValid(isValid: false));
-//     }
-//   }
+class CheckboxButtonValidate extends CheckboxButtonState {
+  final bool value;
+  CheckboxButtonValidate({required this.value});
 
-//   String get values => select;
-
-//   set values(String value) => select = value;
-// }
+  @override
+  List<Object?> get props => [value];
+}

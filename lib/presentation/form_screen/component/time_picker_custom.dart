@@ -14,15 +14,16 @@ class TimePickerCustom extends StatefulWidget {
     required this.title,
     this.isRequest = false,
     required this.timePickerCustomBloc,
-    required this.isError,
+    required this.controller,
   });
 
   @override
   _TimePickerCustomState createState() => _TimePickerCustomState();
   final String title;
-  bool isError;
+  bool isError = false;
   final bool isRequest;
   final TimePickerCustomBloc timePickerCustomBloc;
+  final TextEditingController controller;
 }
 
 class _TimePickerCustomState extends State<TimePickerCustom>
@@ -42,6 +43,10 @@ class _TimePickerCustomState extends State<TimePickerCustom>
     Size size = MediaQuery.of(context).size;
     return BlocBuilder<TimePickerCustomBloc, TimePickerState>(
         builder: (context, state) {
+      if (widget.controller.text.isNotEmpty) {
+        String value = widget.controller.text;
+        context.read<TimePickerCustomBloc>().changeValue(value);
+      }
       String value = context.read<TimePickerCustomBloc>().getState.toString();
 
       if (state is TimePickerInitial) {
@@ -54,8 +59,6 @@ class _TimePickerCustomState extends State<TimePickerCustom>
           widget.isError = false;
         }
       }
-      // print("update values in time is $value");
-
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -87,9 +90,11 @@ class _TimePickerCustomState extends State<TimePickerCustom>
                     const Gap(10),
                     Expanded(
                       child: TextField(
-                        controller: controller.text.isEmpty
-                            ? TextEditingController(text: "Giờ")
-                            : controller,
+                        controller: widget.controller.text.isEmpty
+                            ? controller.text.isEmpty
+                                ? TextEditingController(text: "Giờ")
+                                : controller
+                            : widget.controller,
                         style: TextStyle(color: Colors.black),
                         keyboardType: null,
                         onTap: () {

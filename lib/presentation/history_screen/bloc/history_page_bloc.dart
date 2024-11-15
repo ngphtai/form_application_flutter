@@ -15,14 +15,10 @@ class HistoryPageBloc extends Bloc<HistoryPageEvent, HistoryPageState> {
 
 Future<void> _loadPostFromLocal(
     LoadPostFromLocal event, Emitter<HistoryPageState> emit) async {
-  try {
-    final postServiceable = diPostSeviceable;
-    final result = await postServiceable.getPostsFromLocal();
-
-    result.fold((error) => AppLogger.instance.e(error.toString()), (result) {
-      emit(HistoryPageLoaded(result));
-    });
-  } catch (e) {
-    AppLogger.instance.e("error to fetch local: ${e.toString()}");
-  }
+  emit(HistoryPageLoading());
+  final postServiceable = diPostSeviceable;
+  final result = await postServiceable.getPostsFromLocal();
+  result.fold((error) => AppLogger.instance.e(error.toString()), (result) {
+    emit(HistoryPageLoaded(result));
+  });
 }

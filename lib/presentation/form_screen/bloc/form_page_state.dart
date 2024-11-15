@@ -25,3 +25,10 @@ class FormPageLoaded extends FormPageState {
   @override
   List<Object> get props => [post ?? []];
 }
+
+class FormPageSaveGoogleSheetSuccess extends FormPageState {
+  @override
+  List<Object> get props => [];
+}
+
+class FormPageLoading extends FormPageState {}

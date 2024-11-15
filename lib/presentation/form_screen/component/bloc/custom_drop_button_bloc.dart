@@ -1,3 +1,4 @@
+import 'package:dsoft_form_application/common/logger/app_logger.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CustomDropButtonBloc extends Cubit<CustomDropButtonState> {
@@ -9,13 +10,14 @@ class CustomDropButtonBloc extends Cubit<CustomDropButtonState> {
 
     try {
       if (!isClosed) {
-        if (value != '')
+        if (value != '') {
           emit(CustomDropButtonState(isError: false, isSelected: value));
-        else
+        } else {
           emit(CustomDropButtonState(isError: true, isSelected: ""));
+        }
       }
     } catch (e) {
-      print('Error in custom drop button: ${e.toString()}');
+      AppLogger.instance.e('Error in custom drop button: ${e.toString()}');
     }
   }
 }

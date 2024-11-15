@@ -1,3 +1,4 @@
+import 'package:dsoft_form_application/common/extensions/string_to_datetime.dart';
 import 'package:dsoft_form_application/core/styles/app_icons.dart';
 import 'package:dsoft_form_application/presentation/form_screen/component/bloc/date_picker_bloc.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ class DatePicker extends StatefulWidget {
     this.isRequest = false,
     required this.isError,
     required this.datePickerBloc,
+    required this.controller,
   }) : super(key: key);
 
   @override
@@ -19,7 +21,7 @@ class DatePicker extends StatefulWidget {
   final bool? isRequest;
   final DatePickerBloc datePickerBloc;
   DateTime? datePicker;
-
+  final TextEditingController controller;
   bool isError;
 }
 
@@ -30,6 +32,10 @@ class _DatePickerState extends State<DatePicker>
     super.build(context);
     return BlocBuilder<DatePickerBloc, DatePickerState>(
         builder: (context, state) {
+      if (widget.controller.text.isNotEmpty) {
+        String value = widget.controller.text;
+        context.read<DatePickerBloc>().validate(value.toDateTime());
+      }
       //check error
       if (state is DatePickerInitial) {
         widget.isError = false;
@@ -47,7 +53,6 @@ class _DatePickerState extends State<DatePicker>
         child: GestureDetector(
             onTap: () async {
               await _selectDate(context);
-
               context.read<DatePickerBloc>().validate(widget.datePicker);
               print("ontap ${widget.datePicker}");
             },
@@ -76,12 +81,14 @@ class _DatePickerState extends State<DatePicker>
                       child: widget.datePicker != null
                           ? Text(
                               "${widget.datePicker!.day}/${widget.datePicker!.month}/${widget.datePicker!.year}")
-                          : const Text(
-                              "Tháng, ngày, năm ",
-                              style: TextStyle(
-                                color: Color(0xff8C8C8C),
-                              ),
-                            ),
+                          : widget.controller.text != ""
+                              ? Text(widget.controller.text)
+                              : const Text(
+                                  "Tháng, ngày, năm ",
+                                  style: TextStyle(
+                                    color: Color(0xff8C8C8C),
+                                  ),
+                                ),
                     )
                   ],
                 ))),
@@ -120,6 +127,7 @@ class _DatePickerState extends State<DatePicker>
           child: child!,
         );
       },
+      initialEntryMode: DatePickerEntryMode.calendar,
     );
 
     if (widget.datePicker != selected) {

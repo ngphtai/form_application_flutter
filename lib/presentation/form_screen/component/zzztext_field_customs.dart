@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'zzztext_field_bloc.dart';
 
-class TextFieldCustoms extends StatefulWidget {
-  TextFieldCustoms(
+class TextFieldCustoms2 extends StatefulWidget {
+  TextFieldCustoms2(
       {Key? key,
       required this.maxLine,
       this.isRequest = false,
@@ -12,21 +12,21 @@ class TextFieldCustoms extends StatefulWidget {
       : super(key: key);
 
   @override
-  _TextFieldCustomsState createState() => _TextFieldCustomsState();
+  _TextFieldCustoms2State createState() => _TextFieldCustoms2State();
   final int maxLine;
 
   final bool isRequest;
   final TextEditingController textController = TextEditingController();
 
-  final TextFieldBLoc textFieldBLoc;
+  final TextFieldBLoc2 textFieldBLoc;
 }
 
-class _TextFieldCustomsState extends State<TextFieldCustoms> {
+class _TextFieldCustoms2State extends State<TextFieldCustoms2> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
         create: (context) => widget.textFieldBLoc,
-        child: BlocBuilder<TextFieldBLoc, TextFieldState>(
+        child: BlocBuilder<TextFieldBLoc2, TextFieldState2>(
           builder: (context, isValid) {
             print(isValid);
             print(widget.textController.text);
@@ -61,7 +61,7 @@ class _TextFieldCustomsState extends State<TextFieldCustoms> {
                   contentPadding: const EdgeInsets.only(left: 10),
                 ),
                 onChanged: (value) {
-                  BlocProvider.of<TextFieldBLoc>(context)
+                  BlocProvider.of<TextFieldBLoc2>(context)
                       .validate(value, widget.isRequest);
                 },
                 maxLines: widget.maxLine,

@@ -1,45 +1,38 @@
 import 'package:dsoft_form_application/common/extensions/conver_string_to_enum.dart';
 import 'package:dsoft_form_application/common/extensions/url_conver.dart';
 import 'package:dsoft_form_application/data/model/entities/post_model_entity.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/screen/handle_event.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/bloc/checkbox_button_bloc.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/bloc/radio_button_bloc.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/bloc/text_field_bloc.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/screen/form_widget.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/screen/loading_widget.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/screen/return_button_widget.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/screen/submit_button_widget.dart';
 import '../../domain/models/item_model.dart';
 import '../detail_screen/bloc/detail_page_bloc.dart';
 import 'bloc/form_page_bloc.dart';
 import 'component/bloc/custom_drop_button_bloc.dart';
-import 'component/screen/text_button.dart';
 import '../../core/routing/route_path.dart';
-import 'component/share_container.dart';
-import 'component/text_field_custom_without_bloc.dart';
 import '../../shared/widget/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:loading_indicator/loading_indicator.dart';
 import '../../common/enums/form_page_enums.dart';
-import 'component/checkbox_button.dart';
-import 'component/bloc/checkbox_button_bloc.dart';
-import 'component/custom_drop_button_.dart';
-import 'component/date_picker.dart';
 import 'component/bloc/date_picker_bloc.dart';
-import 'component/radio_button.dart';
-import 'component/bloc/radio_button_bloc.dart';
-
-import 'component/time_picker_custom.dart';
 import 'component/bloc/time_picker_custom_bloc.dart';
 
 // ignore: must_be_immutable
 class FormPageWidget extends StatelessWidget {
   FormPageWidget({super.key, required this.postId});
-
   final DateTime? datePicker = null;
   final int postId;
   bool checkValidToSubmit = true;
   // khai báo danh sách bloc
-  Map<int, TextEditingController> textEditControllers = {};
+  Map<int, TextEditingController> answersControllers = {};
   Map<int, bool?> isRequired = {};
   Map<int, bool> isError = {};
+  Map<int, Cubit> textFieldsBloc = {};
   Map<int, Cubit> radioButtonsBloc = {};
   Map<int, Cubit> customDropBloc = {};
   Map<int, Cubit> checkBoxBloc = {};
@@ -52,7 +45,6 @@ class FormPageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-
     return Scaffold(
       appBar: SharedAppBar(
         title: context.select<DetailPageBloc, String>((bloc) {
@@ -68,350 +60,161 @@ class FormPageWidget extends StatelessWidget {
           BlocBuilder<DetailPageBloc, DetailPageState>(
               builder: (context, state) {
             if (state is DetailPageInitial || state is DetailPageLoading) {
-              return Center(
-                child: Container(
-                  color: Colors.white,
-                  height: 50.w,
-                  width: 50.w,
-                  child: LoadingIndicator(
-                    indicatorType: Indicator.circleStrokeSpin,
-                    colors: const [Colors.red],
-                    strokeWidth: 4.0,
-                    pathBackgroundColor: Colors.red[200],
-                    backgroundColor: Color(0xfff4f4f4),
-                  ),
-                ),
-              );
+              return const LoadingWidget();
             }
             if (state is DetailPageLoaded) {
               initializeBlocs(state.post.itemModels);
-              return
-                  // BlocListener<FormPageBloc, FormPageState>(
-                  //     listener: (context, stateAnswers) {
-                  //       print("state history is $stateAnswers");
-                  //       if (stateAnswers is FormPageInitial) {
-                  //         String idMetaDataPost = state.post.metaData.id;
-                  //         // load answer
-                  //         if (GoRouterState.of(context).name ==
-                  //             Routers.reviewFormPage) {
-                  //           context
-                  //               .read<FormPageBloc>()
-                  //               .add(LoadAnswerLocal(idMetaDataPost));
-                  //         }
-                  //       }
-                  //       if (stateAnswers is FormPageLoaded) {
-                  //         answers = stateAnswers.post?.itemModels;
-                  //         print("answer $answers");
-                  //         loadAnswer();
-                  //       }
-                  //     },
-                  //     child:
-                  Column(
-                children: [
-                  Expanded(
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: state.post.itemModels.length,
-                      itemBuilder: (context, index) {
-                        bool isRequired =
-                            state.post.itemModels[index].isRequired ?? false;
-
-                        final item = state.post.itemModels[index];
-
-                        //Convert string to enum
-                        String jsonType = state.post.itemModels[index].type;
-
-                        FormType? formType = jsonType.toFormType();
-
-                        switch (formType) {
-                          //simple text
-                          case FormType.TEXT:
-                            {
-                              return ShareContainer(
-                                  widget: TextFieldCustomWithoutBloc(
-                                      maxLine: 1,
-                                      isError:
-                                          isError[item.index] as bool ?? false,
-                                      onChanged: (value) {
-                                        print(value);
-                                        if (isRequired &&
-                                            textEditControllers[item.index]!
-                                                .text
-                                                .isNotEmpty) {
-                                          isError[item.index] = false;
-                                        } else {
-                                          isError[item.index] = true;
-                                        }
-                                      },
-                                      textController:
-                                          textEditControllers[item.index]!,
-                                      isRequest: isRequired),
-                                  title: item.title,
-                                  isRequest: isRequired);
-                            }
-                          //multi text
-                          case FormType.PARAGRAPH_TEXT:
-                            {
-                              return ShareContainer(
-                                widget: TextFieldCustomWithoutBloc(
-                                  maxLine: 5,
-                                  isError:
-                                      isError[item.index] as bool? ?? false,
-                                  onChanged: (value) {
-                                    // Kiểm tra điều kiện để cập nhật isError
-                                    if (isRequired && value.isNotEmpty) {
-                                      isError[item.index] = false;
-                                    } else {
-                                      isError[item.index] = true;
-                                    }
-                                  },
-                                  textController:
-                                      textEditControllers[item.index]!,
-                                  isRequest: isRequired,
-                                ),
-                                title: item.title,
-                                isRequest: isRequired,
-                              );
-                            }
-                          case FormType.MULTIPLE_CHOICE:
-                            {
-                              return ShareContainer(
-                                widget: RadioButton(
-                                  listRadio:
-                                      item.choices ?? ["câu hỏi bị trống!"],
-                                  nameGroup: item.title,
-                                  isRequest: isRequired,
-                                  isError: isError[item.index] ?? false,
-                                  radioButtonBloc: radioButtonsBloc[item.index]
-                                      as RadioButtonBloc,
-                                ),
-                                textInputControl: null,
-                                title: item.title,
-                                isRequest: isRequired,
-                              );
-                            }
-                          case FormType.CHECKBOX:
-                            {
-                              return BlocProvider(
-                                create: (context) => checkBoxBloc[item.index]
-                                    as CheckboxButtonBloc,
-                                child: ShareContainer(
-                                  widget: CheckboxButton(
-                                    listCheckbox: item.choices ?? [],
-                                    checkboxButtonBloc: checkBoxBloc[item.index]
-                                        as CheckboxButtonBloc,
-                                    isRequest: isRequired,
-                                    isError: isError[item.index] ?? false,
-                                  ),
-                                  title: item.title,
-                                  isRequest: isRequired,
-                                ),
-                              );
-                            }
-                          case FormType.LIST:
-                            {
-                              return ShareContainer(
-                                widget: CustomDropButton(
-                                  listDropDown: item.choices ?? [],
-                                  isRequest: isRequired,
-                                  customDropButtonBloc:
-                                      customDropBloc[item.index]
-                                          as CustomDropButtonBloc,
-                                ),
-                                title: item.title,
-                                isRequest: isRequired,
-                              );
-                            }
-                          case FormType.TIME:
-                            {
-                              return BlocProvider<TimePickerCustomBloc>(
-                                  create: (context) =>
-                                      timePickerBloc[item.index]
-                                          as TimePickerCustomBloc,
-                                  child: ShareContainer(
-                                    widget: TimePickerCustom(
-                                      isRequest: true,
-                                      title: ("Chọn giờ"),
-                                      timePickerCustomBloc:
-                                          timePickerBloc[item.index]
-                                              as TimePickerCustomBloc,
-                                      isError: isError[item.index] ?? false,
-                                    ),
-                                    title: item.title,
-                                    isRequest: isRequired,
-                                  ));
-                            }
-                          case FormType.DATE:
-                            {
-                              return BlocProvider(
-                                create: (context) => datePickerBloc[item.index]
-                                    as DatePickerBloc,
-                                child: ShareContainer(
-                                  widget: DatePicker(
-                                    isError: isError[item.index] ?? false,
-                                    isRequest: true,
-                                    datePickerBloc: datePickerBloc[item.index]
-                                        as DatePickerBloc,
-                                  ),
-                                  title: item.title,
-                                  isRequest: isRequired,
-                                ),
-                              );
-                            }
-                          default:
-                            return const SizedBox.shrink();
+              return BlocBuilder<FormPageBloc, FormPageState>(
+                  builder: (context, stateAnswers) {
+                if (stateAnswers is FormPageInitial) {
+                  String idMetaDataPost = state.post.metaData.id;
+                  context
+                      .read<FormPageBloc>()
+                      .add(LoadAnswerLocal(idMetaDataPost));
+                }
+                if (stateAnswers is FormPageLoaded &&
+                    GoRouterState.of(context).name == Routers.reviewFormPage) {
+                  List<ItemModel>? answers = stateAnswers.post?.itemModels;
+                  if (answers != null) {
+                    answersControllers.forEach((key, value) {
+                      if (answers[key].result?[0] != null) {
+                        int length = answers[key].result?.length ?? 0;
+                        if (length > 1) {
+                          value.text = answers[key].result.toString();
+                        } else {
+                          value.text = answers[key].result?[0] ?? "";
                         }
-                      },
+                      }
+
+                      print(value.text);
+                    });
+                  }
+                }
+                return Column(
+                  children: [
+                    Expanded(
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: state.post.itemModels.length,
+                        itemBuilder: (context, index) {
+                          return FormWidget(
+                              textFieldsBloc: textFieldsBloc,
+                              answersControllers: answersControllers,
+                              radioButtonsBloc: radioButtonsBloc,
+                              checkBoxBloc: checkBoxBloc,
+                              customDropBloc: customDropBloc,
+                              timePickerBloc: timePickerBloc,
+                              isError: isError,
+                              datePickerBloc: datePickerBloc,
+                              state: state,
+                              index: index);
+                        },
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    height: size.height * 0.1,
-                  )
-                ],
-              ); // xoá o day
-              // ));
+                    SizedBox(
+                      height: size.height * 0.1,
+                    )
+                  ],
+                  // );
+                ); // xoá o day
+              });
             }
             return const Text("");
           }),
           //Button action
           BlocBuilder<FormPageBloc, FormPageState>(
             builder: (context, formState) {
-              return BlocBuilder<DetailPageBloc, DetailPageState>(
-                builder: (context, state) {
-                  return Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: Column(
-                      children: [
-                        Container(
-                          height: 20,
-                          decoration: BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.white.withOpacity(0.5),
-                                spreadRadius: 5,
-                                blurRadius: 7,
-                                offset: const Offset(0, 3),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          color: const Color(0xFFffffff),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  context.pop(context);
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.all(10),
-                                  margin: const EdgeInsets.all(5),
-                                  width: size.width * 0.45,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFffffff),
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(8)),
-                                    border: Border.all(
-                                      color: Colors.red,
-                                      width: 1,
-                                    ),
-                                  ),
-                                  child: const Center(
-                                      child: TextButtonCustom(
-                                          text: "Trở về", color: Colors.red)),
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  if (state is DetailPageLoaded) {
-                                    final PostModelEntity postEntity =
-                                        state.post.toEntity();
-                                    checkValidToSubmit =
-                                        checkTextControllers(postEntity);
+              if (formState is FormPageLoading) {
+                return const Positioned(
+                    bottom: 0, left: 0, right: 0, child: LoadingWidget());
+              } else {
+                return BlocBuilder<DetailPageBloc, DetailPageState>(
+                  builder: (context, state) {
+                    return Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Column(
+                        children: [
+                          Container(
+                            color: const Color(0xFFffffff),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                ReturnButtonWidget(size: size), // button return
 
-                                    checkValidToSubmit = checkValidToSubmit &&
-                                        checkRadioButtonsBloc(postEntity);
+                                GestureDetector(
+                                  // button submit
+                                  onTap: () async {
+                                    if (state is DetailPageLoaded) {
+                                      final PostModelEntity postEntity =
+                                          state.post.toEntity();
+                                      //check validate form
+                                      checkValid(postEntity);
+                                      // Hiển thị thông báo dựa trên kết quả
+                                      if (checkValidToSubmit) {
+                                        //save to local
+                                        context
+                                            .read<FormPageBloc>()
+                                            .add(SaveForm((postEntity)));
+                                        // save to google form
+                                        context.read<FormPageBloc>().add(
+                                            SaveAnswerToGoogleSheet(
+                                                (postEntity.toDomain())));
+                                        //route to success page
+                                        String baseUrl =
+                                            "${Routers.homePage}/${Routers.detailPage}/$postId/${Routers.formPage}/${Routers.successPage}";
+                                        Map<String, dynamic> queryParams = {
+                                          "title": state.post.metaData.title,
+                                          "title2": state.post.metaData
+                                              .confirmationMessage,
+                                          "content": state.post.metaData
+                                              .customClosedFormMessage
+                                        };
+                                        String url = baseUrl.toUrl(queryParams);
+                                        context.go(url);
 
-                                    checkValidToSubmit = checkValidToSubmit &&
-                                        checkCheckBoxBloc(postEntity);
-
-                                    checkValidToSubmit = checkValidToSubmit &&
-                                        checkCustomDropBloc(postEntity);
-
-                                    checkValidToSubmit = checkValidToSubmit &&
-                                        checkTimePickerBloc(postEntity);
-
-                                    checkValidToSubmit = checkValidToSubmit &&
-                                        checkDatePickerBloc(postEntity);
-
-                                    // Hiển thị thông báo dựa trên kết quả
-                                    if (checkValidToSubmit) {
-                                      //save to local
-                                      context
-                                          .read<FormPageBloc>()
-                                          .add(SaveForm((postEntity)));
-                                      // save to google form
-                                      context.read<FormPageBloc>().add(
-                                          SaveAnswerLocal(
-                                              (postEntity.toDomain())));
-                                      String baseUrl =
-                                          "${Routers.homePage}/${Routers.detailPage}/$postId/${Routers.formPage}/${Routers.successPage}";
-                                      Map<String, dynamic> queryParams = {
-                                        "title": state.post.metaData.title,
-                                        "title2": state
-                                            .post.metaData.confirmationMessage,
-                                        "content": state.post.metaData
-                                            .customClosedFormMessage
-                                      };
-                                      String url = baseUrl.toUrl(queryParams);
-                                      context.go(url);
-
-                                      showMessenger(context);
-                                    } else {
-                                      showMessenger(context);
+                                        showMessenger(context);
+                                      } else {
+                                        showMessenger(context);
+                                      }
                                     }
-                                  }
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.all(10),
-                                  margin: const EdgeInsets.all(5),
-                                  width: size.width * 0.45,
-                                  decoration: BoxDecoration(
-                                    color: Colors.red,
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(8)),
-                                    border: Border.all(
-                                      color: Colors.red,
-                                      width: 1,
-                                    ),
-                                  ),
-                                  child: Center(
-                                    child: GoRouterState.of(context).name ==
-                                            Routers.reviewFormPage
-                                        ? const TextButtonCustom(
-                                            text: "Gửi lại",
-                                            color: Colors.white)
-                                        : const TextButtonCustom(
-                                            text: "Gửi", color: Colors.white),
-                                  ),
+                                  },
+                                  child: SubmitButtonWidget(
+                                      size: size), // interface button
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              );
+                        ],
+                      ),
+                    );
+                  },
+                );
+              }
             },
           ),
         ],
       ),
     );
+  }
+
+  // check validate in form
+  void checkValid(PostModelEntity postEntity) {
+    final List<bool> listValid = List.filled(6, true);
+    listValid[0] = checkTextFieldsBloc(postEntity);
+    listValid[1] = checkRadioButtonsBloc(postEntity);
+    listValid[2] = checkCheckBoxBloc(postEntity);
+    listValid[3] = checkCustomDropBloc(postEntity);
+    listValid[4] = checkTimePickerBloc(postEntity);
+    listValid[5] = checkDatePickerBloc(postEntity);
+    checkValidToSubmit = true;
+    for (var element in listValid) {
+      if (element == false) {
+        checkValidToSubmit = false;
+        break;
+      }
+    }
   }
 
 // hiển thị thông báo gửi
@@ -431,20 +234,12 @@ class FormPageWidget extends StatelessWidget {
     //Convert string to enum
     for (var item in items) {
       isError[item.index] = isError[item.index] ?? false;
-
       isRequired[item.index] = (isRequired[item.index] ?? item.isRequired);
-
-      String jsonType = item.type;
-
-      FormType? formType = jsonType.toFormType();
+      FormType? formType = item.type.toFormType();
+      answersControllers[item.index] = TextEditingController();
       switch (formType) {
-        case FormType.TEXT:
-          // textFieldsBloc[item.index] = TextFieldBLoc();
-          textEditControllers[item.index] = TextEditingController();
-          break;
-        case FormType.PARAGRAPH_TEXT:
-          // textFieldsBloc[item.index] = TextFieldBLoc();
-          textEditControllers[item.index] = TextEditingController();
+        case FormType.TEXT || FormType.PARAGRAPH_TEXT:
+          textFieldsBloc[item.index] = TextFieldBloc();
           break;
         case FormType.MULTIPLE_CHOICE:
           radioButtonsBloc[item.index] = RadioButtonBloc();
@@ -468,21 +263,19 @@ class FormPageWidget extends StatelessWidget {
     }
   }
 
-  bool checkTextControllers(PostModelEntity postEntity) {
+  bool checkTextFieldsBloc(PostModelEntity postEntity) {
     bool isValid = true;
-    for (var entry in textEditControllers.entries) {
+    for (var entry in textFieldsBloc.entries) {
       final key = entry.key;
-      final controller = entry.value;
-      print("controller ${controller.text}");
-      if ((controller.text.isEmpty || controller.text == "") &&
-          isRequired[key] == true) {
-        isError[key] = true;
+      final textFieldBloc = entry.value as TextFieldBloc;
+      final String? values = textFieldBloc.value;
+      print("submit values radio is $values");
+      if (values == null && isRequired[key] == true) {
+        textFieldBloc.setError();
         isValid = false;
       } else {
-        isError[key] = false;
         postEntity.items[key].result ??= [""];
-        postEntity.items[key].result![0] = controller.text;
-        // print("result ${postEntity.items[key].result![0]}");
+        postEntity.items[key].result![0] = values ?? "";
       }
     }
     return isValid;
@@ -494,14 +287,12 @@ class FormPageWidget extends StatelessWidget {
       final key = entry.key;
       final radioButtonsBloc = entry.value;
       if (radioButtonsBloc is RadioButtonBloc) {
-        final String? values = radioButtonsBloc.values;
+        final String? values = radioButtonsBloc.value;
         print("submit values radio is $values");
         if (values == null && isRequired[key] == true) {
-          radioButtonsBloc.validate("");
-          isError[key] = true;
+          radioButtonsBloc.setError();
           isValid = false;
         } else {
-          isError[key] = false;
           postEntity.items[key].result ??= [""];
           postEntity.items[key].result![0] = values ?? "";
         }
@@ -515,11 +306,10 @@ class FormPageWidget extends StatelessWidget {
     for (var entry in checkBoxBloc.entries) {
       final key = entry.key;
       final checkBoxBloc = entry.value as CheckboxButtonBloc;
-      final List<String> values = checkBoxBloc.getValue();
+      final List<String> values = checkBoxBloc.values;
       print("submit value checkbox is  $values");
-      if (isRequired[key] == true && values == []) {
-        isError[key] = true;
-        checkBoxBloc.validate(["error"]);
+      if (isRequired[key] == true && values.isEmpty) {
+        checkBoxBloc.setError();
         isValid = false;
         print(checkBoxBloc.state);
       } else {
@@ -589,13 +379,5 @@ class FormPageWidget extends StatelessWidget {
       }
     }
     return isValid;
-  }
-
-  List<ItemModel> loadAnswer() {
-    textEditControllers.forEach((key, value) {
-      value.text = answers?[key].result?[0] ?? "";
-      print(value.text);
-    });
-    return answers ?? [];
   }
 }

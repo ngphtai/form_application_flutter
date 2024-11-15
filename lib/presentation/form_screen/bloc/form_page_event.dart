@@ -16,10 +16,10 @@ class SaveForm extends FormPageEvent {
   List<Object> get props => [postsEntity];
 }
 
-class SaveAnswerLocal extends FormPageEvent {
+class SaveAnswerToGoogleSheet extends FormPageEvent {
   final PostsModel post;
 
-  SaveAnswerLocal(this.post);
+  SaveAnswerToGoogleSheet(this.post);
 
   @override
   List<Object> get props => [post];

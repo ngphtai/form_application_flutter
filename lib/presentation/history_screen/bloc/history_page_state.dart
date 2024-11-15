@@ -2,12 +2,19 @@ part of 'history_page_bloc.dart';
 
 sealed class HistoryPageState extends Equatable {
   const HistoryPageState();
+}
 
+final class HistoryPageInitial extends HistoryPageState {
   @override
   List<Object> get props => [];
 }
 
-final class HistoryPageInitial extends HistoryPageState {}
+final class HistoryPageLoading extends HistoryPageState {
+  HistoryPageLoading();
+
+  @override
+  List<Object> get props => [];
+}
 
 final class HistoryPageLoaded extends HistoryPageState {
   final List<PostsModel>? posts;

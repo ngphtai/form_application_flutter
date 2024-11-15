@@ -3,32 +3,37 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RadioButtonBloc extends Cubit<RadioButtonState> {
   RadioButtonBloc() : super(RadioButtonInitial());
+  String? select;
+  String? get value => select;
+  set value(String? value) => select = value;
 
-  String select = '';
   void validate(String value) {
-    // print("Validate $value");
     if (value.isNotEmpty) {
       select = value;
-      emit(RadioButtonValid(isValid: true));
+      emit(RadioButtonValidate(isValid: true));
     } else {
-      select = '';
-      emit(RadioButtonValid(isValid: false));
+      select = null;
+      emit(RadioButtonValidate(isValid: false));
     }
   }
 
-  String? get values => select != '' ? select : null;
+  void setError() {
+    emit(RadioButtonValidate(isValid: false));
+  }
 }
 
 abstract class RadioButtonState extends Equatable {}
 
 class RadioButtonInitial extends RadioButtonState {
   @override
-  List<Object?> get props => [];
+  List<Object> get props => [];
 }
 
-class RadioButtonValid extends RadioButtonState {
-  bool isValid;
-  RadioButtonValid({required this.isValid});
+class RadioButtonValidate extends RadioButtonState {
+  final bool isValid;
+
+  RadioButtonValidate({required this.isValid});
+
   @override
   List<Object?> get props => [isValid];
 }

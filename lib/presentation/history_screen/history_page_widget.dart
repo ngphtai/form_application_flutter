@@ -1,4 +1,5 @@
 import 'package:dsoft_form_application/common/logger/app_logger.dart';
+import 'package:dsoft_form_application/presentation/form_screen/component/screen/loading_widget.dart';
 import 'package:dsoft_form_application/presentation/history_screen/bloc/history_page_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,34 +20,50 @@ class HistoryPageWidget extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
 
     return BlocBuilder<HistoryPageBloc, HistoryPageState>(
-      bloc: HistoryPageBloc()..add(LoadPostFromLocal()),
+      bloc: context.read<HistoryPageBloc>()..add(LoadPostFromLocal()),
       builder: (context, state) {
+        print("state hien tai  $state");
         AppLogger.instance.d(state.toString());
-        if (state is HistoryPageInitial) {
-          return Center(
-            child: SizedBox(
-              height: 50.w,
-              width: 50.w,
-              child: LoadingIndicator(
-                indicatorType: Indicator.circleStrokeSpin,
-                colors: const [Colors.red],
-                strokeWidth: 4.0,
-                pathBackgroundColor: Colors.red[200],
-                backgroundColor: const Color(0xfff7f7f7),
-              ),
-            ),
-          );
+        if (state is HistoryPageInitial || state is HistoryPageLoading) {
+          return const LoadingWidget();
         } else if (state is HistoryPageLoaded) {
           if (state.posts?.isEmpty == true) {
-            return const Center(
-              child: Text('No data'),
-            );
+            return RefreshIndicator(
+                color: Colors.red,
+                onRefresh: () async {
+                  final bloc = context.read<HistoryPageBloc>();
+                  await Future.delayed(const Duration(seconds: 1));
+                  bloc.add(LoadPostFromLocal());
+                  print("state is ${context.read<HistoryPageBloc>().state}");
+                },
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('No data'),
+                      GestureDetector(
+                        onTap: () {
+                          context
+                              .read<HistoryPageBloc>()
+                              .add(LoadPostFromLocal());
+                          print(
+                              "state is ${context.read<HistoryPageBloc>().state}");
+                        },
+                        child: const Text(
+                          "Thử lại",
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ),
+                    ],
+                  ),
+                ));
           }
           return RefreshIndicator(
             color: Colors.red,
             onRefresh: () async {
+              final bloc = context.read<HistoryPageBloc>();
               await Future.delayed(const Duration(seconds: 1));
-              context.read<HistoryPageBloc>().add(LoadPostFromLocal());
+              bloc.add(LoadPostFromLocal());
             },
             child: ListView.builder(
               itemCount: state.posts?.length,

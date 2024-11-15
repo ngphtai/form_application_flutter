@@ -4,17 +4,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 // ignore: must_be_immutable
 class CheckboxButton extends StatefulWidget {
-  CheckboxButton({
-    super.key,
-    required this.listCheckbox,
-    this.isRequest = false,
-    required this.checkboxButtonBloc,
-    required this.isError,
-  });
+  CheckboxButton(
+      {Key? key,
+      required this.listCheckbox,
+      required this.isRequest,
+      required this.checkboxButtonBloc,
+      required this.controller})
+      : super(key: key);
   final List<String> listCheckbox;
-  bool isError;
+  bool isError = false;
   final bool isRequest;
   final CheckboxButtonBloc checkboxButtonBloc;
+  final TextEditingController controller;
   @override
   _CheckboxButtonState createState() => _CheckboxButtonState();
 }
@@ -25,7 +26,22 @@ class _CheckboxButtonState extends State<CheckboxButton>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return BlocBuilder<CheckboxButtonBloc, bool>(builder: (context, isValid) {
+    if (widget.controller.text.isNotEmpty) {
+      final items = widget.controller.text
+          .replaceAll('[', '')
+          .replaceAll(']', '')
+          .split(',');
+      selectedCheckboxes.addAll(items.map((e) => e.trim()));
+      context.read<CheckboxButtonBloc>().validate(selectedCheckboxes);
+    }
+    return BlocBuilder<CheckboxButtonBloc, CheckboxButtonState>(
+        builder: (context, state) {
+      if (state is CheckboxButtonInitial) {
+        widget.isError = false;
+      } else {
+        bool isValid = context.read<CheckboxButtonBloc>().values.isNotEmpty;
+        isValid ? widget.isError = false : widget.isError = true;
+      }
       return Container(
         decoration: BoxDecoration(
           color: const Color(0xfff4f4f4),
