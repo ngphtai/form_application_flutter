@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:dsoft_form_application/presentation/form_screen/component/bloc/time_picker_custom_bloc.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
@@ -18,6 +19,7 @@ class TimePickerCustom extends StatefulWidget {
   });
 
   @override
+  // ignore: library_private_types_in_public_api
   _TimePickerCustomState createState() => _TimePickerCustomState();
   final String title;
   bool isError = false;
@@ -37,15 +39,19 @@ class _TimePickerCustomState extends State<TimePickerCustom>
   bool isVisible = false;
   String formattedTime = "";
   TextEditingController controller = TextEditingController();
+  bool isClose = false;
   @override
   Widget build(BuildContext context) {
     super.build(context);
     Size size = MediaQuery.of(context).size;
     return BlocBuilder<TimePickerCustomBloc, TimePickerState>(
         builder: (context, state) {
-      if (widget.controller.text.isNotEmpty) {
+      // handle get answer
+      if (widget.controller.text.isNotEmpty && !isClose) {
         String value = widget.controller.text;
         context.read<TimePickerCustomBloc>().changeValue(value);
+        controller.text = value;
+        isClose = true;
       }
       String value = context.read<TimePickerCustomBloc>().getState.toString();
 
@@ -90,19 +96,17 @@ class _TimePickerCustomState extends State<TimePickerCustom>
                     const Gap(10),
                     Expanded(
                       child: TextField(
-                        controller: widget.controller.text.isEmpty
-                            ? controller.text.isEmpty
-                                ? TextEditingController(text: "Giờ")
-                                : controller
-                            : widget.controller,
-                        style: TextStyle(color: Colors.black),
+                        controller: controller.text.isEmpty
+                            ? TextEditingController(text: "Giờ")
+                            : controller,
+                        style: const TextStyle(color: Colors.black),
                         keyboardType: null,
                         onTap: () {
                           setState(() {
                             isVisible ? isVisible = false : isVisible = true;
                           });
                         },
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           border: InputBorder.none,
                         ),
                       ),
@@ -216,11 +220,11 @@ class _TimePickerCustomState extends State<TimePickerCustom>
                                   decoration: BoxDecoration(
                                       color: timeFormat == "AM"
                                           ? Colors.grey.shade800
-                                          : Color(0xFFc7c7c7),
+                                          : const Color(0xFFc7c7c7),
                                       border: Border.all(
                                         color: timeFormat == "AM"
                                             ? Colors.grey
-                                            : Color(0xFFc7c7c7),
+                                            : const Color(0xFFc7c7c7),
                                       )),
                                   child: const Text(
                                     "AM",
@@ -253,11 +257,11 @@ class _TimePickerCustomState extends State<TimePickerCustom>
                                   decoration: BoxDecoration(
                                     color: timeFormat == "PM"
                                         ? Colors.grey.shade800
-                                        : Color(0xFFc7c7c7),
+                                        : const Color(0xFFc7c7c7),
                                     border: Border.all(
                                       color: timeFormat == "PM"
                                           ? Colors.grey
-                                          : Color(0xFFc7c7c7),
+                                          : const Color(0xFFc7c7c7),
                                     ),
                                   ),
                                   child: const Text(
@@ -272,27 +276,6 @@ class _TimePickerCustomState extends State<TimePickerCustom>
                         ],
                       ),
                     ),
-                    // if (state is TimePickerInitial)
-                    //   Text("Intinal")
-                    // else if (state is TimePickerChanged)
-                    //   Column(
-                    //     children: [
-                    //       Text('Slider Value: ${state.value}'),
-                    //       Slider(
-                    //         value: double.parse(state.value),
-                    //         min: 0.0,
-                    //         max: 100.0,
-                    //         divisions: 10,
-                    //         label: '$_sliderValue',
-                    //         onChanged: (double value) {
-                    //           context
-                    //               .read<TimePickerCustomBloc>()
-                    //               .changeValue(value.toString());
-                    //         },
-                    //       ),
-                    //       Text("Changed: ${state.value}"),
-                    //     ],
-                    //   )
                   ],
                 )
               : const Gap(8),

@@ -1,15 +1,15 @@
-import 'package:dsoft_form_application/common/logger/app_logger.dart';
 import 'package:dsoft_form_application/core/routing/route_path.dart';
 import 'package:dsoft_form_application/core/styles/app_images.dart';
 import 'package:dsoft_form_application/presentation/detail_screen/bloc/detail_page_bloc.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/screen/text_button.dart';
 import 'package:dsoft_form_application/shared/widget/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:loading_indicator/loading_indicator.dart';
+import '../form_screen/component/screen/loading_widget.dart';
+import '../form_screen/component/screen/return_button_widget.dart';
+import '../form_screen/component/screen/text_button.dart';
 
 class ChildDetailPageScreen extends StatefulWidget {
   const ChildDetailPageScreen({
@@ -23,14 +23,6 @@ class ChildDetailPageScreen extends StatefulWidget {
 }
 
 class _ChildDetailPageScreenState extends State<ChildDetailPageScreen> {
-  @override
-  void initState() {
-    context
-        .read<DetailPageBloc>()
-        .add(LoadDetailPost(int.parse(widget.postId)));
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -46,21 +38,25 @@ class _ChildDetailPageScreenState extends State<ChildDetailPageScreen> {
       backgroundColor: const Color(0xFFf7f7f7),
       body: BlocBuilder<DetailPageBloc, DetailPageState>(
         builder: (context, state) {
-          if (state is DetailPageInitial || state is DetailPageLoading) {
-            return Center(
-              child: Container(
-                color: Colors.white,
-                height: 50.w,
-                width: 50.w,
-                child: LoadingIndicator(
-                  indicatorType: Indicator.circleStrokeSpin,
-                  colors: const [Colors.red],
-                  strokeWidth: 4.0,
-                  pathBackgroundColor: Colors.red[200],
-                  backgroundColor: const Color(0xfff7f7f7),
-                ),
-              ),
-            );
+          if (state is DetailPageInitial) {
+            int? numericId;
+            if (int.tryParse(widget.postId) != null) {
+              numericId = int.parse(widget.postId);
+            }
+            // Pass numericId or postId as appropriate
+            if (numericId != null) {
+              context
+                  .read<DetailPageBloc>()
+                  .add(LoadDetailPost(int.parse(widget.postId)));
+            } else if (GoRouterState.of(context).name ==
+                Routers.reviewDetailPage) {
+              context
+                  .read<DetailPageBloc>()
+                  .add(LoadDetailPostLocal(widget.postId));
+            }
+            return const LoadingWidget();
+          } else if (state is DetailPageLoading) {
+            return const LoadingWidget();
           } else if (state is DetailPageLoaded) {
             return SizedBox(
               height: 1000.h,
@@ -139,30 +135,7 @@ class _ChildDetailPageScreenState extends State<ChildDetailPageScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              GestureDetector(
-                                onTap: () {
-                                  context.go(Routers.homePage);
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.all(10),
-                                  margin: const EdgeInsets.all(5),
-                                  width: size.width * 0.45,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFffffff),
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(
-                                      color: Colors.red,
-                                      width: 1,
-                                    ),
-                                  ),
-                                  child: const Center(
-                                    child: TextButtonCustom(
-                                      text: "Trở về",
-                                      color: Colors.red,
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              ReturnButtonWidget(size: size), // button return
                               GestureDetector(
                                 onTap: () {
                                   if (GoRouterState.of(context).name ==
@@ -209,7 +182,7 @@ class _ChildDetailPageScreenState extends State<ChildDetailPageScreen> {
               ),
             );
           } else {
-            return Center(
+            return const Center(
               child: Text("Có lỗi xảy ra"),
             );
           }

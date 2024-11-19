@@ -14,3 +14,11 @@ class LoadDetailPost extends DetailPageEvent {
   @override
   List<Object> get props => [id];
 }
+
+class LoadDetailPostLocal extends DetailPageEvent {
+  String id;
+  LoadDetailPostLocal(this.id);
+
+  @override
+  List<Object> get props => [];
+}

@@ -23,9 +23,8 @@ class CustomDropButton extends StatefulWidget {
 class _CustomDropButtonState extends State<CustomDropButton>
     with AutomaticKeepAliveClientMixin {
   String? selectedValue;
-
   bool isDropdownVisible = false;
-
+  bool isClose = false;
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -35,10 +34,14 @@ class _CustomDropButtonState extends State<CustomDropButton>
         create: (context) => widget.customDropButtonBloc,
         child: BlocBuilder<CustomDropButtonBloc, CustomDropButtonState>(
             builder: (context, state) {
-          if (widget.controller.text.isNotEmpty) {
+          // handle get answer and set answer to default
+          if (widget.controller.text.isNotEmpty && !isClose) {
             String value = widget.controller.text;
             context.read<CustomDropButtonBloc>().validate(value);
+            selectedValue = value;
+            isClose = true;
           }
+
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -67,20 +70,14 @@ class _CustomDropButtonState extends State<CustomDropButton>
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      widget.controller.text.isEmpty
-                          ? Text(
-                              selectedValue ?? 'Lựa chọn',
-                              style: TextStyle(
-                                  color: selectedValue == null
-                                      ? const Color(0xff8C8C8C)
-                                      : Colors.black,
-                                  fontWeight: FontWeight.w400),
-                            )
-                          : Text(
-                              widget.controller.text,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.w400),
-                            ),
+                      Text(
+                        selectedValue ?? 'Lựa chọn',
+                        style: TextStyle(
+                            color: selectedValue == null
+                                ? const Color(0xff8C8C8C)
+                                : Colors.black,
+                            fontWeight: FontWeight.w400),
+                      ),
                       Icon(isDropdownVisible
                           ? Icons.keyboard_arrow_up_outlined
                           : Icons.keyboard_arrow_down_outlined),
@@ -131,36 +128,6 @@ class _CustomDropButtonState extends State<CustomDropButton>
             ],
           );
         }));
-
-    // void _showOptionsBottomSheet(BuildContext context) {
-    //   showModalBottomSheet(
-    //     // sheet select
-    //     context: context,
-    //     shape: const RoundedRectangleBorder(
-    //       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-    //     ),
-    //     builder: (BuildContext context) {
-    //       return Container(
-    //         padding: const EdgeInsets.all(16),
-    //         child: Column(
-    //           mainAxisSize: MainAxisSize.min,
-    //           children: [
-    //             for (String item in widget.listDropDown)
-    //               ListTile(
-    //                 title: Text(item),
-    //                 onTap: () {
-    //                   setState(() {
-    //                     selectedValue = item;
-    //                   });
-    //                   Navigator.pop(context);
-    //                 },
-    //               ),
-    //           ],
-    //         ),
-    //       );
-    //     },
-    //   );
-    // }
   }
 
   @override

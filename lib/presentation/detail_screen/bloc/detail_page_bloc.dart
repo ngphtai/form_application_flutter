@@ -12,6 +12,7 @@ part 'detail_page_state.dart';
 class DetailPageBloc extends Bloc<DetailPageEvent, DetailPageState> {
   DetailPageBloc() : super(DetailPageInitial()) {
     on<LoadDetailPost>(_loadDetailPost);
+    on<LoadDetailPostLocal>(_loadDetailPostFromLocal);
   }
   final _postSeviceable = diPostSeviceable;
 
@@ -24,5 +25,19 @@ class DetailPageBloc extends Bloc<DetailPageEvent, DetailPageState> {
     }, (result) {
       emit(DetailPageLoaded(result));
     });
+  }
+
+  Future<void> _loadDetailPostFromLocal(
+      LoadDetailPostLocal event, Emitter<DetailPageState> emit) async {
+    final result = await _postSeviceable.getAnswerFromLocal(event.id);
+    result.fold(
+      (left) {
+        AppLogger.instance.e(left.toString());
+      },
+      (result) {
+        emit(DetailPageLoaded(result ?? [] as PostsModel));
+        AppLogger.instance.i("Detail post is loaded from local success!!");
+      },
+    );
   }
 }

@@ -9,6 +9,7 @@ import '../../common/logger/app_logger.dart';
 abstract class PostLocalDataSource {
   Future<bool> savePost(PostModelEntity post);
   Future<List<PostModelEntity>?> getPostsLocal();
+
   Future<PostModelEntity?> getAnswers(String id);
   Future<bool> deletePostLocal(int id);
 }
@@ -29,18 +30,18 @@ class PostLocalDataSourceImpl extends PostLocalDataSource {
   @override
   Future<bool> savePost(PostModelEntity post) async {
     try {
-      final bool? result = _postEntityBox?.containsKey(post.metaData.id);
-      if (result! == false) {
-        await _postEntityBox!.put(post.metaData.id, post);
-        AppLogger.instance.e("Posts is saved in local device");
-        return true;
-      } else {
-        AppLogger.instance.e("Posts was saved in local device!!!!!");
-        return true;
-      }
-      // await _postEntityBox!.put(post.metaData.id, post);
-      // AppLogger.instance.i("Posts is saved in local device");
-      // return true;
+      // final bool? result = _postEntityBox?.containsKey(post.metaData.id);
+      // if (result! == false) {
+      //   await _postEntityBox!.put(post.metaData.id, post);
+      //   AppLogger.instance.e("Posts is saved in local device");
+      //   return true;
+      // } else {
+      //   AppLogger.instance.e("Posts was saved in local device!!!!!");
+      //   return true;
+      // }
+      await _postEntityBox!.put(post.metaData.id, post);
+      AppLogger.instance.i("Posts is saved in local device");
+      return true;
     } catch (e) {
       debugPrint("HAVE ERROR IN PUT DATA TO BOX ${e.toString()}");
       return false;

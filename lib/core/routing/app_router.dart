@@ -1,10 +1,12 @@
 import 'package:dsoft_form_application/core/routing/navigationbar.dart';
 import 'package:dsoft_form_application/presentation/history_screen/history_page_screen.dart';
 
+import '../../presentation/form_screen/form_page_screen.dart';
+
 import '../../presentation/success_screen/success_page_screen.dart';
 import '../../presentation/detail_screen/detail_page_screen.dart';
 import '../../presentation/home_screen/home_page_screen.dart';
-import '../../presentation/form_screen/form_page_screen.dart';
+
 import '../../presentation/splash_screen/splash_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
@@ -60,7 +62,7 @@ class AppRouter {
                           return NoTransitionPage(
                               key: state.pageKey,
                               restorationId: state.pageKey.value,
-                              child: FormPageScreen(postId: postId));
+                              child: ReviewFormPageScreen(postId: postId));
                         },
                         routes: [
                           GoRoute(
@@ -126,8 +128,31 @@ class AppRouter {
                           return NoTransitionPage(
                               key: state.pageKey,
                               restorationId: state.pageKey.value,
-                              child: FormPageScreen(postId: postId));
+                              child: ReviewFormPageScreen(postId: postId));
                         },
+                        routes: [
+                          GoRoute(
+                            name: Routers.reviewSuccessPage,
+                            path: Routers.successPage,
+                            pageBuilder: (context, state) {
+                              // Lấy queryParameters từ URI
+                              String title =
+                                  state.uri.queryParameters['title'] ?? '';
+                              String title2 =
+                                  state.uri.queryParameters['title2'] ?? '';
+                              String content =
+                                  state.uri.queryParameters['content'] ?? '';
+
+                              return NoTransitionPage(
+                                  key: state.pageKey,
+                                  restorationId: state.pageKey.value,
+                                  child: SuccessPageScreen(
+                                      title: title,
+                                      title2: title2,
+                                      content: content));
+                            },
+                          )
+                        ],
                       )
                     ],
                   )

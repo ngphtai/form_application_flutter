@@ -1,23 +1,22 @@
 import 'package:dsoft_form_application/common/extensions/conver_string_to_enum.dart';
 import 'package:dsoft_form_application/presentation/form_screen/component/bloc/checkbox_button_bloc.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/bloc/custom_drop_button_bloc.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/bloc/date_picker_bloc.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/bloc/radio_button_bloc.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/bloc/text_field_bloc.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/bloc/time_picker_custom_bloc.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/checkbox_button.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/custom_drop_button_.dart';
 import 'package:dsoft_form_application/presentation/form_screen/component/date_picker.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/radio_button.dart';
 import 'package:dsoft_form_application/presentation/form_screen/component/share_container.dart';
 import 'package:dsoft_form_application/presentation/form_screen/component/text_field_custom_without_bloc.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/time_picker_custom.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../../common/enums/form_page_enums.dart';
-import '../../../../domain/models/item_model.dart';
 import '../../../detail_screen/bloc/detail_page_bloc.dart';
+import '../bloc/custom_drop_button_bloc.dart';
+import '../bloc/date_picker_bloc.dart';
+import '../bloc/radio_button_bloc.dart';
+import '../bloc/text_field_bloc.dart';
+import '../bloc/time_picker_custom_bloc.dart';
+import '../checkbox_button.dart';
+import '../custom_drop_button_.dart';
+import '../radio_button.dart';
+
+import '../time_picker_custom.dart';
 
 class FormWidget extends StatelessWidget {
   const FormWidget({
@@ -47,8 +46,6 @@ class FormWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //print result in answerController ra
-    answersControllers.forEach((key, value) => print(value.text));
     bool isRequired = state.post.itemModels[index].isRequired ?? false;
 
     final item = state.post.itemModels[index];

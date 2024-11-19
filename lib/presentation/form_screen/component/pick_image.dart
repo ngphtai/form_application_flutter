@@ -27,6 +27,7 @@ class _PickImageState extends State<PickImage>
   final List<String> listNameFile = [];
   final List<double> listSizeFile = []; //size by MB
   bool isVisible = false;
+  bool isClose = false;
   @override
   Widget build(BuildContext context) {
     super.build(context);

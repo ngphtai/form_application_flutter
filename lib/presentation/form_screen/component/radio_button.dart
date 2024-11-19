@@ -1,6 +1,7 @@
-import 'package:dsoft_form_application/presentation/form_screen/component/bloc/radio_button_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'bloc/radio_button_bloc.dart';
 
 // ignore: must_be_immutable
 class RadioButton extends StatefulWidget {
@@ -25,18 +26,22 @@ class RadioButton extends StatefulWidget {
 
 class _RadioButtonState extends State<RadioButton>
     with AutomaticKeepAliveClientMixin {
+  bool isClose = false;
   @override
   Widget build(BuildContext context) {
     super.build(context);
-
     return BlocProvider(
       create: (context) => widget.radioButtonBloc,
       child: BlocBuilder<RadioButtonBloc, RadioButtonState>(
           builder: (context, state) {
-        if (widget.controller.text.isNotEmpty) {
+        // handle get value from local database
+        if (widget.controller.text.isNotEmpty && isClose == false) {
           String value = widget.controller.text;
+          widget.selected = value;
           context.read<RadioButtonBloc>().validate(value);
+          isClose = true;
         }
+        //handle error when init and validate
         if (state is RadioButtonInitial) {
           widget.isError = false;
         } else {
@@ -59,9 +64,7 @@ class _RadioButtonState extends State<RadioButton>
               return RadioListTile<String>(
                 title: Text(option),
                 value: option,
-                groupValue: widget.controller.text.isEmpty
-                    ? widget.selected
-                    : widget.controller.text,
+                groupValue: widget.selected,
                 activeColor: Colors.red,
                 onChanged: (value) {
                   setState(() {

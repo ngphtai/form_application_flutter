@@ -20,6 +20,9 @@ class SharedAppBar extends StatelessWidget implements PreferredSizeWidget {
             onTap: () {
               if (GoRouterState.of(context).name == Routers.successPage) {
                 context.go(Routers.homePage);
+              } else if (GoRouterState.of(context).name ==
+                  Routers.reviewSuccessPage) {
+                context.go(Routers.historyPage);
               } else {
                 context.pop();
               }

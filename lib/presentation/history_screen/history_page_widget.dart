@@ -1,19 +1,17 @@
-import 'package:dsoft_form_application/common/logger/app_logger.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/screen/loading_widget.dart';
-import 'package:dsoft_form_application/presentation/history_screen/bloc/history_page_bloc.dart';
+import '../../common/logger/app_logger.dart';
+import "../form_screen/component/screen/loading_widget.dart";
+import 'bloc/history_page_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
-import 'package:loading_indicator/loading_indicator.dart';
 
 import '../../core/routing/route_path.dart';
 import '../../core/styles/app_icons.dart';
 import '../../core/styles/app_images.dart';
 
 class HistoryPageWidget extends StatelessWidget {
-  const HistoryPageWidget({Key? key}) : super(key: key);
+  const HistoryPageWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +20,6 @@ class HistoryPageWidget extends StatelessWidget {
     return BlocBuilder<HistoryPageBloc, HistoryPageState>(
       bloc: context.read<HistoryPageBloc>()..add(LoadPostFromLocal()),
       builder: (context, state) {
-        print("state hien tai  $state");
         AppLogger.instance.d(state.toString());
         if (state is HistoryPageInitial || state is HistoryPageLoading) {
           return const LoadingWidget();
@@ -34,20 +31,20 @@ class HistoryPageWidget extends StatelessWidget {
                   final bloc = context.read<HistoryPageBloc>();
                   await Future.delayed(const Duration(seconds: 1));
                   bloc.add(LoadPostFromLocal());
-                  print("state is ${context.read<HistoryPageBloc>().state}");
                 },
                 child: Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('No data'),
+                      const Text(
+                        'Không có dữ liệu',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       GestureDetector(
                         onTap: () {
                           context
                               .read<HistoryPageBloc>()
                               .add(LoadPostFromLocal());
-                          print(
-                              "state is ${context.read<HistoryPageBloc>().state}");
                         },
                         child: const Text(
                           "Thử lại",
@@ -75,7 +72,7 @@ class HistoryPageWidget extends StatelessWidget {
                     GestureDetector(
                       onTap: () {
                         context.push(
-                            '${Routers.historyPage}/${Routers.detailPage}/$index');
+                            '${Routers.historyPage}/${Routers.detailPage}/${post?.id}'); // get id post not index
                       },
                       child: Center(
                         child: Container(

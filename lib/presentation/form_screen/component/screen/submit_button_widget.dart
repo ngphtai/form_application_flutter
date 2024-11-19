@@ -1,8 +1,8 @@
-import 'package:dsoft_form_application/presentation/form_screen/component/screen/text_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/routing/route_path.dart';
+import 'text_button.dart';
 
 class SubmitButtonWidget extends StatelessWidget {
   const SubmitButtonWidget({

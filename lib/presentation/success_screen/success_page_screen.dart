@@ -20,7 +20,11 @@ class SuccessPageScreen extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: () async {
-        context.go(Routers.homePage);
+        if (GoRouterState.of(context).name == Routers.formPage) {
+          context.go(Routers.homePage);
+        } else {
+          context.go(Routers.historyPage);
+        }
         return false;
       },
       child: Scaffold(
@@ -45,13 +49,13 @@ class SuccessPageScreen extends StatelessWidget {
                 ],
               ),
               Padding(
-                padding: EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
                     Text(
                       title2,
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 16),
                     ),
                     Text(
                       content,

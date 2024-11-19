@@ -8,6 +8,7 @@ import 'package:dsoft_form_application/presentation/form_screen/component/screen
 import 'package:dsoft_form_application/presentation/form_screen/component/screen/loading_widget.dart';
 import 'package:dsoft_form_application/presentation/form_screen/component/screen/return_button_widget.dart';
 import 'package:dsoft_form_application/presentation/form_screen/component/screen/submit_button_widget.dart';
+
 import '../../domain/models/item_model.dart';
 import '../detail_screen/bloc/detail_page_bloc.dart';
 import 'bloc/form_page_bloc.dart';
@@ -15,7 +16,6 @@ import 'component/bloc/custom_drop_button_bloc.dart';
 import '../../core/routing/route_path.dart';
 import '../../shared/widget/app_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../common/enums/form_page_enums.dart';
@@ -23,10 +23,10 @@ import 'component/bloc/date_picker_bloc.dart';
 import 'component/bloc/time_picker_custom_bloc.dart';
 
 // ignore: must_be_immutable
-class FormPageWidget extends StatelessWidget {
-  FormPageWidget({super.key, required this.postId});
+class ReviewFormPageWidget extends StatelessWidget {
+  ReviewFormPageWidget({super.key, required this.postId});
   final DateTime? datePicker = null;
-  final int postId;
+  final String postId;
   bool checkValidToSubmit = true;
   // khai báo danh sách bloc
   Map<int, TextEditingController> answersControllers = {};
@@ -57,14 +57,25 @@ class FormPageWidget extends StatelessWidget {
       backgroundColor: const Color(0xFFf7f7f7),
       body: Stack(
         children: [
-          BlocBuilder<DetailPageBloc, DetailPageState>(
+          BlocBuilder<DetailPageBloc, DetailPageState>(// load post detail
               builder: (context, state) {
-            if (state is DetailPageInitial || state is DetailPageLoading) {
+            if (state is DetailPageInitial) {
+              // lấy dữ liệu post phụ thuộc vào loại đường dẫn của trang nếu là detail page thì lấy online còn review detail page thì lấy local
+              int? numericId;
+              if (int.tryParse(postId) != null) {
+                numericId = int.parse(postId);
+              }
+              // Pass numericId or postId as appropriate
+              if (numericId != null) {
+                context.read<DetailPageBloc>().add(LoadDetailPost(numericId));
+              } else {
+                context.read<DetailPageBloc>().add(LoadDetailPostLocal(postId));
+              }
               return const LoadingWidget();
             }
             if (state is DetailPageLoaded) {
               initializeBlocs(state.post.itemModels);
-              return BlocBuilder<FormPageBloc, FormPageState>(
+              return BlocBuilder<FormPageBloc, FormPageState>(// load answer
                   builder: (context, stateAnswers) {
                 if (stateAnswers is FormPageInitial) {
                   String idMetaDataPost = state.post.metaData.id;
@@ -74,19 +85,20 @@ class FormPageWidget extends StatelessWidget {
                 }
                 if (stateAnswers is FormPageLoaded &&
                     GoRouterState.of(context).name == Routers.reviewFormPage) {
-                  List<ItemModel>? answers = stateAnswers.post?.itemModels;
-                  if (answers != null) {
+                  List<ItemModel>? answers =
+                      stateAnswers.post?.itemModels ?? [];
+                  // lấy kết quả đã điền
+                  if (answers.isNotEmpty) {
                     answersControllers.forEach((key, value) {
-                      if (answers[key].result?[0] != null) {
+                      if (answers[key].result != null &&
+                          answers[key].result!.isNotEmpty) {
                         int length = answers[key].result?.length ?? 0;
                         if (length > 1) {
                           value.text = answers[key].result.toString();
                         } else {
-                          value.text = answers[key].result?[0] ?? "";
+                          value.text = answers[key].result![0];
                         }
                       }
-
-                      print(value.text);
                     });
                   }
                 }
@@ -115,8 +127,7 @@ class FormPageWidget extends StatelessWidget {
                       height: size.height * 0.1,
                     )
                   ],
-                  // );
-                ); // xoá o day
+                );
               });
             }
             return const Text("");
@@ -142,7 +153,6 @@ class FormPageWidget extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 ReturnButtonWidget(size: size), // button return
-
                                 GestureDetector(
                                   // button submit
                                   onTap: () async {
@@ -162,8 +172,16 @@ class FormPageWidget extends StatelessWidget {
                                             SaveAnswerToGoogleSheet(
                                                 (postEntity.toDomain())));
                                         //route to success page
-                                        String baseUrl =
-                                            "${Routers.homePage}/${Routers.detailPage}/$postId/${Routers.formPage}/${Routers.successPage}";
+                                        String baseUrl;
+                                        if (GoRouterState.of(context).name ==
+                                            Routers.formPage) {
+                                          baseUrl =
+                                              "${Routers.homePage}/${Routers.detailPage}/$postId/${Routers.formPage}/${Routers.successPage}";
+                                        } else {
+                                          baseUrl =
+                                              '/historyPage/detailPage/$postId/formPage/successPage';
+                                        }
+
                                         Map<String, dynamic> queryParams = {
                                           "title": state.post.metaData.title,
                                           "title2": state.post.metaData
@@ -269,7 +287,7 @@ class FormPageWidget extends StatelessWidget {
       final key = entry.key;
       final textFieldBloc = entry.value as TextFieldBloc;
       final String? values = textFieldBloc.value;
-      print("submit values radio is $values");
+      print("submit values text field is $values");
       if (values == null && isRequired[key] == true) {
         textFieldBloc.setError();
         isValid = false;

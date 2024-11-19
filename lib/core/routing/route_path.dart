@@ -25,4 +25,6 @@ class Routers {
 
   /// static variables.
   static const reviewFormPage = 'reviewFormPage';
+
+  static var reviewSuccessPage = 'reviewSuccessPage';
 }

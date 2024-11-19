@@ -27,14 +27,17 @@ class DatePicker extends StatefulWidget {
 
 class _DatePickerState extends State<DatePicker>
     with AutomaticKeepAliveClientMixin {
+  bool isClose = false;
   @override
   Widget build(BuildContext context) {
     super.build(context);
     return BlocBuilder<DatePickerBloc, DatePickerState>(
         builder: (context, state) {
-      if (widget.controller.text.isNotEmpty) {
+      if (widget.controller.text.isNotEmpty && !isClose) {
         String value = widget.controller.text;
         context.read<DatePickerBloc>().validate(value.toDateTime());
+        widget.datePicker = value.toDateTime();
+        isClose = true;
       }
       //check error
       if (state is DatePickerInitial) {
@@ -81,14 +84,12 @@ class _DatePickerState extends State<DatePicker>
                       child: widget.datePicker != null
                           ? Text(
                               "${widget.datePicker!.day}/${widget.datePicker!.month}/${widget.datePicker!.year}")
-                          : widget.controller.text != ""
-                              ? Text(widget.controller.text)
-                              : const Text(
-                                  "Tháng, ngày, năm ",
-                                  style: TextStyle(
-                                    color: Color(0xff8C8C8C),
-                                  ),
-                                ),
+                          : const Text(
+                              "Tháng, ngày, năm ",
+                              style: TextStyle(
+                                color: Color(0xff8C8C8C),
+                              ),
+                            ),
                     )
                   ],
                 ))),

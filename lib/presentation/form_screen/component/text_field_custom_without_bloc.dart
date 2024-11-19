@@ -2,14 +2,15 @@ import 'package:dsoft_form_application/presentation/form_screen/component/bloc/t
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+// ignore: must_be_immutable
 class TextFieldCustomWithBloc extends StatefulWidget {
   TextFieldCustomWithBloc({
-    Key? key,
+    super.key,
     required this.maxLine,
     required this.isRequest,
     required this.textController,
     required this.textFieldBloc,
-  }) : super(key: key);
+  });
 
   final int maxLine;
   final bool isRequest;

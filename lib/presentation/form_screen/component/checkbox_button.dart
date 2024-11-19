@@ -1,6 +1,7 @@
-import 'package:dsoft_form_application/presentation/form_screen/component/bloc/checkbox_button_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'bloc/checkbox_button_bloc.dart';
 
 // ignore: must_be_immutable
 class CheckboxButton extends StatefulWidget {
@@ -23,16 +24,18 @@ class CheckboxButton extends StatefulWidget {
 class _CheckboxButtonState extends State<CheckboxButton>
     with AutomaticKeepAliveClientMixin {
   final List<String> selectedCheckboxes = [];
+  bool isClose = false;
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    if (widget.controller.text.isNotEmpty) {
+    if (widget.controller.text.isNotEmpty && !isClose) {
       final items = widget.controller.text
           .replaceAll('[', '')
           .replaceAll(']', '')
           .split(',');
       selectedCheckboxes.addAll(items.map((e) => e.trim()));
       context.read<CheckboxButtonBloc>().validate(selectedCheckboxes);
+      isClose = true;
     }
     return BlocBuilder<CheckboxButtonBloc, CheckboxButtonState>(
         builder: (context, state) {
