@@ -1,10 +1,11 @@
+import 'package:dsoft_form_application/common/logger/app_logger.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PickImageBloc extends Cubit<bool> {
   PickImageBloc() : super(true);
 
   void validate(List<String> value) {
-    print(value.length);
+    AppLogger.instance.i("value in pick image is ${value.length}");
     emit(value.isNotEmpty);
   }
 }

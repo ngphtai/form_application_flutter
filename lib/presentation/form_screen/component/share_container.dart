@@ -42,7 +42,7 @@ class ShareContainer extends StatelessWidget {
                     style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
-                        color: Colors.red)),
+                        color: Color(0xffdb1e39))),
               ]))),
           Container(
               margin: const EdgeInsets.fromLTRB(8, 2, 8, 2),

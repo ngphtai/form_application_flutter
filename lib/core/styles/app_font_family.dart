@@ -1,5 +1,3 @@
-
-
 /// {@template app_font_family}
 /// Get font family using in app based on device type, OS type
 /// {@endtemplate}
@@ -9,7 +7,7 @@ class AppFontFamily {
 
   /// {@macro app_font_family}
   AppFontFamily() {
-    appFont = ""; // TODO: Add font name's variable
+    appFont = "Schyler";
   }
 
   /// Get font family based on device type, OS type

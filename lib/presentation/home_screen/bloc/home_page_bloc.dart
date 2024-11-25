@@ -1,9 +1,8 @@
 import 'package:bloc/bloc.dart';
+import 'package:dsoft_form_application/common/logger/app_logger.dart';
 import 'package:dsoft_form_application/core/locators/locators.dart';
-
 import 'package:equatable/equatable.dart';
-
-import '../../../domain/models/post_model.dart';
+import '../../../domain/models/meta_data_model.dart';
 
 part 'home_page_event.dart';
 part 'home_page_state.dart';
@@ -29,7 +28,8 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
         },
       );
     } on Exception catch (e) {
-      print("error to fetch API: ${e.toString}");
+      emit(HomePageLoadFailed());
+      AppLogger.instance.e("message: ${e.toString()}");
     }
   }
 }

@@ -18,42 +18,48 @@ class MetadataModelEntityAdapter extends TypeAdapter<MetadataModelEntity> {
     };
     return MetadataModelEntity(
       id: fields[0] as String,
-      isFilled: fields[1] as bool,
       title: fields[2] as String,
-      imageURLDescription: fields[3] as String,
-      description: fields[4] as String,
-      publishedUrl: fields[5] as String,
-      editorEmails: (fields[6] as List).cast<String>(),
-      count: fields[7] as int,
-      confirmationMessage: fields[8] as String,
-      customClosedFormMessage: fields[9] as String,
+      description: fields[3] as String,
+      publishedUrl: fields[4] as String,
+      editorEmails: (fields[5] as List).cast<String>(),
+      count: fields[6] as int,
+      confirmationMessage: fields[7] as String,
+      customClosedFormMessage: fields[8] as String,
+      enable: fields[1] as bool,
+      spreadsheetId: fields[9] as String,
+      createAt: fields[10] as DateTime,
+      expireAt: fields[11] as DateTime,
     );
   }
 
   @override
   void write(BinaryWriter writer, MetadataModelEntity obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(12)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.isFilled)
+      ..write(obj.enable)
       ..writeByte(2)
       ..write(obj.title)
       ..writeByte(3)
-      ..write(obj.imageURLDescription)
-      ..writeByte(4)
       ..write(obj.description)
-      ..writeByte(5)
+      ..writeByte(4)
       ..write(obj.publishedUrl)
-      ..writeByte(6)
+      ..writeByte(5)
       ..write(obj.editorEmails)
-      ..writeByte(7)
+      ..writeByte(6)
       ..write(obj.count)
-      ..writeByte(8)
+      ..writeByte(7)
       ..write(obj.confirmationMessage)
+      ..writeByte(8)
+      ..write(obj.customClosedFormMessage)
       ..writeByte(9)
-      ..write(obj.customClosedFormMessage);
+      ..write(obj.spreadsheetId)
+      ..writeByte(10)
+      ..write(obj.createAt)
+      ..writeByte(11)
+      ..write(obj.expireAt);
   }
 
   @override

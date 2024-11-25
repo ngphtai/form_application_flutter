@@ -8,27 +8,36 @@ class ItemModel extends MapperEntity<ItemModelEntity> {
   final int index;
   final int id;
   final bool? isRequired;
+  final int? points;
   final List<String>? choices;
+  final bool? hasOtherOption;
+  final String? ratingIcon;
+  final int? ratingScaleLevel;
+  final bool? includesYear;
   final int? upperBound;
+  final int? lowerBound;
   final String? rightLabel;
   final String? leftLabel;
-  final int? lowerBound;
-  final bool? includesYear;
   late List<String>? result;
-  ItemModel(
-      {required this.type,
-      required this.helpText,
-      required this.title,
-      required this.index,
-      required this.id,
-      this.isRequired,
-      this.choices,
-      this.upperBound,
-      this.rightLabel,
-      this.leftLabel,
-      this.lowerBound,
-      this.includesYear,
-      this.result});
+  ItemModel({
+    required this.type,
+    required this.helpText,
+    required this.title,
+    required this.index,
+    required this.id,
+    this.isRequired,
+    this.choices,
+    this.upperBound,
+    this.rightLabel,
+    this.leftLabel,
+    this.lowerBound,
+    this.includesYear,
+    this.result,
+    this.points,
+    this.hasOtherOption,
+    this.ratingIcon,
+    this.ratingScaleLevel,
+  });
 
   factory ItemModel.fromJSon(Map<String, dynamic> json) {
     return ItemModel(
@@ -43,13 +52,22 @@ class ItemModel extends MapperEntity<ItemModelEntity> {
         rightLabel: json['rightLabel'],
         leftLabel: json['leftLabel'],
         lowerBound: json['lowerBound'],
-        includesYear: json['includesYear']);
+        includesYear: json['includesYear'],
+        result: json['result'],
+        points: json['points'],
+        hasOtherOption: json['hasOtherOption'],
+        ratingIcon: json['ratingIcon'],
+        ratingScaleLevel: json['ratingScaleLevel']);
   }
 
   @override
   ItemModelEntity toEntity() {
     return ItemModelEntity(
-      null, // result
+      points: points,
+      hasOtherOption: hasOtherOption,
+      ratingIcon: ratingIcon,
+      ratingScaleLevel: ratingScaleLevel,
+      result: result,
       type: type,
       helpText: helpText,
       title: title,

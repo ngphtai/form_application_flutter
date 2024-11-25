@@ -15,7 +15,7 @@ class HistoryPageBloc extends Bloc<HistoryPageEvent, HistoryPageState> {
 
 Future<void> _loadPostFromLocal(
     LoadPostFromLocal event, Emitter<HistoryPageState> emit) async {
-  emit(HistoryPageLoading());
+  emit(const HistoryPageLoading());
   final postServiceable = diPostSeviceable;
   final result = await postServiceable.getPostsFromLocal();
   result.fold((error) => AppLogger.instance.e(error.toString()), (result) {

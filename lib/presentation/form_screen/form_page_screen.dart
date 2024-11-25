@@ -9,6 +9,7 @@ class ReviewFormPageScreen extends StatefulWidget {
   const ReviewFormPageScreen({super.key, required this.postId});
   final String postId;
   @override
+  // ignore: library_private_types_in_public_api
   _FormPageScreenState createState() => _FormPageScreenState();
 }
 
@@ -18,9 +19,7 @@ class _FormPageScreenState extends State<ReviewFormPageScreen> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => FormPageBloc()),
-        BlocProvider(create: (context) => DetailPageBloc()
-            // ..add(LoadDetailPost(widget.postId))
-            ),
+        BlocProvider(create: (context) => DetailPageBloc()),
       ],
       child: ReviewFormPageWidget(
         postId: widget.postId,

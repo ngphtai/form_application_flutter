@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dsoft_form_application/shared/widget/toast_widget/pop_up_interruption.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,6 +15,8 @@ class Initializer {
   static Initializer get instance => _singleton;
 
   Initializer._();
+
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   void init(VoidCallback runApp) {
     runZonedGuarded(() async {
@@ -30,8 +33,17 @@ class Initializer {
 
       _initStatusBar();
       runApp();
-    }, (error, stack) {
+    }, (
+      error,
+      stack,
+    ) {
       AppLogger.instance.d('runZonedGuarded: ${error.toString()}');
+      final context = navigatorKey.currentContext;
+      if (context != null) {
+        showDiaLogInterruptedInternet(context);
+      } else {
+        AppLogger.instance.e("Navigator context is null. Cannot show dialog.");
+      }
     });
   }
 
@@ -56,8 +68,8 @@ class Initializer {
     Bloc.observer = AppBlocObserver(isLogEnable: isLogEnable);
   }
 
-  Future<void> _fetchThemeApp() async {
-    await diThemePreference.initialize();
-    diThemePreference.fetchThemeApp();
-  }
+  // Future<void> _fetchThemeApp() async {
+  //   await diThemePreference.initialize();
+  //   diThemePreference.fetchThemeApp();
+  // }
 }

@@ -21,6 +21,7 @@ class RadioButton extends StatefulWidget {
   bool isError = false;
   final TextEditingController controller;
   @override
+  // ignore: library_private_types_in_public_api
   _RadioButtonState createState() => _RadioButtonState();
 }
 
@@ -54,7 +55,7 @@ class _RadioButtonState extends State<RadioButton>
             borderRadius: const BorderRadius.all(Radius.circular(4)),
             border: Border.fromBorderSide(BorderSide(
               color: widget.isRequest == true
-                  ? (!widget.isError ? Colors.white : Colors.red)
+                  ? (!widget.isError ? Colors.white : const Color(0xffdb1e39))
                   : Colors.white,
               width: 1,
             )),
@@ -70,7 +71,6 @@ class _RadioButtonState extends State<RadioButton>
                   setState(() {
                     widget.selected = value;
                     context.read<RadioButtonBloc>().validate(value!);
-                    print("valid update: ${state}");
                   });
                 },
               );

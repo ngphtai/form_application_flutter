@@ -16,10 +16,10 @@ class LoadingWidget extends StatelessWidget {
         width: 50.w,
         child: LoadingIndicator(
           indicatorType: Indicator.circleStrokeSpin,
-          colors: const [Colors.red],
+          colors: const [Color(0xffdb1e39)],
           strokeWidth: 4.0,
           pathBackgroundColor: Colors.red[200],
-          backgroundColor: Color(0xfff4f4f4),
+          backgroundColor: const Color(0xfff4f4f4),
         ),
       ),
     );

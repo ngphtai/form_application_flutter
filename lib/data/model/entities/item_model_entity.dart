@@ -8,6 +8,7 @@ part 'item_model_entity.g.dart';
 class ItemModelEntity extends MapperDomain<ItemModel> {
   @HiveField(0)
   final String type;
+
   @HiveField(1)
   final String helpText;
   @HiveField(2)
@@ -19,34 +20,48 @@ class ItemModelEntity extends MapperDomain<ItemModel> {
   @HiveField(5)
   final bool? isRequired;
   @HiveField(6)
-  final List<String>? choices;
+  final int? points;
   @HiveField(7)
-  final int? upperBound;
+  final List<String>? choices;
   @HiveField(8)
-  final String? rightLabel;
+  final bool? hasOtherOption;
   @HiveField(9)
-  final String? leftLabel;
+  final String? ratingIcon;
   @HiveField(10)
-  final int? lowerBound;
+  final int? ratingScaleLevel;
   @HiveField(11)
   final bool? includesYear;
-  //propety to save result
   @HiveField(12)
+  final int? upperBound;
+  @HiveField(13)
+  final int? lowerBound;
+  @HiveField(14)
+  final String? rightLabel;
+  @HiveField(15)
+  final String? leftLabel;
+  //propety to save result
+  @HiveField(16)
   late List<String>? result;
 
-  ItemModelEntity(this.result,
-      {required this.type,
-      required this.helpText,
-      required this.title,
-      required this.index,
-      required this.id,
-      required this.isRequired,
-      required this.choices,
-      required this.upperBound,
-      required this.rightLabel,
-      required this.leftLabel,
-      required this.lowerBound,
-      required this.includesYear});
+  ItemModelEntity({
+    required this.type,
+    required this.helpText,
+    required this.title,
+    required this.index,
+    required this.id,
+    required this.isRequired,
+    required this.choices,
+    required this.upperBound,
+    required this.rightLabel,
+    required this.leftLabel,
+    required this.lowerBound,
+    required this.includesYear,
+    this.result,
+    this.points,
+    this.hasOtherOption,
+    this.ratingIcon,
+    this.ratingScaleLevel,
+  });
 
   @override
   ItemModel toDomain() {
@@ -64,6 +79,10 @@ class ItemModelEntity extends MapperDomain<ItemModel> {
       lowerBound: lowerBound,
       includesYear: includesYear,
       result: result,
+      points: points,
+      hasOtherOption: hasOtherOption,
+      ratingIcon: ratingIcon,
+      ratingScaleLevel: ratingScaleLevel,
     );
   }
 }

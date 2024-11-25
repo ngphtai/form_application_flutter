@@ -23,14 +23,14 @@ class ReturnButtonWidget extends StatelessWidget {
         width: size.width * 0.45,
         decoration: BoxDecoration(
           color: const Color(0xFFffffff),
-          borderRadius: const BorderRadius.all(Radius.circular(8)),
+          borderRadius: const BorderRadius.all(Radius.circular(100)),
           border: Border.all(
-            color: Colors.red,
+            color: const Color(0xffdb1e39),
             width: 1,
           ),
         ),
         child: const Center(
-            child: TextButtonCustom(text: "Trở về", color: Colors.red)),
+            child: TextButtonCustom(text: "Trở về", color: Color(0xffdb1e39))),
       ),
     );
   }

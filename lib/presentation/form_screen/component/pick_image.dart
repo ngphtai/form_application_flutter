@@ -1,20 +1,21 @@
 import 'dart:io';
-
 import 'package:dsoft_form_application/common/logger/app_logger.dart';
 import 'package:dsoft_form_application/common/services/image_picker_service.dart';
 import 'package:dsoft_form_application/core/styles/app_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 
 class PickImage extends StatefulWidget {
   const PickImage({
-    Key? key,
+    super.key,
     this.isRequest = false,
     required this.isError,
     required this.onChanged,
-  }) : super(key: key);
+  });
 
   @override
+  // ignore: library_private_types_in_public_api
   _PickImageState createState() => _PickImageState();
   final bool? isRequest;
   final bool isError;
@@ -31,10 +32,8 @@ class _PickImageState extends State<PickImage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    Size size = MediaQuery.of(context).size;
-
     return Container(
-      width: size.width,
+      width: 1.sw,
       decoration: BoxDecoration(
         color: const Color(0xfff4f4f4),
         borderRadius: const BorderRadius.all(
@@ -44,7 +43,7 @@ class _PickImageState extends State<PickImage>
             color: widget.isRequest == true
                 ? widget.isError == false
                     ? const Color(0xffe8e8e8)
-                    : Colors.red
+                    : const Color(0xffdb1e39)
                 : const Color(0xffe8e8e8),
             width: 1),
       ),
@@ -54,9 +53,9 @@ class _PickImageState extends State<PickImage>
             final imageFiles =
                 await ImagePickerHelper.pickMultiFileFromGallery();
 
-            //TODO  save to hive
+            //  save to hive in hive
+
             if (imageFiles.isEmpty) {
-              print("error");
               widget.onChanged(listMediaPath);
               return;
             } else {
@@ -75,7 +74,6 @@ class _PickImageState extends State<PickImage>
 
                 widget.onChanged(listMediaPath);
               });
-              print("HAVE FILE IS: $imageFiles ");
 
               // handle save to hive
               //   print(imageFile);
@@ -128,7 +126,7 @@ class _PickImageState extends State<PickImage>
                           : fileName;
 
                       // Convert file size from bytes to MB
-                      double fileSizeMB = listSizeFile[index] as double;
+                      double fileSizeMB = listSizeFile[index];
                       // double fileSizeMB = listSizeFile[index] / (1024 * 1024);
                       String fileSizeText = "${fileSizeMB.toString()} MB";
 

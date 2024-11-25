@@ -8,4 +8,5 @@ enum FormType {
   LIST,
   DATE,
   TIME,
+  RATING
 }

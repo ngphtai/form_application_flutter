@@ -19,6 +19,7 @@ class TextFieldCustomWithBloc extends StatefulWidget {
   final TextFieldBloc textFieldBloc;
 
   @override
+  // ignore: library_private_types_in_public_api
   _TextFieldCustomWithBlocState createState() =>
       _TextFieldCustomWithBlocState();
 }
@@ -53,7 +54,7 @@ class _TextFieldCustomWithBlocState extends State<TextFieldCustomWithBloc> {
                   color: widget.isRequest == true
                       ? !widget.isError
                           ? const Color(0xffe8e8e8)
-                          : Colors.red
+                          : const Color(0xffdb1e39)
                       : const Color(0xffe8e8e8),
                   width: 1),
             ),

@@ -10,7 +10,7 @@ abstract class FormPageEvent extends Equatable {
 class SaveForm extends FormPageEvent {
   final PostModelEntity postsEntity;
 
-  SaveForm(this.postsEntity);
+  const SaveForm(this.postsEntity);
 
   @override
   List<Object> get props => [postsEntity];
@@ -19,7 +19,7 @@ class SaveForm extends FormPageEvent {
 class SaveAnswerToGoogleSheet extends FormPageEvent {
   final PostsModel post;
 
-  SaveAnswerToGoogleSheet(this.post);
+  const SaveAnswerToGoogleSheet(this.post);
 
   @override
   List<Object> get props => [post];
@@ -27,8 +27,7 @@ class SaveAnswerToGoogleSheet extends FormPageEvent {
 
 class LoadAnswerLocal extends FormPageEvent {
   final String id;
-  LoadAnswerLocal(this.id);
-
+  const LoadAnswerLocal(this.id);
   @override
   List<Object> get props => [];
 }

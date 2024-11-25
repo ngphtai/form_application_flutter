@@ -13,7 +13,7 @@ void setUpServicesLocatorBefore() {
 
   di.registerSingletonAsync<CustomHttpClient>(
     () async {
-      final httpClient = await HttpClientImpl();
+      final httpClient = HttpClientImpl();
       return httpClient;
     },
   );

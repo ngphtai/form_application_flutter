@@ -4,6 +4,7 @@ import 'package:dsoft_form_application/presentation/form_screen/component/bloc/t
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:numberpicker/numberpicker.dart';
 
@@ -21,6 +22,7 @@ class TimePickerCustom extends StatefulWidget {
   @override
   // ignore: library_private_types_in_public_api
   _TimePickerCustomState createState() => _TimePickerCustomState();
+
   final String title;
   bool isError = false;
   final bool isRequest;
@@ -30,64 +32,58 @@ class TimePickerCustom extends StatefulWidget {
 
 class _TimePickerCustomState extends State<TimePickerCustom>
     with AutomaticKeepAliveClientMixin {
-  // ignore: prefer_typing_uninitialized_variables
-  var hour = 0;
-  // ignore: prefer_typing_uninitialized_variables
-  var minute = 0;
-  // ignore: prefer_typing_uninitialized_variables
-  var timeFormat;
-  bool isVisible = false;
-  String formattedTime = "";
+  int hour = 0;
+  int minute = 0;
+  String? timeFormat = "AM";
   TextEditingController controller = TextEditingController();
-  bool isClose = false;
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    Size size = MediaQuery.of(context).size;
     return BlocBuilder<TimePickerCustomBloc, TimePickerState>(
-        builder: (context, state) {
-      // handle get answer
-      if (widget.controller.text.isNotEmpty && !isClose) {
-        String value = widget.controller.text;
-        context.read<TimePickerCustomBloc>().changeValue(value);
-        controller.text = value;
-        isClose = true;
-      }
-      String value = context.read<TimePickerCustomBloc>().getState.toString();
+      builder: (context, state) {
+        // Handle getting the initial value
+        if (widget.controller.text.isNotEmpty) {
+          String value = widget.controller.text;
+          context.read<TimePickerCustomBloc>().changeValue(value);
+          controller.text = value;
+        }
 
-      if (state is TimePickerInitial) {
-        widget.isError == false;
-      }
-      if (state is TimePickerChanged) {
-        if (value.isEmpty || (value.isNotEmpty && timeFormat == null)) {
-          widget.isError = true;
-        } else {
+        String value = context.read<TimePickerCustomBloc>().getState.toString();
+
+        if (state is TimePickerInitial) {
           widget.isError = false;
         }
-      }
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          InkWell(
-            onTap: () {
-              setState(() {
-                isVisible ? isVisible = false : isVisible = true;
-              });
-            },
-            child: Container(
-                width: size.width,
+        if (state is TimePickerChanged) {
+          if (value.isEmpty || (value.isNotEmpty && timeFormat == null)) {
+            widget.isError = true;
+          } else {
+            widget.isError = false;
+          }
+        }
+
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            InkWell(
+              onTap: () {
+                _showTimePickerBottomSheet(context);
+              },
+              child: Container(
+                width: 1.sw,
                 decoration: BoxDecoration(
                   color: const Color(0xfff4f4f4),
                   borderRadius: const BorderRadius.all(
                     Radius.circular(4),
                   ),
                   border: Border.all(
-                      color: widget.isRequest
-                          ? !widget.isError
-                              ? const Color(0xffe8e8e8)
-                              : Colors.red
-                          : const Color(0xffe8e8e8),
-                      width: 1),
+                    color: widget.isRequest
+                        ? !widget.isError
+                            ? const Color(0xffe8e8e8)
+                            : const Color(0xffdb1e39)
+                        : const Color(0xffe8e8e8),
+                    width: 1,
+                  ),
                 ),
                 padding: const EdgeInsets.all(12),
                 child: Row(
@@ -102,9 +98,7 @@ class _TimePickerCustomState extends State<TimePickerCustom>
                         style: const TextStyle(color: Colors.black),
                         keyboardType: null,
                         onTap: () {
-                          setState(() {
-                            isVisible ? isVisible = false : isVisible = true;
-                          });
+                          _showTimePickerBottomSheet(context);
                         },
                         decoration: const InputDecoration(
                           border: InputBorder.none,
@@ -112,176 +106,167 @@ class _TimePickerCustomState extends State<TimePickerCustom>
                       ),
                     ),
                   ],
-                )),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          isVisible == true
-              ? Column(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 10),
-                      decoration: BoxDecoration(
-                          color: const Color(0xFFf4f4f4),
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showTimePickerBottomSheet(BuildContext context) {
+    // Parse current text to set initial values
+    if (controller.text.isNotEmpty && controller.text != "Giờ") {
+      List<String> parts = controller.text.split(" ");
+      if (parts.length == 2) {
+        List<String> timeParts = parts[0].split(":");
+        if (timeParts.length == 2) {
+          hour = int.tryParse(timeParts[0]) ?? hour;
+          minute = int.tryParse(timeParts[1]) ?? minute;
+        }
+        timeFormat = parts[1];
+      }
+    }
+
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16),
+          topRight: Radius.circular(16),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setBottomSheetState) {
+            return Container(
+              height: 250.h,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  topRight: Radius.circular(16),
+                ),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 100.w,
+                    height: 5.h,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 10),
+                    decoration: const BoxDecoration(
+                        color: Colors.black,
+                        borderRadius:
+                            BorderRadius.all(Radius.elliptical(10, 10))),
+                    margin: const EdgeInsets.only(top: 10),
+                  ),
+                  Gap(10.h),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      NumberPicker(
+                        minValue: 0,
+                        maxValue: 12,
+                        value: hour,
+                        zeroPad: true,
+                        infiniteLoop: true,
+                        itemWidth: 80,
+                        itemHeight: 60,
+                        onChanged: (value) {
+                          setBottomSheetState(() {
+                            hour = value;
+                            _updateControllerText();
+                          });
+                        },
+                        textStyle:
+                            const TextStyle(color: Colors.grey, fontSize: 20),
+                        selectedTextStyle:
+                            const TextStyle(color: Colors.black, fontSize: 30),
+                      ),
+                      NumberPicker(
+                        minValue: 0,
+                        maxValue: 59,
+                        value: minute,
+                        zeroPad: true,
+                        infiniteLoop: true,
+                        itemWidth: 80,
+                        itemHeight: 60,
+                        onChanged: (value) {
+                          setBottomSheetState(() {
+                            minute = value;
+                            _updateControllerText();
+                          });
+                        },
+                        textStyle:
+                            const TextStyle(color: Colors.grey, fontSize: 20),
+                        selectedTextStyle:
+                            const TextStyle(color: Colors.black, fontSize: 30),
+                      ),
+                      Column(
                         children: [
-                          NumberPicker(
-                            minValue: 0,
-                            maxValue: 12,
-                            value: hour,
-                            zeroPad: true,
-                            infiniteLoop: true,
-                            itemWidth: 80,
-                            itemHeight: 60,
-                            onChanged: (value) {
-                              setState(() {
-                                hour = value;
-                                controller.text = timeFormat != null
-                                    ? "${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $timeFormat"
-                                    : "Giờ";
-                                if (controller.text.isNotEmpty ||
-                                    controller.text != "Giờ") {
-                                  context
-                                      .read<TimePickerCustomBloc>()
-                                      .changeValue(controller.text);
-                                }
+                          GestureDetector(
+                            onTap: () {
+                              setBottomSheetState(() {
+                                timeFormat = "AM";
+                                _updateControllerText();
                               });
                             },
-                            textStyle: const TextStyle(
-                                color: Colors.grey, fontSize: 20),
-                            selectedTextStyle: const TextStyle(
-                                color: Colors.black, fontSize: 30),
-                            decoration: const BoxDecoration(
-                              border: Border(
-                                  top: BorderSide(
-                                    color: Colors.white,
-                                  ),
-                                  bottom: BorderSide(color: Colors.white)),
+                            child: _timeFormatButton(
+                              "AM",
+                              isSelected: timeFormat == "AM",
                             ),
                           ),
-                          NumberPicker(
-                            minValue: 0,
-                            maxValue: 59,
-                            value: minute,
-                            zeroPad: true,
-                            infiniteLoop: true,
-                            itemWidth: 80,
-                            itemHeight: 60,
-                            onChanged: (value) {
-                              setState(() {
-                                minute = value;
-                                controller.text = timeFormat != null
-                                    ? "${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $timeFormat"
-                                    : "Giờ";
-                                if (controller.text.isNotEmpty ||
-                                    controller.text != "Giờ") {
-                                  context
-                                      .read<TimePickerCustomBloc>()
-                                      .changeValue(controller.text);
-                                }
+                          const SizedBox(height: 15),
+                          GestureDetector(
+                            onTap: () {
+                              setBottomSheetState(() {
+                                timeFormat = "PM";
+                                _updateControllerText();
                               });
                             },
-                            textStyle: const TextStyle(
-                                color: Colors.grey, fontSize: 20),
-                            selectedTextStyle: const TextStyle(
-                                color: Colors.black, fontSize: 30),
-                            decoration: const BoxDecoration(
-                              border: Border(
-                                  top: BorderSide(
-                                    color: Colors.white,
-                                  ),
-                                  bottom: BorderSide(color: Colors.white)),
+                            child: _timeFormatButton(
+                              "PM",
+                              isSelected: timeFormat == "PM",
                             ),
                           ),
-                          Column(
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    timeFormat = "AM";
-                                    controller.text = timeFormat != null
-                                        ? "${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $timeFormat"
-                                        : "Giờ";
-                                    if (controller.text.isNotEmpty ||
-                                        controller.text != "Giờ") {
-                                      context
-                                          .read<TimePickerCustomBloc>()
-                                          .changeValue(controller.text);
-                                    }
-                                  });
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20, vertical: 10),
-                                  decoration: BoxDecoration(
-                                      color: timeFormat == "AM"
-                                          ? Colors.grey.shade800
-                                          : const Color(0xFFc7c7c7),
-                                      border: Border.all(
-                                        color: timeFormat == "AM"
-                                            ? Colors.grey
-                                            : const Color(0xFFc7c7c7),
-                                      )),
-                                  child: const Text(
-                                    "AM",
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 25),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 15,
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    timeFormat = "PM";
-                                    controller.text = timeFormat != null
-                                        ? "${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $timeFormat"
-                                        : "Giờ";
-                                    if (controller.text.isNotEmpty ||
-                                        controller.text != "Giờ") {
-                                      context
-                                          .read<TimePickerCustomBloc>()
-                                          .changeValue(controller.text);
-                                    }
-                                  });
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20, vertical: 10),
-                                  decoration: BoxDecoration(
-                                    color: timeFormat == "PM"
-                                        ? Colors.grey.shade800
-                                        : const Color(0xFFc7c7c7),
-                                    border: Border.all(
-                                      color: timeFormat == "PM"
-                                          ? Colors.grey
-                                          : const Color(0xFFc7c7c7),
-                                    ),
-                                  ),
-                                  child: const Text(
-                                    "PM",
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 25),
-                                  ),
-                                ),
-                              )
-                            ],
-                          )
                         ],
                       ),
-                    ),
-                  ],
-                )
-              : const Gap(8),
-        ],
-      );
-    });
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _timeFormatButton(String format, {required bool isSelected}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      decoration: BoxDecoration(
+        color: isSelected ? Colors.grey.shade800 : const Color(0xFFc7c7c7),
+        border: Border.all(
+          color: isSelected ? Colors.grey : const Color(0xFFc7c7c7),
+        ),
+      ),
+      child: Text(
+        format,
+        style: const TextStyle(color: Colors.white, fontSize: 25),
+      ),
+    );
+  }
+
+  void _updateControllerText() {
+    controller.text = timeFormat != null
+        ? "${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $timeFormat"
+        : "Giờ";
+    context.read<TimePickerCustomBloc>().changeValue(controller.text);
   }
 
   @override

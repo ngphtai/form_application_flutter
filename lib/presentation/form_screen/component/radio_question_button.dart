@@ -14,6 +14,7 @@ class RadioQuestionButton extends StatefulWidget {
   });
 
   @override
+  // ignore: library_private_types_in_public_api
   _RadioQuestionButtonState createState() => _RadioQuestionButtonState();
   final List<String> listQuestion;
   // final ValueChanged<Map<String, String>> onChanged;
@@ -27,6 +28,7 @@ List<String> review = ["Xuất sắc", "Tốt", "Trung bình", "Kém"];
 class _RadioQuestionButtonState extends State<RadioQuestionButton> {
   Map<String, String> selectedAnswers = {};
 
+  @override
   Widget build(BuildContext context) {
     return BlocBuilder<RadioQuestionButtonBloc, bool>(
       builder: (context, isValid) {
@@ -35,7 +37,7 @@ class _RadioQuestionButtonState extends State<RadioQuestionButton> {
         return Container(
           height: 700,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(4)),
+            borderRadius: const BorderRadius.all(Radius.circular(4)),
             border: Border.all(
                 color: widget.isRequest == true
                     ? !widget.isError
@@ -78,7 +80,7 @@ class _RadioQuestionButtonState extends State<RadioQuestionButton> {
                                 .read<RadioQuestionButtonBloc>()
                                 .validate(selectedAnswers, widget.listQuestion);
                           });
-                          print(selectedAnswers);
+                          // print(selectedAnswers);
                           // widget.onChanged(selectedAnswers);
                         },
                       );

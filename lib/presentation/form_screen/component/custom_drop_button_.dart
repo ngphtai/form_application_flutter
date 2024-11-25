@@ -1,23 +1,29 @@
+import 'package:dsoft_form_application/core/styles/app_text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 
 import 'bloc/custom_drop_button_bloc.dart';
 
 class CustomDropButton extends StatefulWidget {
   const CustomDropButton({
-    Key? key,
+    super.key,
     required this.listDropDown,
     this.isRequest = false,
     required this.customDropButtonBloc,
     required this.controller,
-  }) : super(key: key);
+    required this.title,
+  });
 
   @override
+  // ignore: library_private_types_in_public_api
   _CustomDropButtonState createState() => _CustomDropButtonState();
   final List<String> listDropDown;
   final bool? isRequest;
   final TextEditingController controller;
   final CustomDropButtonBloc customDropButtonBloc;
+  final String title;
 }
 
 class _CustomDropButtonState extends State<CustomDropButton>
@@ -28,8 +34,6 @@ class _CustomDropButtonState extends State<CustomDropButton>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    // main
-    Size size = MediaQuery.of(context).size;
     return BlocProvider(
         create: (context) => widget.customDropButtonBloc,
         child: BlocBuilder<CustomDropButtonBloc, CustomDropButtonState>(
@@ -48,9 +52,7 @@ class _CustomDropButtonState extends State<CustomDropButton>
               const SizedBox(height: 8),
               GestureDetector(
                 onTap: () {
-                  setState(() {
-                    isDropdownVisible = !isDropdownVisible;
-                  });
+                  _showDropDownBottomSheet(context);
                   context.read<CustomDropButtonBloc>().validate("");
                 },
                 child: Container(
@@ -61,10 +63,10 @@ class _CustomDropButtonState extends State<CustomDropButton>
                         color: widget.isRequest == true
                             ? !state.isError
                                 ? const Color(0xffe8e8e8)
-                                : Colors.red
+                                : const Color(0xffdb1e39)
                             : const Color(0xffe8e8e8),
                         width: 1),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(4),
                     color: Colors.grey[200],
                   ),
                   child: Row(
@@ -78,56 +80,119 @@ class _CustomDropButtonState extends State<CustomDropButton>
                                 : Colors.black,
                             fontWeight: FontWeight.w400),
                       ),
-                      Icon(isDropdownVisible
-                          ? Icons.keyboard_arrow_up_outlined
-                          : Icons.keyboard_arrow_down_outlined),
                     ],
                   ),
                 ),
               ),
               const SizedBox(height: 8),
-              Visibility(
-                visible: isDropdownVisible,
-                child: Container(
-                  decoration: BoxDecoration(
-                    border:
-                        Border.all(color: const Color(0xffe8e8e8), width: 1),
-                    borderRadius: BorderRadius.circular(8),
-                    color: const Color(0xFFf4f4f4),
-                  ),
-                  child: Column(
-                    children: widget.listDropDown.map((item) {
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            selectedValue = item;
-                            isDropdownVisible = false;
-                            if (selectedValue != null) {
-                              state.isError = false;
-                            } else if (selectedValue == null) {
-                              state.isError = true;
-                            }
-                            print(selectedValue);
-                            context
-                                .read<CustomDropButtonBloc>()
-                                .validate(selectedValue!);
-                          });
-                        },
-                        child: Container(
-                          width: size.width,
-                          margin: const EdgeInsets.fromLTRB(8, 2, 8, 2),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 2, vertical: 8),
-                          child: Text(item),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ),
             ],
           );
         }));
+  }
+
+  void _showDropDownBottomSheet(BuildContext context) {
+    final originContext = context;
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(16),
+        topRight: Radius.circular(16),
+      )),
+      builder: (context) => StatefulBuilder(
+        builder: (BuildContext context, StateSetter setBottomSheetState) {
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // cross bar
+                Container(
+                  width: 100.h,
+                  height: 5,
+                  decoration: const BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                  margin: const EdgeInsets.only(top: 10, bottom: 20),
+                ),
+                // title
+                Text(
+                  widget.title,
+                  style: AppTextStyle.regular16.copyWith(color: Colors.grey),
+                ),
+                Gap(10.h),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: widget.listDropDown.map((item) {
+                    final bool isSelected = item == selectedValue;
+                    return GestureDetector(
+                      onTap: () {
+                        // Cập nhật UI cho BottomSheet
+                        setBottomSheetState(() {
+                          selectedValue = item;
+                        });
+                        // update ui widget
+                        setState(() {
+                          selectedValue = item;
+                        });
+                        originContext
+                            .read<CustomDropButtonBloc>()
+                            .validate(selectedValue!);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? const Color(0xFFFDEEEE)
+                              : Colors.white,
+                          border: Border.all(
+                            color: isSelected
+                                ? const Color(0xffdb1e39)
+                                : const Color(0xffe8e8e8),
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        width: double.infinity,
+                        margin: const EdgeInsets.symmetric(vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              item,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: isSelected
+                                    ? const Color(0xffdb1e39)
+                                    : Colors.black,
+                              ),
+                            ),
+                            if (isSelected)
+                              const Icon(
+                                Icons.check_circle,
+                                color: Color(0xffdb1e39),
+                              ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
   }
 
   @override

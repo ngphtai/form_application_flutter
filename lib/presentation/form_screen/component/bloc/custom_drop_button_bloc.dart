@@ -6,8 +6,6 @@ class CustomDropButtonBloc extends Cubit<CustomDropButtonState> {
       : super(CustomDropButtonState(isError: false, isSelected: ""));
 
   void validate(String value) {
-    if (isClosed) return; // Ngăn phát nếu đã đóng
-
     try {
       if (!isClosed) {
         if (value != '') {

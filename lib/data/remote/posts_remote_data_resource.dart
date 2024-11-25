@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:dsoft_form_application/common/constant/constants.dart';
 import 'package:dsoft_form_application/common/logger/app_logger.dart';
 import 'package:dsoft_form_application/core/locators/locators.dart';
+import 'package:dsoft_form_application/data/model/DTO/metadata_model_dto.dart';
 import 'package:dsoft_form_application/data/model/DTO/posts_response_model_dto.dart';
 import 'package:dsoft_form_application/data/remote/google_sheet/insert_new_row.dart';
 import 'package:dsoft_form_application/domain/models/post_model.dart';
@@ -16,8 +17,8 @@ import 'package:googleapis_auth/auth_io.dart';
 import 'google_sheet/create_new_sheet.dart';
 
 abstract class PostRemoteDataResource {
-  Future<List<PostsResponseModelDto>> getPosts();
-  Future<PostsResponseModelDto> getDetailPost(int index);
+  Future<List<MetadataModelDTO>> getPosts();
+  Future<PostsResponseModelDto> getDetailPost(String index);
 
   Future<bool> saveAnswerToGoogleSheet(PostsModel post);
 }
@@ -25,12 +26,26 @@ abstract class PostRemoteDataResource {
 class PostsRemoteDataResourceImpl extends PostRemoteDataResource {
   final customHttpClient = diCustomHttpClient;
   @override
-  Future<List<PostsResponseModelDto>> getPosts() async {
+  Future<List<MetadataModelDTO>> getPosts() async {
     try {
       final response = await customHttpClient.get(APIConstants.methodPost);
-      final List<PostsResponseModelDto> forms = (response as List)
-          .map((e) => PostsResponseModelDto.fromJson(e))
-          .toList();
+      final List<MetadataModelDTO> forms =
+          (response as List).map((e) => MetadataModelDTO.fromJson(e)).toList();
+      // sort form by exprire date :
+      forms.sort((a, b) {
+        final now = DateTime.now();
+        final isExpiredA = now.isAfter(a.expireAt);
+        final isExpiredB = now.isAfter(b.expireAt);
+
+        if (isExpiredA && !isExpiredB) {
+          return 1; // Bài A hết hạn, B không hết hạn
+        }
+        if (!isExpiredA && isExpiredB) {
+          return -1; // Bài B hết hạn, A không hết hạn
+        }
+        return a.expireAt
+            .compareTo(b.expireAt); // Nếu cùng trạng thái, sắp xếp theo ngày
+      });
       return forms;
     } on DioException catch (e) {
       final message = e.response?.data.message;
@@ -42,7 +57,7 @@ class PostsRemoteDataResourceImpl extends PostRemoteDataResource {
   @override
   Future<PostsResponseModelDto> getDetailPost(index) async {
     try {
-      String url = "${APIConstants.methodPost}/${index}";
+      String url = "${APIConstants.methodPost}/$index";
       var response = await customHttpClient.get(url);
 
       // var response = response.data;

@@ -1,3 +1,5 @@
+import 'package:dsoft_form_application/common/logger/app_logger.dart';
+
 import 'app_error.dart';
 
 /// {@template app_other_error}
@@ -19,7 +21,7 @@ class AppOtherError extends AppError {
 
   @override
   void logErrorToLogger() {
-    // TODO: implement logErrorToLogger
+    AppLogger.instance.e(messageError);
   }
 
   @override

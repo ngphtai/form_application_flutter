@@ -10,12 +10,14 @@ import '../../../detail_screen/bloc/detail_page_bloc.dart';
 import '../bloc/custom_drop_button_bloc.dart';
 import '../bloc/date_picker_bloc.dart';
 import '../bloc/radio_button_bloc.dart';
+import '../bloc/rating_bloc.dart';
 import '../bloc/text_field_bloc.dart';
 import '../bloc/time_picker_custom_bloc.dart';
 import '../checkbox_button.dart';
 import '../custom_drop_button_.dart';
 import '../radio_button.dart';
 
+import '../rating.dart';
 import '../time_picker_custom.dart';
 
 class FormWidget extends StatelessWidget {
@@ -31,6 +33,7 @@ class FormWidget extends StatelessWidget {
     required this.datePickerBloc,
     required this.state,
     required this.index,
+    required this.ratingBloc,
   });
 
   final Map<int, Cubit> textFieldsBloc;
@@ -41,6 +44,7 @@ class FormWidget extends StatelessWidget {
   final Map<int, Cubit> timePickerBloc;
   final Map<int, bool> isError;
   final Map<int, Cubit> datePickerBloc;
+  final Map<int, Cubit> ratingBloc;
   final DetailPageLoaded state;
   final int index;
 
@@ -121,6 +125,7 @@ class FormWidget extends StatelessWidget {
         {
           return ShareContainer(
             widget: CustomDropButton(
+              title: item.title,
               listDropDown: item.choices ?? [],
               isRequest: isRequired,
               customDropButtonBloc:
@@ -166,6 +171,19 @@ class FormWidget extends StatelessWidget {
               isRequest: isRequired,
             ),
           );
+        }
+      case FormType.RATING:
+        {
+          return ShareContainer(
+              title: item.title,
+              isRequest: isRequired,
+              widget: Rating(
+                controller:
+                    answersControllers[item.index] ?? TextEditingController(),
+                ratingBloc: ratingBloc[item.index] as RatingBloc,
+                isError: isError[item.index] ?? false,
+                isRequest: isRequired,
+              ));
         }
       default:
         return const SizedBox.shrink();

@@ -9,12 +9,13 @@ abstract class DetailPageEvent extends Equatable {
 
 // ignore: must_be_immutable
 class LoadDetailPost extends DetailPageEvent {
-  int id;
+  String id;
   LoadDetailPost(this.id);
   @override
   List<Object> get props => [id];
 }
 
+// ignore: must_be_immutable
 class LoadDetailPostLocal extends DetailPageEvent {
   String id;
   LoadDetailPostLocal(this.id);

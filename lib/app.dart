@@ -59,6 +59,10 @@ class App extends StatelessWidget {
       child: isMainContent
           ? MaterialApp.router(
               title: AppConstants.appName,
+              routerDelegate: diAppRouter.router.routerDelegate,
+              routeInformationParser: diAppRouter.router.routeInformationParser,
+              routeInformationProvider:
+                  diAppRouter.router.routeInformationProvider,
               debugShowCheckedModeBanner: false,
               // supportedLocales: SLang.delegate.supportedLocales,
               localizationsDelegates: const [
@@ -67,7 +71,7 @@ class App extends StatelessWidget {
                 // GlobalWidgetsLocalizations.delegate,
                 // GlobalCupertinoLocalizations.delegate,
               ],
-              routerConfig: diAppRouter.router,
+              // routerConfig: diAppRouter.router,
               theme: ThemeData.light(),
               builder: FlutterSmartDialog.init(
                 builder: (context, child) => MediaQuery(

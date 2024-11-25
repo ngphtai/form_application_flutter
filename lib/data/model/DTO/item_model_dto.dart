@@ -12,12 +12,17 @@ class ItemModelDto extends MapperDomain<ItemModel> {
   final int index;
   final int id;
   final bool? isRequired;
+  final int? points;
   final List<String>? choices;
+  final bool? hasOtherOption;
+  final String? ratingIcon;
+  final int? ratingScaleLevel;
+  final bool? includesYear;
   final int? upperBound;
+  final int? lowerBound;
   final String? rightLabel;
   final String? leftLabel;
-  final int? lowerBound;
-  final bool? includesYear;
+  late List<String>? result;
 
   ItemModelDto({
     required this.type,
@@ -26,32 +31,42 @@ class ItemModelDto extends MapperDomain<ItemModel> {
     required this.index,
     required this.id,
     this.isRequired,
+    this.points,
     this.choices,
+    this.hasOtherOption,
+    this.ratingIcon,
+    this.ratingScaleLevel,
+    this.includesYear,
     this.upperBound,
+    this.lowerBound,
     this.rightLabel,
     this.leftLabel,
-    this.lowerBound,
-    this.includesYear,
   });
 
   factory ItemModelDto.fromJson(Map<String, dynamic> json) =>
       _$ItemModelDtoFromJson(json);
+
   Map<String, dynamic> toJson() => _$ItemModelDtoToJson(this);
 
   @override
   ItemModel toDomain() {
     return ItemModel(
-        type: type,
-        helpText: helpText,
-        title: title,
-        index: index,
-        id: id,
-        isRequired: isRequired,
-        choices: choices,
-        upperBound: upperBound,
-        rightLabel: rightLabel,
-        leftLabel: leftLabel,
-        lowerBound: lowerBound,
-        includesYear: includesYear);
+      type: type,
+      helpText: helpText,
+      title: title,
+      index: index,
+      id: id,
+      isRequired: isRequired,
+      points: points,
+      choices: choices,
+      hasOtherOption: hasOtherOption,
+      ratingIcon: ratingIcon,
+      ratingScaleLevel: ratingScaleLevel,
+      includesYear: includesYear,
+      upperBound: upperBound,
+      lowerBound: lowerBound,
+      rightLabel: rightLabel,
+      leftLabel: leftLabel,
+    );
   }
 }

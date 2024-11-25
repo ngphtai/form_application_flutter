@@ -9,12 +9,12 @@ class ErrorsInterceptor extends QueuedInterceptor {
   ErrorsInterceptor._();
 
   @override
-  void onError(DioError err, ErrorInterceptorHandler handler) {
+  void onError(DioException err, ErrorInterceptorHandler handler) {
     final remoteException = diRemoteHttpException;
     final appError = remoteException.fromDioError(err);
     // If request is occur an error without AppOtherError type
     handler.reject(
-      DioError(
+      DioException(
         requestOptions: err.requestOptions,
         response: Response(
           requestOptions: err.requestOptions,

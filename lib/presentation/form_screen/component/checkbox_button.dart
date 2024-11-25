@@ -6,18 +6,18 @@ import 'bloc/checkbox_button_bloc.dart';
 // ignore: must_be_immutable
 class CheckboxButton extends StatefulWidget {
   CheckboxButton(
-      {Key? key,
+      {super.key,
       required this.listCheckbox,
       required this.isRequest,
       required this.checkboxButtonBloc,
-      required this.controller})
-      : super(key: key);
+      required this.controller});
   final List<String> listCheckbox;
   bool isError = false;
   final bool isRequest;
   final CheckboxButtonBloc checkboxButtonBloc;
   final TextEditingController controller;
   @override
+  // ignore: library_private_types_in_public_api
   _CheckboxButtonState createState() => _CheckboxButtonState();
 }
 
@@ -54,7 +54,7 @@ class _CheckboxButtonState extends State<CheckboxButton>
           border: Border.fromBorderSide(BorderSide(
               color: widget.isRequest == true
                   ? widget.isError
-                      ? Colors.red
+                      ? const Color(0xffdb1e39)
                       : const Color(0xffe8e8e8)
                   : const Color(0xffe8e8e8),
               width: 1)),
@@ -62,8 +62,8 @@ class _CheckboxButtonState extends State<CheckboxButton>
         child: Column(
           children: widget.listCheckbox.map((options) {
             return CheckboxListTile(
-              hoverColor: Colors.red,
-              activeColor: Colors.red,
+              hoverColor: const Color(0xffdb1e39),
+              activeColor: const Color(0xffdb1e39),
               overlayColor: WidgetStatePropertyAll(Colors.red[100]),
               value: selectedCheckboxes.contains(options),
               controlAffinity: ListTileControlAffinity.leading,
@@ -74,7 +74,7 @@ class _CheckboxButtonState extends State<CheckboxButton>
                   } else {
                     selectedCheckboxes.remove(options);
                   }
-                  print(selectedCheckboxes);
+                  // print(selectedCheckboxes);
                   context
                       .read<CheckboxButtonBloc>()
                       .validate(selectedCheckboxes);

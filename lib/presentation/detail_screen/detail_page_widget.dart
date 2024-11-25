@@ -1,31 +1,32 @@
 import 'package:dsoft_form_application/core/routing/route_path.dart';
-import 'package:dsoft_form_application/core/styles/app_images.dart';
+import 'package:dsoft_form_application/core/styles/app_icons.dart';
+import 'package:dsoft_form_application/core/styles/app_text_style.dart';
 import 'package:dsoft_form_application/presentation/detail_screen/bloc/detail_page_bloc.dart';
 import 'package:dsoft_form_application/shared/widget/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import '../form_screen/component/screen/loading_widget.dart';
-import '../form_screen/component/screen/return_button_widget.dart';
 import '../form_screen/component/screen/text_button.dart';
 
-class ChildDetailPageScreen extends StatefulWidget {
-  const ChildDetailPageScreen({
-    Key? key,
+class DetailPageWidget extends StatefulWidget {
+  const DetailPageWidget({
+    super.key,
     required this.postId,
-  }) : super(key: key);
+  });
   final String postId;
 
   @override
-  State<ChildDetailPageScreen> createState() => _ChildDetailPageScreenState();
+  State<DetailPageWidget> createState() => _DetailPageWidgetState();
 }
 
-class _ChildDetailPageScreenState extends State<ChildDetailPageScreen> {
+class _DetailPageWidgetState extends State<DetailPageWidget> {
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    final currentRouter = GoRouterState.of(context).name;
     return Scaffold(
       appBar: SharedAppBar(
         title: context.select<DetailPageBloc, String>((bloc) {
@@ -39,28 +40,19 @@ class _ChildDetailPageScreenState extends State<ChildDetailPageScreen> {
       body: BlocBuilder<DetailPageBloc, DetailPageState>(
         builder: (context, state) {
           if (state is DetailPageInitial) {
-            int? numericId;
-            if (int.tryParse(widget.postId) != null) {
-              numericId = int.parse(widget.postId);
-            }
-            // Pass numericId or postId as appropriate
-            if (numericId != null) {
-              context
-                  .read<DetailPageBloc>()
-                  .add(LoadDetailPost(int.parse(widget.postId)));
-            } else if (GoRouterState.of(context).name ==
-                Routers.reviewDetailPage) {
-              context
-                  .read<DetailPageBloc>()
-                  .add(LoadDetailPostLocal(widget.postId));
+            final bloc = context.read<DetailPageBloc>();
+            if (currentRouter == Routers.detailPage) {
+              bloc.add(LoadDetailPost(widget.postId));
+            } else if (currentRouter == Routers.reviewDetailPage) {
+              bloc.add(LoadDetailPostLocal(widget.postId));
             }
             return const LoadingWidget();
           } else if (state is DetailPageLoading) {
             return const LoadingWidget();
           } else if (state is DetailPageLoaded) {
             return SizedBox(
-              height: 1000.h,
-              width: 1000.w,
+              height: 1.sh,
+              width: 1.sw,
               child: Stack(
                 children: [
                   SingleChildScrollView(
@@ -69,16 +61,8 @@ class _ChildDetailPageScreenState extends State<ChildDetailPageScreen> {
                       child: Column(
                         children: [
                           Container(
-                            decoration: const BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(16)),
-                            ),
-                            child: Image.asset(AppImages.banner),
-                          ),
-                          SizedBox(height: size.height * 0.02),
-                          Container(
                             padding: const EdgeInsets.all(10),
-                            width: size.width * 0.95,
+                            width: 0.95.sw,
                             decoration: const BoxDecoration(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(10)),
@@ -111,6 +95,8 @@ class _ChildDetailPageScreenState extends State<ChildDetailPageScreen> {
                       ),
                     ),
                   ),
+
+                  //button
                   Positioned(
                     bottom: 0,
                     left: 0,
@@ -125,44 +111,44 @@ class _ChildDetailPageScreenState extends State<ChildDetailPageScreen> {
                                 color: Colors.white.withOpacity(0.5),
                                 spreadRadius: 5,
                                 blurRadius: 7,
-                                offset: Offset(0, 3),
+                                offset: const Offset(0, 3),
                               ),
                             ],
                           ),
                         ),
                         Container(
                           color: const Color(0xFFffffff),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          child: Column(
                             children: [
-                              ReturnButtonWidget(size: size), // button return
+                              // ReturnButtonWidget(size: size), // button return
                               GestureDetector(
                                 onTap: () {
-                                  if (GoRouterState.of(context).name ==
-                                      Routers.reviewDetailPage) {
-                                    context.go(
-                                      '/historyPage/detailPage/${widget.postId}/formPage',
-                                    );
+                                  if (state.post.metaData.expireAt
+                                          .isBefore(DateTime.now()) &&
+                                      currentRouter !=
+                                          Routers.reviewDetailPage) {
+                                    showDiaLog(context);
                                   } else {
-                                    context.go(
-                                      '/homePage/detailPage/${widget.postId}/formPage',
-                                    );
+                                    context.go(currentRouter ==
+                                            Routers.reviewDetailPage
+                                        ? '/historyPage/reviewDetailPage/${widget.postId}/formPage'
+                                        : '/homePage/detailPage/${widget.postId}/formPage');
                                   }
                                 },
                                 child: Container(
                                   padding: const EdgeInsets.all(10),
                                   margin: const EdgeInsets.all(5),
-                                  width: size.width * 0.45,
+                                  width: 0.9.sw,
                                   decoration: BoxDecoration(
-                                    color: Colors.red,
-                                    borderRadius: BorderRadius.circular(8),
+                                    color: const Color(0xffdb1e39),
+                                    borderRadius: BorderRadius.circular(100),
                                     border: Border.all(
-                                      color: Colors.red,
+                                      color: const Color(0xffdb1e39),
                                       width: 1,
                                     ),
                                   ),
                                   child: Center(
-                                      child: GoRouterState.of(context).name ==
+                                      child: currentRouter ==
                                               Routers.reviewDetailPage
                                           ? const TextButtonCustom(
                                               text: "Xem lại",
@@ -172,6 +158,7 @@ class _ChildDetailPageScreenState extends State<ChildDetailPageScreen> {
                                               color: Colors.white)),
                                 ),
                               ),
+                              Gap(10.h),
                             ],
                           ),
                         ),
@@ -189,5 +176,68 @@ class _ChildDetailPageScreenState extends State<ChildDetailPageScreen> {
         },
       ),
     );
+  }
+
+  Future<dynamic> showDiaLog(BuildContext originContext) {
+    return showDialog(
+        context: originContext,
+        builder: (context) => AlertDialog(
+              backgroundColor: Colors.white,
+              content: Container(
+                width: 1.sw,
+                height: 0.3.sh,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(12)),
+                ),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Gap(10),
+                      Image.asset(
+                        AppIcons.warning,
+                        height: 60,
+                        width: 60,
+                        fit: BoxFit.fill,
+                      ),
+                      const Gap(10),
+                      Text(
+                        "Cảnh báo",
+                        style: AppTextStyle.bold20,
+                      ),
+                      const Gap(10),
+                      Text(
+                        "Form form này đã hết hạn!",
+                        style:
+                            AppTextStyle.regular14.copyWith(color: Colors.grey),
+                      ),
+                      const Gap(20),
+                      Center(
+                        child: GestureDetector(
+                          onTap: () {
+                            // GoRouter.of(originContext).go(Routers.homePage);
+                            context.pop();
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.fromLTRB(55, 10, 55, 10),
+                            margin: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: const Color(0xffdb1e39),
+                              borderRadius: BorderRadius.circular(100),
+                              border: Border.all(
+                                color: const Color(0xffdb1e39),
+                                width: 1,
+                              ),
+                            ),
+                            child: const Center(
+                                child: TextButtonCustom(
+                                    text: "Ok", color: Colors.white)),
+                          ),
+                        ),
+                      ),
+                    ]),
+              ),
+            ));
   }
 }

@@ -14,7 +14,7 @@ class HomePageLoading extends HomePageState {}
 class HomePageLoadFailed extends HomePageState {}
 
 class HomePageLoaded extends HomePageState {
-  final List<PostsModel> posts;
+  final List<MetaDataModel> posts;
 
   const HomePageLoaded(this.posts);
 

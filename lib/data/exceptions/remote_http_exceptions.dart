@@ -23,10 +23,10 @@ class RemoteHttpException implements Exception {
   /// AppError
   late final AppError appError;
 
-  String _messageErrorDefault = "";
+  final String _messageErrorDefault = "";
 
   /// {@macro remote_http_exception}
-  AppError fromDioError(DioError error) {
+  AppError fromDioError(DioException error) {
     // _messageErrorDefault = SLang.current.somethingWentWrongError;
     switch (error.type) {
       case DioExceptionType.cancel:
@@ -48,7 +48,7 @@ class RemoteHttpException implements Exception {
     }
   }
 
-  AppError _handleOtherError(DioError error) {
+  AppError _handleOtherError(DioException error) {
     final otherError = AppOtherError(
         exception: error,
         // messageError: SLang.current.appUnableConnectServer,
@@ -56,7 +56,7 @@ class RemoteHttpException implements Exception {
     return otherError;
   }
 
-  AppError _handleTimeoutError(DioError error) {
+  AppError _handleTimeoutError(DioException error) {
     final statusCode = error.response?.statusCode;
     _logErrorToFirebase(
         message: error.message.toString(),
@@ -75,7 +75,7 @@ class RemoteHttpException implements Exception {
     return otherError;
   }
 
-  AppError _handleCancelError(DioError error) {
+  AppError _handleCancelError(DioException error) {
     if (error.response != null) {
       if (error.response?.data is NetworkError) {
         return NetworkError();
@@ -87,7 +87,7 @@ class RemoteHttpException implements Exception {
     );
   }
 
-  AppError _handleResponseError(DioError error) {
+  AppError _handleResponseError(DioException error) {
     if (error.response != null) {
       final statusCode = error.response?.statusCode;
       final dataError = error.response?.data is String
@@ -139,7 +139,7 @@ class RemoteHttpException implements Exception {
     int? statusCode,
     dynamic codeDetail,
     String? messageResponse,
-    DioErrorType? errorType,
+    DioExceptionType? errorType,
     bool? isUndefinedError,
   }) {
     return messageResponse ?? _messageErrorDefault;

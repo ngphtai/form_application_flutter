@@ -13,14 +13,19 @@ ItemModelDto _$ItemModelDtoFromJson(Map<String, dynamic> json) => ItemModelDto(
       index: (json['index'] as num).toInt(),
       id: (json['id'] as num).toInt(),
       isRequired: json['isRequired'] as bool?,
+      points: (json['points'] as num?)?.toInt(),
       choices:
           (json['choices'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      hasOtherOption: json['hasOtherOption'] as bool?,
+      ratingIcon: json['ratingIcon'] as String?,
+      ratingScaleLevel: (json['ratingScaleLevel'] as num?)?.toInt(),
+      includesYear: json['includesYear'] as bool?,
       upperBound: (json['upperBound'] as num?)?.toInt(),
+      lowerBound: (json['lowerBound'] as num?)?.toInt(),
       rightLabel: json['rightLabel'] as String?,
       leftLabel: json['leftLabel'] as String?,
-      lowerBound: (json['lowerBound'] as num?)?.toInt(),
-      includesYear: json['includesYear'] as bool?,
-    );
+    )..result =
+        (json['result'] as List<dynamic>?)?.map((e) => e as String).toList();
 
 Map<String, dynamic> _$ItemModelDtoToJson(ItemModelDto instance) =>
     <String, dynamic>{
@@ -30,10 +35,15 @@ Map<String, dynamic> _$ItemModelDtoToJson(ItemModelDto instance) =>
       'index': instance.index,
       'id': instance.id,
       'isRequired': instance.isRequired,
+      'points': instance.points,
       'choices': instance.choices,
+      'hasOtherOption': instance.hasOtherOption,
+      'ratingIcon': instance.ratingIcon,
+      'ratingScaleLevel': instance.ratingScaleLevel,
+      'includesYear': instance.includesYear,
       'upperBound': instance.upperBound,
+      'lowerBound': instance.lowerBound,
       'rightLabel': instance.rightLabel,
       'leftLabel': instance.leftLabel,
-      'lowerBound': instance.lowerBound,
-      'includesYear': instance.includesYear,
+      'result': instance.result,
     };

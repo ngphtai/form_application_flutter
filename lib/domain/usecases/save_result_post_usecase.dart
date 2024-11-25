@@ -4,6 +4,7 @@ import 'package:dsoft_form_application/data/model/entities/post_model_entity.dar
 
 import 'package:dsoft_form_application/domain/repositories/posts_repository.dart';
 import 'package:dsoft_form_application/domain/usecases/usecase.dart';
+// ignore: implementation_imports
 import 'package:either_dart/src/either.dart';
 
 class SaveResultPostUsecase extends UseCase<dynamic, PostModelEntity> {

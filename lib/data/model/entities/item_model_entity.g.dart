@@ -17,26 +17,30 @@ class ItemModelEntityAdapter extends TypeAdapter<ItemModelEntity> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return ItemModelEntity(
-      (fields[12] as List?)?.cast<String>(),
       type: fields[0] as String,
       helpText: fields[1] as String,
       title: fields[2] as String,
       index: fields[3] as int,
       id: fields[4] as int,
       isRequired: fields[5] as bool?,
-      choices: (fields[6] as List?)?.cast<String>(),
-      upperBound: fields[7] as int?,
-      rightLabel: fields[8] as String?,
-      leftLabel: fields[9] as String?,
-      lowerBound: fields[10] as int?,
+      choices: (fields[7] as List?)?.cast<String>(),
+      upperBound: fields[12] as int?,
+      rightLabel: fields[14] as String?,
+      leftLabel: fields[15] as String?,
+      lowerBound: fields[13] as int?,
       includesYear: fields[11] as bool?,
+      result: (fields[16] as List?)?.cast<String>(),
+      points: fields[6] as int?,
+      hasOtherOption: fields[8] as bool?,
+      ratingIcon: fields[9] as String?,
+      ratingScaleLevel: fields[10] as int?,
     );
   }
 
   @override
   void write(BinaryWriter writer, ItemModelEntity obj) {
     writer
-      ..writeByte(13)
+      ..writeByte(17)
       ..writeByte(0)
       ..write(obj.type)
       ..writeByte(1)
@@ -50,18 +54,26 @@ class ItemModelEntityAdapter extends TypeAdapter<ItemModelEntity> {
       ..writeByte(5)
       ..write(obj.isRequired)
       ..writeByte(6)
-      ..write(obj.choices)
+      ..write(obj.points)
       ..writeByte(7)
-      ..write(obj.upperBound)
+      ..write(obj.choices)
       ..writeByte(8)
-      ..write(obj.rightLabel)
+      ..write(obj.hasOtherOption)
       ..writeByte(9)
-      ..write(obj.leftLabel)
+      ..write(obj.ratingIcon)
       ..writeByte(10)
-      ..write(obj.lowerBound)
+      ..write(obj.ratingScaleLevel)
       ..writeByte(11)
       ..write(obj.includesYear)
       ..writeByte(12)
+      ..write(obj.upperBound)
+      ..writeByte(13)
+      ..write(obj.lowerBound)
+      ..writeByte(14)
+      ..write(obj.rightLabel)
+      ..writeByte(15)
+      ..write(obj.leftLabel)
+      ..writeByte(16)
       ..write(obj.result);
   }
 

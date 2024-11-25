@@ -9,9 +9,8 @@ part of 'metadata_model_dto.dart';
 MetadataModelDTO _$MetadataModelDTOFromJson(Map<String, dynamic> json) =>
     MetadataModelDTO(
       id: json['id'] as String,
-      isFilled: json['isFilled'] as bool,
+      enable: json['enable'] as bool,
       title: json['title'] as String,
-      imageURLDescription: json['imageURLDescription'] as String,
       description: json['description'] as String,
       publishedUrl: json['publishedUrl'] as String,
       editorEmails: (json['editorEmails'] as List<dynamic>)
@@ -20,18 +19,23 @@ MetadataModelDTO _$MetadataModelDTOFromJson(Map<String, dynamic> json) =>
       count: (json['count'] as num).toInt(),
       confirmationMessage: json['confirmationMessage'] as String,
       customClosedFormMessage: json['customClosedFormMessage'] as String,
+      spreadsheetId: json['spreadsheetId'] as String,
+      createAt: DateTime.parse(json['createAt'] as String),
+      expireAt: DateTime.parse(json['expireAt'] as String),
     );
 
 Map<String, dynamic> _$MetadataModelDTOToJson(MetadataModelDTO instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'isFilled': instance.isFilled,
+      'enable': instance.enable,
       'title': instance.title,
-      'imageURLDescription': instance.imageURLDescription,
       'description': instance.description,
       'publishedUrl': instance.publishedUrl,
       'editorEmails': instance.editorEmails,
       'count': instance.count,
       'confirmationMessage': instance.confirmationMessage,
       'customClosedFormMessage': instance.customClosedFormMessage,
+      'spreadsheetId': instance.spreadsheetId,
+      'createAt': instance.createAt.toIso8601String(),
+      'expireAt': instance.expireAt.toIso8601String(),
     };

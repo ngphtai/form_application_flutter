@@ -1,3 +1,5 @@
+import 'package:dsoft_form_application/common/logger/app_logger.dart';
+
 import 'app_orther_error.dart';
 
 /// {@template api_error}
@@ -17,7 +19,7 @@ class NetworkError extends AppOtherError {
 
   @override
   void logErrorToLogger() {
-    // TODO: implement logErrorToLogger
+    AppLogger.instance.e("network have error is $messageNetworkError");
   }
 
   @override

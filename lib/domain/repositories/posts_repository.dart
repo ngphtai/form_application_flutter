@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:dsoft_form_application/common/constant/app_errors/app_error.dart';
 import 'package:dsoft_form_application/core/locators/locators.dart';
 import 'package:dsoft_form_application/data/model/entities/post_model_entity.dart';
+import 'package:dsoft_form_application/domain/models/meta_data_model.dart';
 import 'package:dsoft_form_application/domain/repositories/repository.dart';
 
 import 'package:either_dart/either.dart';
@@ -10,25 +11,25 @@ import '../models/post_model.dart';
 
 abstract class PostsRepository extends Repository {
   //remote
-  Future<Either<AppError, List<PostsModel>>> fetchPosts();
-  Future<Either<AppError, PostsModel>> getDetailPost(int index);
+  Future<Either<AppError, List<MetaDataModel>>> fetchPosts();
+  Future<Either<AppError, PostsModel>> getDetailPost(String index);
   Future<Either<AppError, bool>> saveAnswerToGoogleSheet(PostsModel post);
   //local
   Future<Either<AppError, bool>> saveResultPostToLocal(PostModelEntity post);
   Future<Either<AppError, List<PostsModel>?>> getPostsFromLocal();
-  Future<Either<AppError, PostsModel>> getAnswerFromLocal(String id);
+  Future<Either<AppError, PostsModel?>> getAnswerFromLocal(String id);
 }
 
 class PostRepositoryImpl extends PostsRepository {
   //remote
   final _fetchPosts = diPostsRemoteDataResource;
   @override
-  Future<Either<AppError, List<PostsModel>>> fetchPosts() async {
+  Future<Either<AppError, List<MetaDataModel>>> fetchPosts() async {
     try {
-      final postsModelDto = await _fetchPosts.getPosts();
+      final metaDataModelDto = await _fetchPosts.getPosts();
 
-      final List<PostsModel> result =
-          postsModelDto.map((dto) => dto.toDomain()).toList();
+      final List<MetaDataModel> result =
+          metaDataModelDto.map((dto) => dto.toDomain()).toList();
 
       return Right(result);
     } on DioException catch (e) {
@@ -89,10 +90,10 @@ class PostRepositoryImpl extends PostsRepository {
   }
 
   @override
-  Future<Either<AppError, PostsModel>> getAnswerFromLocal(String id) async {
+  Future<Either<AppError, PostsModel?>> getAnswerFromLocal(String id) async {
     try {
       final result = await postLocal.getAnswers(id);
-      final PostsModel post = result!.toDomain();
+      final PostsModel? post = result?.toDomain();
 
       return Right(post);
     } on AppError catch (e) {

@@ -10,7 +10,7 @@ final class HistoryPageInitial extends HistoryPageState {
 }
 
 final class HistoryPageLoading extends HistoryPageState {
-  HistoryPageLoading();
+  const HistoryPageLoading();
 
   @override
   List<Object> get props => [];

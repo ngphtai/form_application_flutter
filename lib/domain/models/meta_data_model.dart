@@ -3,55 +3,63 @@ import 'package:dsoft_form_application/domain/models/mapper_entity.dart';
 
 class MetaDataModel extends MapperEntity<MetadataModelEntity> {
   final String id;
-  final bool isFilled;
+  final bool enable;
   final String title;
-  final String imageURLDescription;
   final String description;
   final String publishedUrl;
   final List<String> editorEmails;
   final int count;
   final String confirmationMessage;
   final String customClosedFormMessage;
+  final String spreadsheetId;
+  final DateTime createAt;
+  final DateTime expireAt;
+
   MetaDataModel({
     required this.id,
-    required this.isFilled,
     required this.title,
-    required this.imageURLDescription,
     required this.description,
     required this.publishedUrl,
     required this.editorEmails,
     required this.count,
     required this.confirmationMessage,
     required this.customClosedFormMessage,
+    required this.enable,
+    required this.spreadsheetId,
+    required this.createAt,
+    required this.expireAt,
   });
 
   factory MetaDataModel.fromJson(Map<String, dynamic> json) {
     return MetaDataModel(
         id: json['id'],
-        isFilled: json['isFilled'],
         title: json['title'],
-        imageURLDescription: json['imageURLDescription'],
         description: json['description'],
         publishedUrl: json['publishedUrl'],
         editorEmails: json['editorEmails'],
         count: json['count'],
         confirmationMessage: json['confirmationMessage'],
-        customClosedFormMessage: json['customClosedFormMessage']);
+        customClosedFormMessage: json['customClosedFormMessage'],
+        spreadsheetId: json['spreadsheetId'],
+        enable: json['enable'],
+        createAt: DateTime.parse(json['createAt']),
+        expireAt: DateTime.parse(json['expireAt']));
   }
 
   @override
   MetadataModelEntity toEntity() {
     return MetadataModelEntity(
-      id: id,
-      isFilled: isFilled,
-      title: title,
-      imageURLDescription: imageURLDescription,
-      description: description,
-      publishedUrl: publishedUrl,
-      editorEmails: editorEmails,
-      count: count,
-      confirmationMessage: confirmationMessage,
-      customClosedFormMessage: customClosedFormMessage,
-    );
+        id: id,
+        title: title,
+        description: description,
+        publishedUrl: publishedUrl,
+        editorEmails: editorEmails,
+        count: count,
+        confirmationMessage: confirmationMessage,
+        customClosedFormMessage: customClosedFormMessage,
+        enable: enable,
+        spreadsheetId: spreadsheetId,
+        createAt: createAt,
+        expireAt: expireAt);
   }
 }

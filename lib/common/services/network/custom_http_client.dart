@@ -125,7 +125,7 @@ class HttpClientImpl implements CustomHttpClient {
         }),
       );
       return response.data;
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       AppLogger.instance.e(e.message!);
       rethrow;
     } on Exception catch (e) {
@@ -151,7 +151,7 @@ class HttpClientImpl implements CustomHttpClient {
         }),
       );
       return response.data;
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       AppLogger.instance.e(e.message!);
       rethrow;
     } on Exception catch (e) {
@@ -177,7 +177,7 @@ class HttpClientImpl implements CustomHttpClient {
         }),
       );
       return response.data;
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       AppLogger.instance.e(e.message!);
       rethrow;
     } on Exception catch (e) {
@@ -200,7 +200,7 @@ class HttpClientImpl implements CustomHttpClient {
             AppConstants.isAuthenticationKeyInterceptor: authorization,
           }));
       return true;
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       AppLogger.instance.e(e.message!);
       rethrow;
     } on Exception catch (e) {
@@ -228,7 +228,7 @@ class HttpClientImpl implements CustomHttpClient {
             AppConstants.isAuthenticationKeyInterceptor: authorization,
           }));
       return res.data;
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       AppLogger.instance.e(e.message!);
       rethrow;
     } on Exception catch (e) {

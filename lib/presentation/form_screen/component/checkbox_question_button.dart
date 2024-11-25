@@ -11,6 +11,7 @@ class CheckboxQuestionButton extends StatefulWidget {
       this.isError = false});
 
   @override
+  // ignore: library_private_types_in_public_api
   _CheckboxQuestionButtonState createState() => _CheckboxQuestionButtonState();
 
   final List<String> listCheckBox;
@@ -41,12 +42,12 @@ class _CheckboxQuestionButtonState extends State<CheckboxQuestionButton> {
 
         return Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(4)),
+            borderRadius: const BorderRadius.all(Radius.circular(4)),
             border: Border.all(
                 color: widget.isRequest == true
                     ? !widget.isError
                         ? const Color(0xffe8e8e8)
-                        : Colors.red
+                        : const Color(0xffdb1e39)
                     : const Color(0xffe8e8e8),
                 width: 1),
           ),
@@ -57,7 +58,8 @@ class _CheckboxQuestionButtonState extends State<CheckboxQuestionButton> {
               return Container(
                 decoration: BoxDecoration(
                     color: index % 2 == 0
-                        ? const Color(0xFFf4f4f4f4)
+                        // ignore: use_full_hex_values_for_flutter_colors
+                        ? const Color(0xfff4f4f4f4)
                         : Colors.white),
                 child: CheckboxListTile(
                   hoverColor: Colors.red,
@@ -76,7 +78,7 @@ class _CheckboxQuestionButtonState extends State<CheckboxQuestionButton> {
                       context
                           .read<CheckboxQuestionButtonBloc>()
                           .validate(selectedCheckboxes);
-                      print(selectedCheckboxes);
+                      // print(selectedCheckboxes);
                       // widget.onChanged(selectedCheckboxes);
                     });
                   },

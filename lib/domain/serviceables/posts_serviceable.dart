@@ -2,6 +2,7 @@ import 'package:dsoft_form_application/common/constant/app_errors/app_error.dart
 import 'package:dsoft_form_application/common/logger/app_logger.dart';
 import 'package:dsoft_form_application/core/locators/locators.dart';
 import 'package:dsoft_form_application/data/model/entities/post_model_entity.dart';
+import 'package:dsoft_form_application/domain/models/meta_data_model.dart';
 import 'package:either_dart/either.dart';
 
 import '../models/post_model.dart';
@@ -19,7 +20,8 @@ class PostsServiceable {
 
   Future<void> initialize() async {}
   //remote
-  Future<Either<AppError, List<PostsModel>>> fetchPostsFromRemote() async {
+
+  Future<Either<AppError, List<MetaDataModel>>> fetchPostsFromRemote() async {
     var result = await _fetchPost.call(dynamic);
 
     return result.fold(
@@ -33,7 +35,7 @@ class PostsServiceable {
     );
   }
 
-  Future<Either<AppError, PostsModel>> getDetailPost(int index) async {
+  Future<Either<AppError, PostsModel>> getDetailPost(String index) async {
     var result = await _getDetailPost.call(index);
 
     return result.fold((context) {

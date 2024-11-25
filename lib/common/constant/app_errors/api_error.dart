@@ -1,3 +1,4 @@
+import 'package:dsoft_form_application/common/logger/app_logger.dart';
 import 'app_error.dart';
 
 /// {@template api_error}
@@ -18,12 +19,13 @@ class APIError extends AppError {
   APIError({
     this.codeStatus,
     this.codeDetail,
-    this.message = "", // TODO: Add default error when do not find error
+    this.message = "API have error !",
   });
 
   @override
   void logErrorToLogger() {
-    // TODO: implement logErrorToLogger
+    AppLogger.instance.e(
+        'Error: $message, Code Status: $codeStatus, Code Detail: $codeDetail');
   }
 
   @override

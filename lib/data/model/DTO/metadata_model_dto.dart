@@ -7,27 +7,31 @@ part 'metadata_model_dto.g.dart';
 @JsonSerializable(explicitToJson: true)
 class MetadataModelDTO extends MapperDomain<MetaDataModel> {
   final String id;
-  final bool isFilled;
+  final bool enable;
   final String title;
-  final String imageURLDescription;
   final String description;
   final String publishedUrl;
   final List<String> editorEmails;
   final int count;
   final String confirmationMessage;
   final String customClosedFormMessage;
+  final String spreadsheetId;
+  final DateTime createAt;
+  final DateTime expireAt;
 
   MetadataModelDTO({
     required this.id,
-    required this.isFilled,
+    required this.enable,
     required this.title,
-    required this.imageURLDescription,
     required this.description,
     required this.publishedUrl,
     required this.editorEmails,
     required this.count,
     required this.confirmationMessage,
     required this.customClosedFormMessage,
+    required this.spreadsheetId,
+    required this.createAt,
+    required this.expireAt,
   });
 
   factory MetadataModelDTO.fromJson(Map<String, dynamic> json) =>
@@ -38,14 +42,16 @@ class MetadataModelDTO extends MapperDomain<MetaDataModel> {
   MetaDataModel toDomain() {
     return MetaDataModel(
         id: id,
-        isFilled: isFilled,
         title: title,
-        imageURLDescription: imageURLDescription,
         description: description,
         publishedUrl: publishedUrl,
         editorEmails: editorEmails,
         count: count,
         confirmationMessage: confirmationMessage,
-        customClosedFormMessage: customClosedFormMessage);
+        customClosedFormMessage: customClosedFormMessage,
+        enable: enable,
+        spreadsheetId: spreadsheetId,
+        createAt: createAt,
+        expireAt: expireAt);
   }
 }
