@@ -59,9 +59,6 @@ class PostsRemoteDataResourceImpl extends PostRemoteDataResource {
     try {
       String url = "${APIConstants.methodPost}/$index";
       var response = await customHttpClient.get(url);
-
-      // var response = response.data;
-
       response = response is String
           ? json.decode(response) as Map<String, dynamic>
           : response;
@@ -93,22 +90,23 @@ class PostsRemoteDataResourceImpl extends PostRemoteDataResource {
           await clientViaServiceAccount(serviceAccountCredentials, scopes);
       final sheetsApi = sheets.SheetsApi(client);
 
-      const spreadsheetId = AppConstants.spreadsheetId;
-
       // Format sheet name to be valid
-      String sheetName = post.metaData.id.replaceAll(' ', '-');
+      // String sheetName = post.metaData.id.replaceAll(' ', '-');
 
-      // Check if spreadsheet exists
-      final spreadsheet = await sheetsApi.spreadsheets.get(spreadsheetId);
+      // // Check if spreadsheet exists
+      // final spreadsheet = await sheetsApi.spreadsheets.get(spreadsheetId);
 
-      if (!spreadsheet.sheets!
-          .any((sheet) => sheet.properties!.title == sheetName)) {
-        // Create new sheet
-        await createNewSheet(sheetName, sheetsApi, spreadsheetId, post);
-        await addValueToSheet(post, sheetsApi, spreadsheetId, sheetName);
-      } else {
-        await addValueToSheet(post, sheetsApi, spreadsheetId, sheetName);
-      }
+      // if (!spreadsheet.sheets!
+      //     .any((sheet) => sheet.properties!.title == sheetName)) {
+      //   // Create new sheet
+      //   await createNewSheet(sheetName, sheetsApi, spreadsheetId, post);
+      //   await addValueToSheet(post, sheetsApi, spreadsheetId, sheetName);
+      // } else {
+      //   await addValueToSheet(post, sheetsApi, spreadsheetId, sheetName);
+      // }
+
+      await addValueToSheet(post, sheetsApi, post.metaData.spreadsheetId,
+          "Câu trả lời biểu mẫu 1");
 
       // Close client
       client.close();

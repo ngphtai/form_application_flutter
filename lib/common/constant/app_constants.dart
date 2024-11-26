@@ -36,6 +36,4 @@ class AppConstants {
   static const folderNameOutputLogger = "FaceLogOutputLogger";
 
   static const credentials = 'assets/credentials.json';
-
-  static const spreadsheetId = '1dRDA_ovwIfmodIEp8gKLeRMQSE73g9_ndLpmSmvD_FQ';
 }

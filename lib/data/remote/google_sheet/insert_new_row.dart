@@ -4,6 +4,10 @@ import 'package:googleapis/sheets/v4.dart' as sheets;
 Future<void> addValueToSheet(PostsModel posts, sheets.SheetsApi sheetsApi,
     String spreadsheetId, String sheetName) async {
   List<dynamic> rowData = [];
+  // Add current time
+  DateTime now = DateTime.now();
+  rowData.add(now.toIso8601String());
+
   for (var item in posts.itemModels) {
     String result =
         item.result.toString().replaceAll('[', '').replaceAll(']', '');
@@ -12,10 +16,6 @@ Future<void> addValueToSheet(PostsModel posts, sheets.SheetsApi sheetsApi,
     }
     rowData.add(result);
   }
-
-  // Add current time
-  DateTime now = DateTime.now();
-  rowData.add(now.toIso8601String());
 
   // Create ValueRange object
   final valueRange = sheets.ValueRange.fromJson({

@@ -254,7 +254,8 @@ class ReviewFormPageWidget extends StatelessWidget {
         content: Text(checkValidToSubmit
             ? "Đã lưu thành công"
             : "Vui lòng điền đầy đủ thông tin"),
-        backgroundColor: checkValidToSubmit ? Colors.green : Colors.red,
+        backgroundColor:
+            checkValidToSubmit ? Colors.green : const Color(0xffdb1e39),
       ),
     );
   }

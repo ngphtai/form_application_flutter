@@ -149,7 +149,7 @@ class SharedAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             ),
             GoRouterState.of(context).name == Routers.historyPage
-                ? const Text("      ")
+                ? Gap(20.w)
                 : GestureDetector(
                     onTap: () {
                       context.go(Routers.historyPage);
