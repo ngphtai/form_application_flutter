@@ -1,4 +1,4 @@
-import 'package:dsoft_form_application/core/utils/just_one_pointer/just_one_pointer_widget.dart';
+import '/core/utils/just_one_pointer/just_one_pointer_widget.dart';
 import 'package:flutter/material.dart';
 
 import 'app.dart';

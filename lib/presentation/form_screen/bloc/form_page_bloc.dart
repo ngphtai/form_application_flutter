@@ -1,8 +1,8 @@
 import 'package:bloc/bloc.dart';
-import 'package:dsoft_form_application/common/logger/app_logger.dart';
-import 'package:dsoft_form_application/core/locators/locators.dart';
-import 'package:dsoft_form_application/data/model/entities/post_model_entity.dart';
-import 'package:dsoft_form_application/domain/models/post_model.dart';
+import '/common/logger/app_logger.dart';
+import '/core/locators/locators.dart';
+import '/data/model/entities/post_model_entity.dart';
+import '/domain/models/post_model.dart';
 import 'package:equatable/equatable.dart';
 
 part 'form_page_event.dart';

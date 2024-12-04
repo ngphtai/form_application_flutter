@@ -1,4 +1,4 @@
-import 'package:dsoft_form_application/presentation/history_screen/history_page_screen.dart';
+import '/presentation/history_screen/history_page_screen.dart';
 
 import '../../initializer.dart';
 import '../../presentation/form_screen/form_page_screen.dart';

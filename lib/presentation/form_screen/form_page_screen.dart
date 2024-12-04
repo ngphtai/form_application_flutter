@@ -1,6 +1,6 @@
-import 'package:dsoft_form_application/presentation/detail_screen/bloc/detail_page_bloc.dart';
-import 'package:dsoft_form_application/presentation/form_screen/bloc/form_page_bloc.dart';
-import 'package:dsoft_form_application/presentation/form_screen/form_page_wiget.dart';
+import '/presentation/detail_screen/bloc/detail_page_bloc.dart';
+import '/presentation/form_screen/bloc/form_page_bloc.dart';
+import '/presentation/form_screen/form_page_wiget.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

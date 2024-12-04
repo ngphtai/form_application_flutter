@@ -1,7 +1,7 @@
-import 'package:dsoft_form_application/common/logger/app_logger.dart';
-import 'package:dsoft_form_application/data/model/entities/item_model_entity.dart';
-import 'package:dsoft_form_application/data/model/entities/metadata_model_entity.dart';
-import 'package:dsoft_form_application/data/model/entities/post_model_entity.dart';
+import '/common/logger/app_logger.dart';
+import '/data/model/entities/item_model_entity.dart';
+import '/data/model/entities/metadata_model_entity.dart';
+import '/data/model/entities/post_model_entity.dart';
 import 'package:hive/hive.dart';
 
 import '../../../common/constant/constants.dart';

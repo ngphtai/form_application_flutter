@@ -1,4 +1,4 @@
-import 'package:dsoft_form_application/common/logger/app_logger.dart';
+import '/common/logger/app_logger.dart';
 
 extension StringToDateTime on String {
   DateTime? toDateTime({String pattern = "yyyy-MM-dd HH:mm:ss"}) {

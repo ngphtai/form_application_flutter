@@ -1,6 +1,6 @@
-import 'package:dsoft_form_application/core/styles/app_icons.dart';
-import 'package:dsoft_form_application/core/styles/app_text_style.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/bloc/rating_bloc.dart';
+import '/core/styles/app_icons.dart';
+import '/core/styles/app_text_style.dart';
+import '/presentation/form_screen/component/bloc/rating_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

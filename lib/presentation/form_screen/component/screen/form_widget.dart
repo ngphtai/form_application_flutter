@@ -1,8 +1,8 @@
-import 'package:dsoft_form_application/common/extensions/conver_string_to_enum.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/bloc/checkbox_button_bloc.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/date_picker.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/share_container.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/text_field_custom_without_bloc.dart';
+import '/common/extensions/conver_string_to_enum.dart';
+import '/presentation/form_screen/component/bloc/checkbox_button_bloc.dart';
+import '/presentation/form_screen/component/date_picker.dart';
+import '/presentation/form_screen/component/share_container.dart';
+import '/presentation/form_screen/component/text_field_custom_without_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../common/enums/form_page_enums.dart';
@@ -91,6 +91,7 @@ class FormWidget extends StatelessWidget {
         {
           return ShareContainer(
             widget: RadioButton(
+              key: Key(item.index.toString()),
               listRadio: item.choices ?? ["câu hỏi bị trống!"],
               nameGroup: item.title,
               isRequest: isRequired,

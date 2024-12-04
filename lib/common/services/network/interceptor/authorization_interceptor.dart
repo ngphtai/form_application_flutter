@@ -1,7 +1,7 @@
 // ignore_for_file: unused_field
 
 import 'package:dio/dio.dart';
-import 'package:dsoft_form_application/common/constant/constants.dart';
+import '/common/constant/constants.dart';
 
 /// [AuthorizationInterceptor] add access token to header when call the API
 /// need access token

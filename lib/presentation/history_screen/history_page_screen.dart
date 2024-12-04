@@ -1,6 +1,6 @@
-import 'package:dsoft_form_application/presentation/history_screen/bloc/history_page_bloc.dart';
-import 'package:dsoft_form_application/presentation/history_screen/history_page_widget.dart';
-import 'package:dsoft_form_application/shared/widget/app_bar.dart';
+import '../../shared/widget/share_app_bar.dart';
+import '/presentation/history_screen/bloc/history_page_bloc.dart';
+import '/presentation/history_screen/history_page_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

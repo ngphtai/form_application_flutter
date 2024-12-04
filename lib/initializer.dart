@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:dsoft_form_application/shared/widget/toast_widget/pop_up_interruption.dart';
+import '/shared/widget/toast_widget/pop_up_interruption.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

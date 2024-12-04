@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:dsoft_form_application/common/extensions/to_file.dart';
+import '/common/extensions/to_file.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:image_picker/image_picker.dart';

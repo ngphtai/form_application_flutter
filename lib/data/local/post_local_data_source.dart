@@ -1,6 +1,6 @@
-import 'package:dsoft_form_application/common/constant/constants.dart';
-import 'package:dsoft_form_application/core/locators/locators.dart';
-import 'package:dsoft_form_application/data/model/entities/post_model_entity.dart';
+import '/common/constant/constants.dart';
+import '/core/locators/locators.dart';
+import '/data/model/entities/post_model_entity.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 

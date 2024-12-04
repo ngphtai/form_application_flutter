@@ -1,4 +1,4 @@
-import 'package:dsoft_form_application/presentation/splash_screen/components/splash_place_holder.dart';
+import '/presentation/splash_screen/components/splash_place_holder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -72,7 +72,11 @@ class App extends StatelessWidget {
                 // GlobalCupertinoLocalizations.delegate,
               ],
               // routerConfig: diAppRouter.router,
-              theme: ThemeData.light(),
+              theme: ThemeData.light().copyWith(
+                textTheme: ThemeData.light().textTheme.apply(
+                      fontFamily: 'Poppins',
+                    ),
+              ),
               builder: FlutterSmartDialog.init(
                 builder: (context, child) => MediaQuery(
                   data: MediaQuery.of(context)

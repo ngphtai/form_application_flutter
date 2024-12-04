@@ -1,4 +1,4 @@
-import 'package:dsoft_form_application/data/model/mapper_domain.dart';
+import '/data/model/mapper_domain.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../../domain/models/meta_data_model.dart';

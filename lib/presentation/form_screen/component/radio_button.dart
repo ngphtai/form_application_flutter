@@ -1,4 +1,4 @@
-import 'package:dsoft_form_application/core/styles/app_text_style.dart';
+import '/core/styles/app_text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -18,7 +18,6 @@ class RadioButton extends StatefulWidget {
   });
   final List<String> listRadio;
   final String nameGroup;
-  String? selected;
   final bool? isRequest;
   final RadioButtonBloc radioButtonBloc;
   bool isError = false;
@@ -30,7 +29,6 @@ class RadioButton extends StatefulWidget {
 
 class _RadioButtonState extends State<RadioButton>
     with AutomaticKeepAliveClientMixin {
-  bool isClose = false;
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -38,20 +36,20 @@ class _RadioButtonState extends State<RadioButton>
       create: (context) => widget.radioButtonBloc,
       child: BlocBuilder<RadioButtonBloc, RadioButtonState>(
           builder: (context, state) {
+        final bloc = context.read<RadioButtonBloc>();
         // handle get value from local database
-        if (widget.controller.text.isNotEmpty && isClose == false) {
+        if (widget.controller.text.isNotEmpty && bloc.value == null) {
           String value = widget.controller.text;
-          widget.selected = value;
-          context.read<RadioButtonBloc>().validate(value);
-          isClose = true;
+          bloc.validate(value);
         }
         //handle error when init and validate
         if (state is RadioButtonInitial) {
           widget.isError = false;
         } else {
-          bool isNoEmpty = context.read<RadioButtonBloc>().value != null;
+          bool isNoEmpty = bloc.value != null;
           isNoEmpty ? widget.isError = false : widget.isError = true;
         }
+        String? selected = bloc.value;
         return Container(
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(4)),
@@ -68,11 +66,8 @@ class _RadioButtonState extends State<RadioButton>
             children: widget.listRadio.map((option) {
               return GestureDetector(
                 onTap: () {
-                  setState(() {
-                    widget.selected = option;
-                    widget.controller.text = option;
-                    context.read<RadioButtonBloc>().validate(option);
-                  });
+                  bloc.validate(option);
+                  widget.controller.text = option;
                 },
                 child: Container(
                   padding: const EdgeInsets.only(top: 8, bottom: 8),
@@ -86,16 +81,16 @@ class _RadioButtonState extends State<RadioButton>
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: option == widget.selected
+                            color: option == selected
                                 ? const Color(0xffdb1e39)
                                 : Colors.black,
                             width: 2,
                           ),
-                          color: option == widget.selected
+                          color: option == selected
                               ? const Color(0xffdb1e39)
                               : Colors.transparent,
                         ),
-                        child: option == widget.selected
+                        child: option == selected
                             ? const Center(
                                 child: Icon(
                                   Icons.check,
@@ -123,19 +118,3 @@ class _RadioButtonState extends State<RadioButton>
   @override
   bool get wantKeepAlive => true;
 }
-// Column(
-//             children: widget.listRadio.map((option) {
-//               return RadioListTile<String>(
-//                 title: Text(option),
-//                 value: option,
-//                 groupValue: widget.selected,
-//                 activeColor: Colors.red,
-//                 onChanged: (value) {
-//                   setState(() {
-//                     widget.selected = value;
-//                     context.read<RadioButtonBloc>().validate(value!);
-//                   });
-//                 },
-//               );
-//             }).toList(),
-//           ),

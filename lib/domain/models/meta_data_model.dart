@@ -1,5 +1,5 @@
-import 'package:dsoft_form_application/data/model/entities/metadata_model_entity.dart';
-import 'package:dsoft_form_application/domain/models/mapper_entity.dart';
+import '/data/model/entities/metadata_model_entity.dart';
+import '/domain/models/mapper_entity.dart';
 
 class MetaDataModel extends MapperEntity<MetadataModelEntity> {
   final String id;

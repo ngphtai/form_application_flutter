@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
-import 'package:dsoft_form_application/common/constant/app_errors/app_error.dart';
-import 'package:dsoft_form_application/core/locators/locators.dart';
-import 'package:dsoft_form_application/data/model/entities/post_model_entity.dart';
-import 'package:dsoft_form_application/domain/models/meta_data_model.dart';
-import 'package:dsoft_form_application/domain/repositories/repository.dart';
+import '/common/constant/app_errors/app_error.dart';
+import '/core/locators/locators.dart';
+import '/data/model/entities/post_model_entity.dart';
+import '/domain/models/meta_data_model.dart';
+import '/domain/repositories/repository.dart';
 
 import 'package:either_dart/either.dart';
 

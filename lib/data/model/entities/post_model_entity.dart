@@ -1,7 +1,7 @@
-import 'package:dsoft_form_application/data/model/entities/item_model_entity.dart';
-import 'package:dsoft_form_application/data/model/entities/metadata_model_entity.dart';
-import 'package:dsoft_form_application/data/model/mapper_domain.dart';
-import 'package:dsoft_form_application/domain/models/post_model.dart';
+import '/data/model/entities/item_model_entity.dart';
+import '/data/model/entities/metadata_model_entity.dart';
+import '/data/model/mapper_domain.dart';
+import '/domain/models/post_model.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 part 'post_model_entity.g.dart';

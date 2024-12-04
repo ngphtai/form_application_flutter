@@ -1,6 +1,6 @@
-import 'package:dsoft_form_application/core/styles/app_icons.dart';
-import 'package:dsoft_form_application/core/styles/app_text_style.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/screen/text_button.dart';
+import '/core/styles/app_icons.dart';
+import '/core/styles/app_text_style.dart';
+import '/presentation/form_screen/component/screen/text_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

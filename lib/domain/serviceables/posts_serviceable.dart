@@ -1,8 +1,8 @@
-import 'package:dsoft_form_application/common/constant/app_errors/app_error.dart';
-import 'package:dsoft_form_application/common/logger/app_logger.dart';
-import 'package:dsoft_form_application/core/locators/locators.dart';
-import 'package:dsoft_form_application/data/model/entities/post_model_entity.dart';
-import 'package:dsoft_form_application/domain/models/meta_data_model.dart';
+import '/common/constant/app_errors/app_error.dart';
+import '/common/logger/app_logger.dart';
+import '/core/locators/locators.dart';
+import '/data/model/entities/post_model_entity.dart';
+import '/domain/models/meta_data_model.dart';
 import 'package:either_dart/either.dart';
 
 import '../models/post_model.dart';

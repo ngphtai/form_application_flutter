@@ -1,4 +1,4 @@
-import 'package:dsoft_form_application/common/logger/app_logger.dart';
+import '/common/logger/app_logger.dart';
 
 import 'app_orther_error.dart';
 

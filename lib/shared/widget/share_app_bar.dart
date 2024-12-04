@@ -1,168 +1,121 @@
-import 'package:dsoft_form_application/core/styles/app_text_style.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/screen/text_button.dart';
 import 'package:flutter/material.dart';
-import 'package:dsoft_form_application/core/styles/app_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/routing/route_path.dart';
+import '../../core/styles/app_icons.dart';
+import '../../core/styles/app_text_style.dart';
+import '../../presentation/form_screen/component/screen/text_button.dart';
 
 // ignore: must_be_immutable
 class SharedAppBar extends StatelessWidget implements PreferredSizeWidget {
+  SharedAppBar(
+      {super.key, this.title, this.isForm = false, this.isReviewForm = false});
   final String? title;
   bool isForm;
   bool isReviewForm;
-  SharedAppBar({
-    super.key,
-    this.title,
-    this.isForm = false,
-    this.isReviewForm = false,
-  });
-
   @override
   Widget build(BuildContext context) {
-    if (title != null) {
-      return AppBar(
-          backgroundColor: Colors.white,
-          automaticallyImplyLeading: false, // hide default back button
-          leading: GestureDetector(
-            onTap: () async {
-              if (isForm) {
-                !isReviewForm
-                    ? await showDiaLog(context)
-                    : context.pop(context);
-              } else {
-                context.pop(context);
-              }
-            },
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 15.h,
+    final currentRouter = GoRouterState.of(context).name ?? "";
+    return AppBar(
+      backgroundColor: Colors.white,
+      automaticallyImplyLeading: false,
+      title: _buildTitle(context, currentRouter),
+    );
+  }
+
+  Widget _buildTitle(BuildContext context, String? currentPage) {
+    return SizedBox(
+      height: 0.3.sh,
+      width: double.infinity,
+      child: Stack(
+        children: [
+          currentPage != Routers.homePage
+              ? _buttonBack(context, currentPage)
+              : Positioned(
+                  right: 0,
+                  top: 0.25.sw,
+                  child: currentPage == Routers.homePage
+                      ? GestureDetector(
+                          onTap: () {
+                            context.go(Routers.historyPage);
+                          },
+                          child: const Text(
+                            "Đã điền",
+                            style: TextStyle(
+                              color: Color(0xffe03a52),
+                              fontSize: 14,
+                            ),
+                          ),
+                        )
+                      : const SizedBox(),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Icon(
-                      Icons.arrow_back_ios_new,
-                      size: 20.h,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            SizedBox(
-              width: 0.102.sw,
-            )
-          ],
-          bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(4.0),
-            child: Container(
-              color: Colors.white,
-              height: 1.0,
-            ),
-          ),
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: SizedBox(
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: title != null
+                  ? SizedBox(
                       width: 0.55.sw,
-                      child: Center(
-                        child: Text(
-                          textAlign: TextAlign.center,
-                          title.toString(),
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 14),
+                      child: Text(
+                        title ?? "",
+                        textAlign: TextAlign.center,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                    )
+                  : Center(
+                      widthFactor: 100.w,
+                      child: Transform.translate(
+                        offset: const Offset(-10, 0),
+                        child: Image.asset(
+                          AppIcons.logo2,
+                          height: 100.w,
+                          width: 100.w,
                         ),
                       ),
                     ),
-                  )
-                ],
-              ),
-            ],
-          ));
-    } else {
-      //App bar for home Page
-      return AppBar(
-        backgroundColor: Colors.white,
-        automaticallyImplyLeading: false,
-        elevation: 0,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(4.0),
-          child: Container(
-            color: Colors.white,
-            height: 1.0,
-          ),
-        ),
-        leading: GoRouterState.of(context).name == Routers.historyPage
-            ? GestureDetector(
-                onTap: () {
-                  if (GoRouterState.of(context).name == Routers.successPage) {
-                    context.go(Routers.homePage);
-                  } else if (GoRouterState.of(context).name ==
-                      Routers.reviewSuccessPage) {
-                    context.go(Routers.historyPage);
-                  } else {
-                    context.go(Routers.homePage);
-                  }
-                },
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 15.h,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Icon(
-                          Icons.arrow_back_ios_new,
-                          size: 20.h,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              )
-            : null,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            GoRouterState.of(context).name == Routers.historyPage
-                ? Gap(0.48.w)
-                : Gap(0.11.sw),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Image.asset(
-                AppIcons.logo2,
-                height: 100.w,
-                width: 100.w,
-              ),
             ),
-            GoRouterState.of(context).name == Routers.historyPage
-                ? Gap(20.w)
-                : GestureDetector(
-                    onTap: () {
-                      context.go(Routers.historyPage);
-                    },
-                    child: const Text(
-                      "Đã điền",
-                      style: TextStyle(color: Color(0xffe03a52), fontSize: 14),
-                    )),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buttonBack(BuildContext context, String? currentPage) {
+    return Positioned(
+      left: 0,
+      top: 0.23.sw,
+      child: GestureDetector(
+        onTap: () async {
+          if (title != null && isForm) {
+            !isReviewForm ? await showDiaLog(context) : context.pop(context);
+          } else if (currentPage == Routers.historyPage) {
+            context.go(Routers.homePage);
+          } else {
+            context.pop(context);
+          }
+        },
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Icon(Icons.arrow_back_ios_new, size: 20.h),
+              ],
+            ),
           ],
         ),
-      );
-    }
+      ),
+    );
   }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   Future<dynamic> showDiaLog(BuildContext originContext) {
     return showDialog(
@@ -257,8 +210,4 @@ class SharedAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             ));
   }
-
-  @override
-  Size get preferredSize => const Size.fromHeight(
-      kToolbarHeight + 1); // AppBar height + bottom divider
 }

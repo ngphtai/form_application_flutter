@@ -1,7 +1,7 @@
 import 'dart:io';
-import 'package:dsoft_form_application/common/logger/app_logger.dart';
-import 'package:dsoft_form_application/common/services/image_picker_service.dart';
-import 'package:dsoft_form_application/core/styles/app_icons.dart';
+import '/common/logger/app_logger.dart';
+import '/common/services/image_picker_service.dart';
+import '/core/styles/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';

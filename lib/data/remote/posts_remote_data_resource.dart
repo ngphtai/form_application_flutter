@@ -1,20 +1,18 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:dsoft_form_application/common/constant/constants.dart';
-import 'package:dsoft_form_application/common/logger/app_logger.dart';
-import 'package:dsoft_form_application/core/locators/locators.dart';
-import 'package:dsoft_form_application/data/model/DTO/metadata_model_dto.dart';
-import 'package:dsoft_form_application/data/model/DTO/posts_response_model_dto.dart';
-import 'package:dsoft_form_application/data/remote/google_sheet/insert_new_row.dart';
-import 'package:dsoft_form_application/domain/models/post_model.dart';
+import '/common/constant/constants.dart';
+import '/common/logger/app_logger.dart';
+import '/core/locators/locators.dart';
+import '/data/model/DTO/metadata_model_dto.dart';
+import '/data/model/DTO/posts_response_model_dto.dart';
+import '/data/remote/google_sheet/insert_new_row.dart';
+import '/domain/models/post_model.dart';
 
 //example
 import 'package:flutter/services.dart';
 import 'package:googleapis/sheets/v4.dart' as sheets;
 import 'package:googleapis_auth/auth_io.dart';
-
-import 'google_sheet/create_new_sheet.dart';
 
 abstract class PostRemoteDataResource {
   Future<List<MetadataModelDTO>> getPosts();

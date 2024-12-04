@@ -1,6 +1,6 @@
 // ignore_for_file: must_be_immutable
 
-import 'package:dsoft_form_application/presentation/form_screen/component/bloc/time_picker_custom_bloc.dart';
+import '/presentation/form_screen/component/bloc/time_picker_custom_bloc.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

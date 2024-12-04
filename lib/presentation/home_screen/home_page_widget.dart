@@ -1,17 +1,17 @@
-import 'package:dsoft_form_application/core/styles/app_icons.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/screen/loading_widget.dart';
-import 'package:dsoft_form_application/presentation/home_screen/bloc/home_page_bloc.dart';
-import 'package:dsoft_form_application/shared/widget/app_bar.dart';
+import '../../shared/widget/share_app_bar.dart';
+import '/core/styles/app_icons.dart';
+import '/presentation/form_screen/component/screen/loading_widget.dart';
+import '/presentation/home_screen/bloc/home_page_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import '../../../core/routing/route_path.dart';
+import '../../core/routing/route_path.dart';
 
-class PostWidget extends StatelessWidget {
-  const PostWidget({super.key});
+class HomePageWidget extends StatelessWidget {
+  const HomePageWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

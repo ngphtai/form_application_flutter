@@ -1,5 +1,5 @@
-import 'package:dsoft_form_application/data/model/mapper_domain.dart';
-import 'package:dsoft_form_application/domain/models/item_model.dart';
+import '/data/model/mapper_domain.dart';
+import '/domain/models/item_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'item_model_dto.g.dart';

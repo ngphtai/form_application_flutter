@@ -1,4 +1,4 @@
-import 'package:dsoft_form_application/domain/models/post_model.dart';
+import '/domain/models/post_model.dart';
 import 'package:googleapis/sheets/v4.dart' as sheets;
 
 Future<void> addValueToSheet(PostsModel posts, sheets.SheetsApi sheetsApi,

@@ -1,5 +1,5 @@
-import 'package:dsoft_form_application/core/styles/app_icons.dart';
-import 'package:dsoft_form_application/core/styles/app_text_style.dart';
+import '/core/styles/app_icons.dart';
+import '/core/styles/app_text_style.dart';
 import 'package:flutter/material.dart';
 
 // ignore: camel_case_types

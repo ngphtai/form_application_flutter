@@ -1,7 +1,7 @@
-import 'package:dsoft_form_application/data/model/entities/post_model_entity.dart';
-import 'package:dsoft_form_application/domain/models/item_model.dart';
-import 'package:dsoft_form_application/domain/models/mapper_entity.dart';
-import 'package:dsoft_form_application/domain/models/meta_data_model.dart';
+import '/data/model/entities/post_model_entity.dart';
+import '/domain/models/item_model.dart';
+import '/domain/models/mapper_entity.dart';
+import '/domain/models/meta_data_model.dart';
 
 class PostsModel extends MapperEntity<PostModelEntity> {
   final MetaDataModel metaData;

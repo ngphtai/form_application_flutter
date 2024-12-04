@@ -1,4 +1,4 @@
-import 'package:dsoft_form_application/common/logger/app_logger.dart';
+import '/common/logger/app_logger.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PickImageBloc extends Cubit<bool> {

@@ -1,8 +1,8 @@
-import 'package:dsoft_form_application/data/model/DTO/item_model_dto.dart';
-import 'package:dsoft_form_application/data/model/mapper_domain.dart';
-import 'package:dsoft_form_application/domain/models/post_model.dart';
+import '/data/model/DTO/item_model_dto.dart';
+import '/data/model/mapper_domain.dart';
+import '/domain/models/post_model.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:dsoft_form_application/data/model/DTO/metadata_model_dto.dart';
+import '/data/model/DTO/metadata_model_dto.dart';
 
 part 'posts_response_model_dto.g.dart';
 

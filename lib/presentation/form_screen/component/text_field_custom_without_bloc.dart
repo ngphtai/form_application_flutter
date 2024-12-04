@@ -1,4 +1,4 @@
-import 'package:dsoft_form_application/presentation/form_screen/component/bloc/text_field_bloc.dart';
+import '/presentation/form_screen/component/bloc/text_field_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

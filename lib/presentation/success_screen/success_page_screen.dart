@@ -1,5 +1,5 @@
-import 'package:dsoft_form_application/core/styles/app_icons.dart';
-import 'package:dsoft_form_application/shared/widget/app_bar.dart';
+import '/core/styles/app_icons.dart';
+import '/shared/widget/share_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';

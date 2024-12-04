@@ -1,5 +1,6 @@
-import 'package:dsoft_form_application/shared/widget/no_data_from_local.dart';
+import '/shared/widget/no_data_from_local.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import '../../common/logger/app_logger.dart';
 import "../form_screen/component/screen/loading_widget.dart";
 import 'bloc/history_page_bloc.dart';
@@ -71,11 +72,13 @@ class HistoryPageWidget extends StatelessWidget {
                                       children: [
                                         Image.asset(AppIcons.folder),
                                         const Gap(10),
-                                        Text(
-                                          post!.title,
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
+                                        Expanded(
+                                          child: Text(
+                                            post!.title,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -95,9 +98,9 @@ class HistoryPageWidget extends StatelessWidget {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        const Text(
-                                          "Hết hạn 12/09/2024",
-                                          style: TextStyle(
+                                        Text(
+                                          "Hết hạn: ${DateFormat('dd/MM/yyyy').format(post.expireAt)}",
+                                          style: const TextStyle(
                                             fontSize: 12,
                                             fontStyle: FontStyle.normal,
                                             color: Color(0xff6f6f6f),

@@ -1,7 +1,7 @@
-import 'package:dsoft_form_application/common/extensions/string_to_datetime.dart';
-import 'package:dsoft_form_application/common/logger/app_logger.dart';
-import 'package:dsoft_form_application/core/styles/app_icons.dart';
-import 'package:dsoft_form_application/presentation/form_screen/component/bloc/date_picker_bloc.dart';
+import '/common/extensions/string_to_datetime.dart';
+import '/common/logger/app_logger.dart';
+import '/core/styles/app_icons.dart';
+import '/presentation/form_screen/component/bloc/date_picker_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
-import 'package:dsoft_form_application/common/logger/app_logger.dart';
-import 'package:dsoft_form_application/core/locators/locators.dart';
+import '/common/logger/app_logger.dart';
+import '/core/locators/locators.dart';
 import 'package:equatable/equatable.dart';
 import '../../../domain/models/meta_data_model.dart';
 
