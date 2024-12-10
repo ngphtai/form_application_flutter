@@ -8,18 +8,19 @@ class RatingBloc extends Cubit<RatingState> {
 
   RatingBloc() : super(RatingInitial());
 
-  void validate(int? value) {
-    if (value != null) {
+  void validate(int value) {
+    if (value != 0) {
       selected = value;
-      emit(RatingValidate(value: true));
+      emit(RatingValidate(isValid: true, star: value));
     } else {
       selected = null;
-      emit(RatingValidate(value: false));
+      emit(RatingValidate(isValid: false, star: null));
     }
   }
 
   void setError() {
-    emit(RatingValidate(value: false)); // for state init and submit
+    emit(RatingValidate(
+        isValid: false, star: null)); // for state init and submit
   }
 }
 
@@ -31,9 +32,11 @@ abstract class RatingState extends Equatable {
 class RatingInitial extends RatingState {}
 
 class RatingValidate extends RatingState {
-  final bool value;
-  RatingValidate({required this.value});
+  final bool isValid;
+  final int? star;
+
+  RatingValidate({required this.isValid, required this.star});
 
   @override
-  List<Object?> get props => [value];
+  List<Object?> get props => [isValid, star];
 }

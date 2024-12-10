@@ -47,40 +47,64 @@ class _RatingState extends State<Rating> with AutomaticKeepAliveClientMixin {
             bool isNoEmpty = context.read<RatingBloc>().selected != null;
             isNoEmpty ? widget.isError = false : widget.isError = true;
           }
-          return Container(
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(4)),
-              border: Border.fromBorderSide(BorderSide(
-                color: widget.isRequest == true
-                    ? (!widget.isError ? Colors.white : const Color(0xffdb1e39))
-                    : Colors.white,
-                width: 1,
-              )),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                  5,
-                  (index) => Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Gap(10.h),
-                          Text((index + 1).toString(),
-                              style: AppTextStyle.regular14),
-                          IconButton(
-                            icon: showStar(index),
-                            color: Colors.amber,
-                            iconSize: 16.0,
-                            onPressed: () {
-                              setState(() {
-                                widget.star = index + 1;
-                              });
-                              context.read<RatingBloc>().validate(widget.star);
-                            },
-                          ),
-                        ],
-                      )).toList(),
-            ),
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(Radius.circular(4)),
+                  border: Border.fromBorderSide(BorderSide(
+                    color: widget.isRequest == true
+                        ? (!widget.isError
+                            ? Colors.white
+                            : const Color(0xffdb1e39))
+                        : Colors.white,
+                    width: 1,
+                  )),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(
+                      5,
+                      (index) => Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Gap(10.h),
+                              Text((index + 1).toString(),
+                                  style: AppTextStyle.regular14),
+                              IconButton(
+                                icon: showStar(index),
+                                color: Colors.amber,
+                                iconSize: 16.0,
+                                onPressed: () {
+                                  if (index + 1 == widget.star) {
+                                    setState(() {
+                                      widget.star = 0;
+                                    });
+                                    context
+                                        .read<RatingBloc>()
+                                        .validate(widget.star);
+                                  } else {
+                                    setState(() {
+                                      widget.star = index + 1;
+                                    });
+                                    context
+                                        .read<RatingBloc>()
+                                        .validate(widget.star);
+                                  }
+                                },
+                              ),
+                            ],
+                          )).toList(),
+                ),
+              ),
+              widget.isError
+                  ? const Text(
+                      "Câu hỏi này bắt buộc *",
+                      style: TextStyle(color: Color(0xffdb1e39)),
+                    )
+                  : const SizedBox(),
+            ],
           );
         },
       ),

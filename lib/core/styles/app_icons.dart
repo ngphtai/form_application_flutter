@@ -4,6 +4,7 @@
 /// These are imported to other files/widgets to load icons.
 class AppIcons {
   static const String logo = 'assets/icons/logo.png';
+  static const String logoApp = 'assets/icons/logo-app.png';
   static const String logo2 = 'assets/icons/logo2.png';
   static const String success = 'assets/icons/success.png';
   static const String tassel = 'assets/icons/tua_rua.png';

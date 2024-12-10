@@ -71,40 +71,52 @@ class _DatePickerState extends State<DatePicker>
               context.read<DatePickerBloc>().validate(widget.datePicker);
               // print("onTap ${widget.datePicker}");
             },
-            child: Container(
-                width: 1000.w,
-                decoration: BoxDecoration(
-                  color: const Color(0xfff4f4f4),
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(4),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 1000.w,
+                  decoration: BoxDecoration(
+                    color: const Color(0xfff4f4f4),
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(4),
+                    ),
+                    border: Border.all(
+                        color: widget.isRequest == true
+                            ? widget.isError
+                                ? const Color(0xffdb1e39)
+                                : const Color(0xffe8e8e8)
+                            : const Color(0xffe8e8e8),
+                        width: 1),
                   ),
-                  border: Border.all(
-                      color: widget.isRequest == true
-                          ? widget.isError
-                              ? const Color(0xffdb1e39)
-                              : const Color(0xffe8e8e8)
-                          : const Color(0xffe8e8e8),
-                      width: 1),
-                ),
-                padding: const EdgeInsets.all(12),
-                child: Row(
-                  children: [
-                    Image.asset(AppIcons.calendar, fit: BoxFit.fitHeight),
-                    const Gap(5),
-                    Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: dateRangePickerController.selectedDate != null
-                          ? Text(
-                              "${dateRangePickerController.selectedDate!.day}/${dateRangePickerController.selectedDate!.month}/${dateRangePickerController.selectedDate!.year}")
-                          : const Text(
-                              "Tháng, ngày, năm ",
-                              style: TextStyle(
-                                color: Color(0xff8C8C8C),
+                  padding: const EdgeInsets.all(12),
+                  child: Row(
+                    children: [
+                      Image.asset(AppIcons.calendar, fit: BoxFit.fitHeight),
+                      const Gap(5),
+                      Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: dateRangePickerController.selectedDate != null
+                            ? Text(
+                                "${dateRangePickerController.selectedDate!.day}/${dateRangePickerController.selectedDate!.month}/${dateRangePickerController.selectedDate!.year}")
+                            : const Text(
+                                "Tháng, ngày, năm ",
+                                style: TextStyle(
+                                  color: Color(0xff8C8C8C),
+                                ),
                               ),
-                            ),
-                    )
-                  ],
-                ))),
+                      )
+                    ],
+                  ),
+                ),
+                widget.isError
+                    ? const Text(
+                        "Câu hỏi này bắt buộc *",
+                        style: TextStyle(color: Color(0xffdb1e39)),
+                      )
+                    : const SizedBox(),
+              ],
+            )),
       );
     });
   }

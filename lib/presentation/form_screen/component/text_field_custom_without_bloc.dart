@@ -44,31 +44,42 @@ class _TextFieldCustomWithBlocState extends State<TextFieldCustomWithBloc> {
           widget.isError = !state.isValid;
         }
 
-        return Container(
-          padding: const EdgeInsets.fromLTRB(2, 0, 2, 0),
-          decoration: BoxDecoration(
-            color: const Color(0xfff4f4f4),
-            borderRadius: const BorderRadius.all(Radius.circular(4)),
-            border: Border.fromBorderSide(
-              BorderSide(
-                  color: widget.isRequest == true
-                      ? !widget.isError
-                          ? const Color(0xffe8e8e8)
-                          : const Color(0xffdb1e39)
-                      : const Color(0xffe8e8e8),
-                  width: 1),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.fromLTRB(2, 0, 2, 0),
+              decoration: BoxDecoration(
+                color: const Color(0xfff4f4f4),
+                borderRadius: const BorderRadius.all(Radius.circular(4)),
+                border: Border.fromBorderSide(
+                  BorderSide(
+                      color: widget.isRequest == true
+                          ? !widget.isError
+                              ? const Color(0xffe8e8e8)
+                              : const Color(0xffdb1e39)
+                          : const Color(0xffe8e8e8),
+                      width: 1),
+                ),
+              ),
+              child: TextField(
+                controller: widget.textController,
+                decoration: InputDecoration(
+                  hintText: "Nhập câu trả lời",
+                  hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.only(left: 10),
+                ),
+                maxLines: widget.maxLine,
+              ),
             ),
-          ),
-          child: TextField(
-            controller: widget.textController,
-            decoration: InputDecoration(
-              hintText: "Lựa chọn",
-              hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.only(left: 10),
-            ),
-            maxLines: widget.maxLine,
-          ),
+            widget.isError
+                ? const Text(
+                    "Câu hỏi này bắt buộc *",
+                    style: TextStyle(color: Color(0xffdb1e39)),
+                  )
+                : const SizedBox(),
+          ],
         );
       },
     );

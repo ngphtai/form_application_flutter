@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:dsoft_form_application/common/logger/app_logger.dart';
 import '/common/constant/app_errors/app_error.dart';
 import '/core/locators/locators.dart';
 import '/data/model/entities/post_model_entity.dart';
@@ -33,6 +34,7 @@ class PostRepositoryImpl extends PostsRepository {
 
       return Right(result);
     } on DioException catch (e) {
+      AppLogger.instance.d(e.toString());
       return LeftAPI(e);
     }
   }

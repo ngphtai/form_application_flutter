@@ -56,11 +56,12 @@ class _CheckboxQuestionButtonState extends State<CheckboxQuestionButton> {
             itemCount: widget.listCheckBox.length,
             itemBuilder: (context, index) {
               return Container(
-                decoration: BoxDecoration(
-                    color: index % 2 == 0
-                        // ignore: use_full_hex_values_for_flutter_colors
-                        ? const Color(0xfff4f4f4f4)
-                        : Colors.white),
+                decoration: const BoxDecoration(
+                    // color: index % 2 == 0
+                    //     // ignore: use_full_hex_values_for_flutter_colors
+                    //     ? const Color(0xfff4f4f4f4)
+                    //     : Colors.white
+                    ),
                 child: CheckboxListTile(
                   hoverColor: Colors.red,
                   activeColor: Colors.red,

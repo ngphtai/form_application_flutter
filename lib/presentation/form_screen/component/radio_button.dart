@@ -50,66 +50,86 @@ class _RadioButtonState extends State<RadioButton>
           isNoEmpty ? widget.isError = false : widget.isError = true;
         }
         String? selected = bloc.value;
-        return Container(
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.all(Radius.circular(4)),
-            border: Border.fromBorderSide(
-              BorderSide(
-                color: widget.isRequest == true
-                    ? (!widget.isError ? Colors.white : const Color(0xffdb1e39))
-                    : Colors.white,
-                width: 1,
-              ),
-            ),
-          ),
-          child: Column(
-            children: widget.listRadio.map((option) {
-              return GestureDetector(
-                onTap: () {
-                  bloc.validate(option);
-                  widget.controller.text = option;
-                },
-                child: Container(
-                  padding: const EdgeInsets.only(top: 8, bottom: 8),
-                  child: Row(
-                    children: [
-                      Gap(0.05.sw),
-                      Container(
-                        margin: const EdgeInsets.only(right: 12),
-                        height: 18,
-                        width: 18,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: option == selected
-                                ? const Color(0xffdb1e39)
-                                : Colors.black,
-                            width: 2,
-                          ),
-                          color: option == selected
-                              ? const Color(0xffdb1e39)
-                              : Colors.transparent,
-                        ),
-                        child: option == selected
-                            ? const Center(
-                                child: Icon(
-                                  Icons.check,
-                                  size: 12,
-                                  color: Colors.white,
-                                ),
-                              )
-                            : null,
-                      ),
-                      Text(
-                        option,
-                        style: AppTextStyle.regular14,
-                      ),
-                    ],
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.all(Radius.circular(4)),
+                border: Border.fromBorderSide(
+                  BorderSide(
+                    color: widget.isRequest == true
+                        ? (!widget.isError
+                            ? Colors.white
+                            : const Color(0xffdb1e39))
+                        : Colors.white,
+                    width: 1,
                   ),
                 ),
-              );
-            }).toList(),
-          ),
+              ),
+              child: Column(
+                children: widget.listRadio.map((option) {
+                  return GestureDetector(
+                    onTap: () {
+                      if (bloc.value == option) {
+                        bloc.validate("");
+                        widget.controller.text = "";
+                      } else {
+                        bloc.validate(option);
+                        widget.controller.text = option;
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.only(top: 8, bottom: 8),
+                      child: Row(
+                        children: [
+                          Gap(0.05.sw),
+                          Container(
+                            margin: const EdgeInsets.only(right: 12),
+                            height: 18,
+                            width: 18,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: option == selected
+                                    ? const Color(0xffdb1e39)
+                                    : Colors.black,
+                                width: 2,
+                              ),
+                              color: option == selected
+                                  ? const Color(0xffdb1e39)
+                                  : Colors.transparent,
+                            ),
+                            child: option == selected
+                                ? const Center(
+                                    child: Icon(
+                                      Icons.check,
+                                      size: 12,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : null,
+                          ),
+                          Text(
+                            option,
+                            style: AppTextStyle.regular14,
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+            widget.isRequest == true
+                ? widget.isError
+                    ? const Text(
+                        "Câu hỏi này bắt buộc *",
+                        style: TextStyle(color: Color(0xffdb1e39)),
+                      )
+                    : const SizedBox()
+                : const SizedBox(),
+          ],
         );
       }),
     );

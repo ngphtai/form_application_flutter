@@ -10,15 +10,15 @@ class RadioButtonBloc extends Cubit<RadioButtonState> {
   void validate(String value) {
     if (value.isNotEmpty) {
       select = value;
-      emit(RadioButtonValidate(isValid: true));
+      emit(RadioButtonValidate(isValid: true, value: value));
     } else {
       select = null;
-      emit(RadioButtonValidate(isValid: false));
+      emit(RadioButtonValidate(isValid: false, value: null));
     }
   }
 
   void setError() {
-    emit(RadioButtonValidate(isValid: false));
+    emit(RadioButtonValidate(isValid: false, value: null));
   }
 }
 
@@ -31,9 +31,10 @@ class RadioButtonInitial extends RadioButtonState {
 
 class RadioButtonValidate extends RadioButtonState {
   final bool isValid;
+  final String? value;
 
-  RadioButtonValidate({required this.isValid});
+  RadioButtonValidate({required this.isValid, required this.value});
 
   @override
-  List<Object?> get props => [isValid];
+  List<Object?> get props => [isValid, value];
 }

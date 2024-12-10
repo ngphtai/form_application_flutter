@@ -1,0 +1,105 @@
+{
+  "project_info": {
+    "project_number": "211816411616",
+    "project_id": "m-tech-internal-products",
+    "storage_bucket": "m-tech-internal-products.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:211816411616:android:a41787cc4df3530474fb85",
+        "android_client_info": {
+          "package_name": "com.mtech.formapplication.luc"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAemSmVFtklp0_osRDIbOPklfWHPZD2Xkk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:211816411616:android:3c61c0e76853661574fb85",
+        "android_client_info": {
+          "package_name": "com.mtech.formapplication.ngan"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAemSmVFtklp0_osRDIbOPklfWHPZD2Xkk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:211816411616:android:d886dd634725d9ee74fb85",
+        "android_client_info": {
+          "package_name": "com.mtech.formapplication.tai"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAemSmVFtklp0_osRDIbOPklfWHPZD2Xkk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:211816411616:android:0897e888e9a6323174fb85",
+        "android_client_info": {
+          "package_name": "com.mtech.formapplication.tham"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAemSmVFtklp0_osRDIbOPklfWHPZD2Xkk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:211816411616:android:46ca5aa64070ec0674fb85",
+        "android_client_info": {
+          "package_name": "com.mtech.formapplication.them"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAemSmVFtklp0_osRDIbOPklfWHPZD2Xkk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

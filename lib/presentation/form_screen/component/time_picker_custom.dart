@@ -69,44 +69,55 @@ class _TimePickerCustomState extends State<TimePickerCustom>
               onTap: () {
                 _showTimePickerBottomSheet(context);
               },
-              child: Container(
-                width: 1.sw,
-                decoration: BoxDecoration(
-                  color: const Color(0xfff4f4f4),
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(4),
-                  ),
-                  border: Border.all(
-                    color: widget.isRequest
-                        ? !widget.isError
-                            ? const Color(0xffe8e8e8)
-                            : const Color(0xffdb1e39)
-                        : const Color(0xffe8e8e8),
-                    width: 1,
-                  ),
-                ),
-                padding: const EdgeInsets.all(12),
-                child: Row(
-                  children: [
-                    Image.asset(AppIcons.calendar, fit: BoxFit.fitHeight),
-                    const Gap(10),
-                    Expanded(
-                      child: TextField(
-                        controller: controller.text.isEmpty
-                            ? TextEditingController(text: "Giờ")
-                            : controller,
-                        style: const TextStyle(color: Colors.black),
-                        keyboardType: null,
-                        onTap: () {
-                          _showTimePickerBottomSheet(context);
-                        },
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                        ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 1.sw,
+                    decoration: BoxDecoration(
+                      color: const Color(0xfff4f4f4),
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(4),
+                      ),
+                      border: Border.all(
+                        color: widget.isRequest
+                            ? !widget.isError
+                                ? const Color(0xffe8e8e8)
+                                : const Color(0xffdb1e39)
+                            : const Color(0xffe8e8e8),
+                        width: 1,
                       ),
                     ),
-                  ],
-                ),
+                    padding: const EdgeInsets.all(12),
+                    child: Row(
+                      children: [
+                        Image.asset(AppIcons.calendar, fit: BoxFit.fitHeight),
+                        const Gap(10),
+                        Expanded(
+                          child: TextField(
+                            controller: controller.text.isEmpty
+                                ? TextEditingController(text: "Giờ")
+                                : controller,
+                            style: const TextStyle(color: Colors.black),
+                            keyboardType: null,
+                            onTap: () {
+                              _showTimePickerBottomSheet(context);
+                            },
+                            decoration: const InputDecoration(
+                              border: InputBorder.none,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  widget.isError
+                      ? const Text(
+                          "Câu hỏi này bắt buộc *",
+                          style: TextStyle(color: Color(0xffdb1e39)),
+                        )
+                      : const SizedBox(),
+                ],
               ),
             ),
           ],

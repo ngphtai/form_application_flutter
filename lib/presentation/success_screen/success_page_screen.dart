@@ -68,48 +68,51 @@ class _SuccessPageScreenState extends State<SuccessPageScreen>
         }
         handlePop(context);
       },
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: SharedAppBar(title: widget.title),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 0.2.sh,
-              ),
-              Stack(
-                children: [
-                  ScaleTransition(
-                    scale: _scaleAnimation,
-                    child: Image.asset(AppIcons.tassel),
-                  ),
-                  Positioned(
-                    left: 0.01.sw,
-                    right: 0,
-                    bottom: 0,
-                    top: 0,
-                    child: Image.asset(AppIcons.success),
-                  ),
-                ],
-              ),
-              const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Column(
+      child: SafeArea(
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          appBar: SharedAppBar(title: widget.title),
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 0.2.sh,
+                ),
+                Stack(
                   children: [
-                    Text(
-                      "Bạn đã hoàn thành!",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    ScaleTransition(
+                      scale: _scaleAnimation,
+                      child: Image.asset(AppIcons.tassel),
                     ),
-                    Text(
-                      "Cảm ơn bạn đã dành thời gian điền form khảo sát.",
-                      style: TextStyle(color: Color(0xFF858585), fontSize: 14),
+                    Positioned(
+                      left: 0.01.sw,
+                      right: 0,
+                      bottom: 0,
+                      top: 0,
+                      child: Image.asset(AppIcons.success),
                     ),
                   ],
                 ),
-              ),
-            ],
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Text(
+                        "Bạn đã hoàn thành!",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                      Text(
+                        "Cảm ơn bạn đã dành thời gian điền form khảo sát.",
+                        style:
+                            TextStyle(color: Color(0xFF858585), fontSize: 14),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -45,50 +45,65 @@ class _CheckboxButtonState extends State<CheckboxButton>
         bool isValid = context.read<CheckboxButtonBloc>().values.isNotEmpty;
         isValid ? widget.isError = false : widget.isError = true;
       }
-      return Container(
-        decoration: BoxDecoration(
-          color: const Color(0xfff4f4f4),
-          borderRadius: const BorderRadius.all(
-            Radius.circular(4),
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: const BorderRadius.all(
+                Radius.circular(4),
+              ),
+              border: Border.fromBorderSide(BorderSide(
+                  color: widget.isRequest == true
+                      ? widget.isError
+                          ? const Color(0xffdb1e39)
+                          : Colors.white
+                      : Colors.white,
+                  width: 1)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: widget.listCheckbox.map((options) {
+                return CheckboxListTile(
+                  hoverColor: const Color(0xffdb1e39),
+                  activeColor: const Color(0xffdb1e39),
+                  overlayColor: WidgetStatePropertyAll(Colors.red[100]),
+                  value: selectedCheckboxes.contains(options),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  onChanged: (value) {
+                    setState(() {
+                      if (value == true) {
+                        selectedCheckboxes.add(options);
+                      } else {
+                        selectedCheckboxes.remove(options);
+                      }
+                      // print(selectedCheckboxes);
+                      context
+                          .read<CheckboxButtonBloc>()
+                          .validate(selectedCheckboxes);
+                      if (selectedCheckboxes.isEmpty) {
+                        widget.isError = true;
+                      } else {
+                        widget.isError = false;
+                      }
+                    });
+                  },
+                  title: Text(options.toString()),
+                );
+              }).toList(),
+            ),
           ),
-          border: Border.fromBorderSide(BorderSide(
-              color: widget.isRequest == true
-                  ? widget.isError
-                      ? const Color(0xffdb1e39)
-                      : const Color(0xffe8e8e8)
-                  : const Color(0xffe8e8e8),
-              width: 1)),
-        ),
-        child: Column(
-          children: widget.listCheckbox.map((options) {
-            return CheckboxListTile(
-              hoverColor: const Color(0xffdb1e39),
-              activeColor: const Color(0xffdb1e39),
-              overlayColor: WidgetStatePropertyAll(Colors.red[100]),
-              value: selectedCheckboxes.contains(options),
-              controlAffinity: ListTileControlAffinity.leading,
-              onChanged: (value) {
-                setState(() {
-                  if (value == true) {
-                    selectedCheckboxes.add(options);
-                  } else {
-                    selectedCheckboxes.remove(options);
-                  }
-                  // print(selectedCheckboxes);
-                  context
-                      .read<CheckboxButtonBloc>()
-                      .validate(selectedCheckboxes);
-                  if (selectedCheckboxes.isEmpty) {
-                    widget.isError = true;
-                  } else {
-                    widget.isError = false;
-                  }
-                });
-              },
-              title: Text(options.toString()),
-            );
-          }).toList(),
-        ),
+          widget.isRequest == true
+              ? widget.isError
+                  ? const Text(
+                      "Câu hỏi này bắt buộc *",
+                      style: TextStyle(color: Color(0xffdb1e39)),
+                    )
+                  : const SizedBox()
+              : const SizedBox(),
+        ],
       );
     });
   }

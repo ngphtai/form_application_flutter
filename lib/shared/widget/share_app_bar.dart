@@ -165,8 +165,8 @@ class SharedAppBar extends StatelessWidget implements PreferredSizeWidget {
                               originContext.pop();
                             },
                             child: Container(
-                              padding:
-                                  const EdgeInsets.fromLTRB(55, 10, 55, 10),
+                              width: 140.w,
+                              height: 40.h,
                               margin: const EdgeInsets.all(5),
                               decoration: BoxDecoration(
                                 color: const Color(0xFFffffff),
@@ -188,8 +188,8 @@ class SharedAppBar extends StatelessWidget implements PreferredSizeWidget {
                               GoRouter.of(originContext).go(Routers.homePage);
                             },
                             child: Container(
-                              padding:
-                                  const EdgeInsets.fromLTRB(55, 10, 55, 10),
+                              width: 140.w,
+                              height: 40.h,
                               margin: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
                                 color: const Color(0xffdb1e39),

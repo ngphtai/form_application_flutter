@@ -47,5 +47,6 @@
     "Usecase",
     "usecases"
   ],
-  "cmake.sourceDirectory": "D:/Intern D-Soft/tainp.form-application.proj/windows"
+  "cmake.sourceDirectory": "D:/Intern D-Soft/tainp.form-application.proj/windows",
+  "java.configuration.updateBuildConfiguration": "disabled"
 }

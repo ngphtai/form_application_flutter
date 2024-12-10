@@ -55,33 +55,44 @@ class _CustomDropButtonState extends State<CustomDropButton>
                   _showDropDownBottomSheet(context);
                   context.read<CustomDropButtonBloc>().validate("");
                 },
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                        color: widget.isRequest == true
-                            ? !state.isError
-                                ? const Color(0xffe8e8e8)
-                                : const Color(0xffdb1e39)
-                            : const Color(0xffe8e8e8),
-                        width: 1),
-                    borderRadius: BorderRadius.circular(4),
-                    color: Colors.grey[200],
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        selectedValue ?? 'Lựa chọn',
-                        style: TextStyle(
-                            color: selectedValue == null
-                                ? const Color(0xff8C8C8C)
-                                : Colors.black,
-                            fontWeight: FontWeight.w400),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 16),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                            color: widget.isRequest == true
+                                ? !state.isError
+                                    ? const Color(0xffe8e8e8)
+                                    : const Color(0xffdb1e39)
+                                : const Color(0xffe8e8e8),
+                            width: 1),
+                        borderRadius: BorderRadius.circular(4),
+                        color: Colors.grey[200],
                       ),
-                    ],
-                  ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            selectedValue ?? 'Nhập câu trả lời',
+                            style: TextStyle(
+                                color: selectedValue == null
+                                    ? const Color(0xff8C8C8C)
+                                    : Colors.black,
+                                fontWeight: FontWeight.w400),
+                          ),
+                        ],
+                      ),
+                    ),
+                    state.isError
+                        ? const Text(
+                            "Câu hỏi này bắt buộc *",
+                            style: TextStyle(color: Color(0xffdb1e39)),
+                          )
+                        : const SizedBox(),
+                  ],
                 ),
               ),
               const SizedBox(height: 8),

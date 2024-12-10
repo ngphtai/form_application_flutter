@@ -1,5 +1,3 @@
-import 'package:dsoft_form_application/core/styles/app_icons.dart';
-
 import '../../core/styles/app_text_style.dart';
 import '../../shared/widget/share_app_bar.dart';
 import '/common/extensions/conver_string_to_enum.dart';
@@ -26,7 +24,6 @@ import '../../common/enums/form_page_enums.dart';
 import 'component/bloc/date_picker_bloc.dart';
 import 'component/bloc/rating_bloc.dart';
 import 'component/bloc/time_picker_custom_bloc.dart';
-import 'component/screen/text_button.dart';
 
 // ignore: must_be_immutable
 class ReviewFormPageWidget extends StatelessWidget {
@@ -55,185 +52,187 @@ class ReviewFormPageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String? currentRoute = GoRouterState.of(context).name;
-    return Scaffold(
-      appBar: SharedAppBar(
-        isForm: true,
-        isReviewForm: currentRoute == Routers.reviewFormPage ? true : false,
-        title: context.select<DetailPageBloc, String>((bloc) {
-          final state = bloc.state;
-          return state is DetailPageLoaded
-              ? state.post.metaData.title
-              : ". . .";
-        }),
-      ),
-      backgroundColor: const Color(0xFFf7f7f7),
-      body: Stack(
-        children: [
-          BlocBuilder<DetailPageBloc, DetailPageState>(// load post detail
-              builder: (context, state) {
-            if (state is DetailPageInitial) {
-              final bloc = context.read<DetailPageBloc>();
-              switch (currentRoute) {
-                case Routers.formPage:
-                  bloc.add(LoadDetailPost(postId));
-                  break;
-                case Routers.reviewFormPage:
-                  bloc.add(LoadDetailPostLocal(postId));
-                  break;
-                default:
-                  break;
-              }
-              return const LoadingWidget();
-            }
-            if (state is DetailPageLoaded) {
-              if (!blocAlreadyInit) {
-                initializeBlocs(state.post.itemModels);
-                blocAlreadyInit = true;
-              }
-              return BlocBuilder<FormPageBloc, FormPageState>(// load answer
-                  builder: (context, stateAnswers) {
-                if (stateAnswers is FormPageInitial) {
-                  String idMetaDataPost = state.post.metaData.id;
-                  context
-                      .read<FormPageBloc>()
-                      .add(LoadAnswerLocal(idMetaDataPost));
-                }
-                if (stateAnswers is FormPageLoaded &&
-                    currentRoute == Routers.reviewFormPage) {
-                  List<ItemModel>? answers =
-                      stateAnswers.post?.itemModels ?? [];
-                  // lấy kết quả đã điền
-                  if (answers.isNotEmpty) {
-                    answersControllers.forEach((key, value) {
-                      if (answers[key].result != null &&
-                          answers[key].result!.isNotEmpty) {
-                        int length = answers[key].result?.length ?? 0;
-                        if (length > 1) {
-                          value.text = answers[key].result.toString();
-                        } else {
-                          value.text = answers[key].result![0];
-                        }
-                      }
-                    });
-                  }
-                }
-                return Column(
-                  children: [
-                    Expanded(
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: state.post.itemModels.length,
-                        itemBuilder: (context, index) {
-                          return FormWidget(
-                            key: ValueKey(index),
-                            textFieldsBloc: textFieldsBloc,
-                            answersControllers: answersControllers,
-                            radioButtonsBloc: radioButtonsBloc,
-                            checkBoxBloc: checkBoxBloc,
-                            customDropBloc: customDropBloc,
-                            timePickerBloc: timePickerBloc,
-                            isError: isError,
-                            datePickerBloc: datePickerBloc,
-                            state: state,
-                            index: index,
-                            ratingBloc: ratingBloc,
-                          );
-                        },
-                      ),
-                    ),
-                    if (currentRoute != Routers.reviewFormPage)
-                      SizedBox(
-                        height: 0.1.sh,
-                      )
-                  ],
-                );
-              });
-            }
-            return const Text("");
+    return SafeArea(
+      child: Scaffold(
+        appBar: SharedAppBar(
+          isForm: true,
+          isReviewForm: currentRoute == Routers.reviewFormPage ? true : false,
+          title: context.select<DetailPageBloc, String>((bloc) {
+            final state = bloc.state;
+            return state is DetailPageLoaded
+                ? state.post.metaData.title
+                : ". . .";
           }),
-          //Button action
-          if (currentRoute != Routers.reviewFormPage)
-            BlocBuilder<FormPageBloc, FormPageState>(
-              builder: (context, formState) {
-                if (formState is FormPageLoading) {
-                  return const Positioned(
-                      bottom: 0, left: 0, right: 0, child: LoadingWidget());
-                } else {
-                  return BlocBuilder<DetailPageBloc, DetailPageState>(
-                    builder: (context, state) {
-                      return Positioned(
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        child: Column(
-                          children: [
-                            Container(
-                              color: const Color(0xFFffffff),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  // ReturnButtonWidget(size: size), // button return
-                                  BlocListener<FormPageBloc, FormPageState>(
-                                    listener: (context, state) {
-                                      if (state
-                                          is FormPageSaveGoogleSheetSuccess) {
-                                        String baseUrl = currentRoute ==
-                                                Routers.formPage
-                                            ? "/homePage/detailPage/$postId/formPage/successPage"
-                                            : '/historyPage/detailPage/$postId/formPage/successPage';
-                                        context.go(baseUrl);
-                                      }
-                                    },
-                                    child: GestureDetector(
-                                      onTap: () async {
-                                        if (state is DetailPageLoaded) {
-                                          final PostModelEntity postEntity =
-                                              state.post.toEntity();
-                                          checkValidForEachElementInForm(
-                                              postEntity);
-                                          // Hiển thị thông báo dựa trên kết quả
-                                          if (checkValidToSubmit) {
-                                            //save to local
-                                            context
-                                                .read<FormPageBloc>()
-                                                .add(SaveForm((postEntity)));
-                                            // save to google form
-                                            context.read<FormPageBloc>().add(
-                                                SaveAnswerToGoogleSheet(
-                                                    (postEntity.toDomain())));
-                                            //route to success page
-                                            //        Map<String, dynamic> queryParams = {
-                                            //   "title": state.post.metaData.title,
-                                            //   "title2": state.post.metaData
-                                            //       .confirmationMessage,
-                                            //   "content": state.post.metaData
-                                            //       .customClosedFormMessage
-                                            // }; // handle with custom messange
-                                            // String url = baseUrl.toUrl(queryParams);
-                                            showDiaLogLoading(context);
-                                          } else {
-                                            showMessenger(context);
-                                          }
+        ),
+        backgroundColor: const Color(0xFFf7f7f7),
+        body: Stack(
+          children: [
+            BlocBuilder<DetailPageBloc, DetailPageState>(// load post detail
+                builder: (context, state) {
+              if (state is DetailPageInitial) {
+                final bloc = context.read<DetailPageBloc>();
+                switch (currentRoute) {
+                  case Routers.formPage:
+                    bloc.add(LoadDetailPost(postId));
+                    break;
+                  case Routers.reviewFormPage:
+                    bloc.add(LoadDetailPostLocal(postId));
+                    break;
+                  default:
+                    break;
+                }
+                return const LoadingWidget();
+              }
+              if (state is DetailPageLoaded) {
+                if (!blocAlreadyInit) {
+                  initializeBlocs(state.post.itemModels);
+                  blocAlreadyInit = true;
+                }
+                return BlocBuilder<FormPageBloc, FormPageState>(// load answer
+                    builder: (context, stateAnswers) {
+                  if (stateAnswers is FormPageInitial) {
+                    String idMetaDataPost = state.post.metaData.id;
+                    context
+                        .read<FormPageBloc>()
+                        .add(LoadAnswerLocal(idMetaDataPost));
+                  }
+                  if (stateAnswers is FormPageLoaded &&
+                      currentRoute == Routers.reviewFormPage) {
+                    List<ItemModel>? answers =
+                        stateAnswers.post?.itemModels ?? [];
+                    // lấy kết quả đã điền
+                    if (answers.isNotEmpty) {
+                      answersControllers.forEach((key, value) {
+                        if (answers[key].result != null &&
+                            answers[key].result!.isNotEmpty) {
+                          int length = answers[key].result?.length ?? 0;
+                          if (length > 1) {
+                            value.text = answers[key].result.toString();
+                          } else {
+                            value.text = answers[key].result![0];
+                          }
+                        }
+                      });
+                    }
+                  }
+                  return Column(
+                    children: [
+                      Expanded(
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: state.post.itemModels.length,
+                          itemBuilder: (context, index) {
+                            return FormWidget(
+                              key: ValueKey(index),
+                              textFieldsBloc: textFieldsBloc,
+                              answersControllers: answersControllers,
+                              radioButtonsBloc: radioButtonsBloc,
+                              checkBoxBloc: checkBoxBloc,
+                              customDropBloc: customDropBloc,
+                              timePickerBloc: timePickerBloc,
+                              isError: isError,
+                              datePickerBloc: datePickerBloc,
+                              state: state,
+                              index: index,
+                              ratingBloc: ratingBloc,
+                            );
+                          },
+                        ),
+                      ),
+                      if (currentRoute != Routers.reviewFormPage)
+                        SizedBox(
+                          height: 0.1.sh,
+                        )
+                    ],
+                  );
+                });
+              }
+              return const Text("");
+            }),
+            //Button action
+            if (currentRoute != Routers.reviewFormPage)
+              BlocBuilder<FormPageBloc, FormPageState>(
+                builder: (context, formState) {
+                  if (formState is FormPageLoading) {
+                    return const Positioned(
+                        bottom: 0, left: 0, right: 0, child: LoadingWidget());
+                  } else {
+                    return BlocBuilder<DetailPageBloc, DetailPageState>(
+                      builder: (context, state) {
+                        return Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: Column(
+                            children: [
+                              Container(
+                                color: const Color(0xFFffffff),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    // ReturnButtonWidget(size: size), // button return
+                                    BlocListener<FormPageBloc, FormPageState>(
+                                      listener: (context, state) {
+                                        if (state
+                                            is FormPageSaveGoogleSheetSuccess) {
+                                          String baseUrl = currentRoute ==
+                                                  Routers.formPage
+                                              ? "/homePage/detailPage/$postId/formPage/successPage"
+                                              : '/historyPage/detailPage/$postId/formPage/successPage';
+                                          context.go(baseUrl);
                                         }
                                       },
-                                      child:
-                                          const SubmitButtonWidget(), // interface button
+                                      child: GestureDetector(
+                                        onTap: () async {
+                                          if (state is DetailPageLoaded) {
+                                            final PostModelEntity postEntity =
+                                                state.post.toEntity();
+                                            checkValidForEachElementInForm(
+                                                postEntity);
+                                            // Hiển thị thông báo dựa trên kết quả
+                                            if (checkValidToSubmit) {
+                                              //save to local
+                                              context
+                                                  .read<FormPageBloc>()
+                                                  .add(SaveForm((postEntity)));
+                                              // save to google form
+                                              context.read<FormPageBloc>().add(
+                                                  SaveAnswerToGoogleSheet(
+                                                      (postEntity.toDomain())));
+                                              //route to success page
+                                              //        Map<String, dynamic> queryParams = {
+                                              //   "title": state.post.metaData.title,
+                                              //   "title2": state.post.metaData
+                                              //       .confirmationMessage,
+                                              //   "content": state.post.metaData
+                                              //       .customClosedFormMessage
+                                              // }; // handle with custom messange
+                                              // String url = baseUrl.toUrl(queryParams);
+                                              showDiaLogLoading(context);
+                                            } else {
+                                              showMessenger(context);
+                                            }
+                                          }
+                                        },
+                                        child:
+                                            const SubmitButtonWidget(), // interface button
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                            Gap(10.h),
-                          ],
-                        ),
-                      );
-                    },
-                  );
-                }
-              },
-            ),
-        ],
+                              Gap(10.h),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  }
+                },
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -460,6 +459,12 @@ class ReviewFormPageWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      Text(
+                        "Vui lòng đợi trong giây lát",
+                        style: AppTextStyle.bold20
+                            .copyWith(color: const Color(0xffdb1e39)),
+                      ),
+                      Gap(20.w),
                       Container(
                         color: Colors.white,
                         height: 100.w,
@@ -470,100 +475,6 @@ class ReviewFormPageWidget extends StatelessWidget {
                             strokeWidth: 4.0,
                             pathBackgroundColor: Colors.red[200],
                             backgroundColor: Colors.white),
-                      ),
-                    ]),
-              ),
-            ));
-  }
-
-  Future<dynamic> showDiaLog(BuildContext originContext) {
-    return showDialog(
-        context: originContext,
-        builder: (context) => AlertDialog(
-              backgroundColor: Colors.white,
-              content: Container(
-                width: 1.sw,
-                height: 0.3.sh,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(12)),
-                ),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Gap(10),
-                      Image.asset(
-                        AppIcons.warning,
-                        height: 60,
-                        width: 60,
-                        fit: BoxFit.fill,
-                      ),
-                      const Gap(10),
-                      Text(
-                        "Cảnh báo",
-                        style: AppTextStyle.bold20,
-                      ),
-                      const Gap(10),
-                      Text(
-                        "Mọi thay đổi sẽ không được lưu.",
-                        style:
-                            AppTextStyle.regular14.copyWith(color: Colors.grey),
-                      ),
-                      Text(
-                        "Bạn có chắc muốn thoát không?",
-                        style:
-                            AppTextStyle.regular14.copyWith(color: Colors.grey),
-                      ),
-                      const Gap(20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              originContext.pop();
-                            },
-                            child: Container(
-                              padding:
-                                  const EdgeInsets.fromLTRB(55, 10, 55, 10),
-                              margin: const EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFffffff),
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(100)),
-                                border: Border.all(
-                                  color: const Color(0xffdb1e39),
-                                  width: 1,
-                                ),
-                              ),
-                              child: const Center(
-                                  child: TextButtonCustom(
-                                      text: "Huỷ", color: Color(0xffdb1e39))),
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).pop();
-                              GoRouter.of(originContext).go(Routers.homePage);
-                            },
-                            child: Container(
-                              padding:
-                                  const EdgeInsets.fromLTRB(55, 10, 55, 10),
-                              margin: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: const Color(0xffdb1e39),
-                                borderRadius: BorderRadius.circular(100),
-                                border: Border.all(
-                                  color: const Color(0xffdb1e39),
-                                  width: 1,
-                                ),
-                              ),
-                              child: const Center(
-                                  child: TextButtonCustom(
-                                      text: "Thoát", color: Colors.white)),
-                            ),
-                          ),
-                        ],
                       ),
                     ]),
               ),
