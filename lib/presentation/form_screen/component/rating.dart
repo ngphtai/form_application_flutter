@@ -35,7 +35,9 @@ class _RatingState extends State<Rating> with AutomaticKeepAliveClientMixin {
       create: (context) => widget.ratingBloc,
       child: BlocBuilder<RatingBloc, RatingState>(
         builder: (context, state) {
-          if (widget.controller.text.isNotEmpty) {
+          if (widget.controller.text.isNotEmpty &&
+              widget.controller.text != "" &&
+              widget.controller.text != "null") {
             int? value = int.parse(widget.controller.text);
             widget.star = value;
             context.read<RatingBloc>().validate(value);
@@ -98,11 +100,13 @@ class _RatingState extends State<Rating> with AutomaticKeepAliveClientMixin {
                           )).toList(),
                 ),
               ),
-              widget.isError
-                  ? const Text(
-                      "Câu hỏi này bắt buộc *",
-                      style: TextStyle(color: Color(0xffdb1e39)),
-                    )
+              widget.isRequest == true
+                  ? widget.isError
+                      ? const Text(
+                          "Câu hỏi này bắt buộc *",
+                          style: TextStyle(color: Color(0xffdb1e39)),
+                        )
+                      : const SizedBox()
                   : const SizedBox(),
             ],
           );

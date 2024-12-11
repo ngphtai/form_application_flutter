@@ -21,5 +21,5 @@ class TimePickerCustomBloc extends Cubit<TimePickerState> {
     text = value;
   }
 
-  String? get getState => text;
+  String? get getTime => text;
 }

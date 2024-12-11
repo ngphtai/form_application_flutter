@@ -17,7 +17,7 @@ class HomePageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: SharedAppBar(),
+        appBar: const SharedAppBar(),
         backgroundColor: const Color(0xFFF7F7F7),
         body: BlocBuilder<HomePageBloc, HomePageState>(
           bloc: context.read<HomePageBloc>()..add(GetPost()),

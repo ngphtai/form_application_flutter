@@ -49,7 +49,7 @@ class _TimePickerCustomState extends State<TimePickerCustom>
           controller.text = value;
         }
 
-        String value = context.read<TimePickerCustomBloc>().getState.toString();
+        String value = context.read<TimePickerCustomBloc>().getTime.toString();
 
         if (state is TimePickerInitial) {
           widget.isError = false;
@@ -178,6 +178,7 @@ class _TimePickerCustomState extends State<TimePickerCustom>
                   Gap(10.h),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       NumberPicker(
                         minValue: 0,
@@ -198,6 +199,10 @@ class _TimePickerCustomState extends State<TimePickerCustom>
                         selectedTextStyle:
                             const TextStyle(color: Colors.black, fontSize: 30),
                       ),
+                      const Text(":",
+                          style: TextStyle(
+                            fontSize: 30,
+                          )),
                       NumberPicker(
                         minValue: 0,
                         maxValue: 59,
@@ -261,7 +266,7 @@ class _TimePickerCustomState extends State<TimePickerCustom>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       decoration: BoxDecoration(
-        color: isSelected ? Colors.grey.shade800 : const Color(0xFFc7c7c7),
+        color: isSelected ? const Color(0xffdb1e39) : const Color(0xFFc7c7c7),
         border: Border.all(
           color: isSelected ? Colors.grey : const Color(0xFFc7c7c7),
         ),

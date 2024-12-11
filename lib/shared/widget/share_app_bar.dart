@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../core/routing/route_path.dart';
 import '../../core/styles/app_icons.dart';
-import '../../core/styles/app_text_style.dart';
-import '../../presentation/form_screen/component/screen/text_button.dart';
 
-// ignore: must_be_immutable
 class SharedAppBar extends StatelessWidget implements PreferredSizeWidget {
-  SharedAppBar(
-      {super.key, this.title, this.isForm = false, this.isReviewForm = false});
+  const SharedAppBar({
+    super.key,
+    this.title,
+  });
   final String? title;
-  bool isForm;
-  bool isReviewForm;
+
   @override
   Widget build(BuildContext context) {
     final currentRouter = GoRouterState.of(context).name ?? "";
@@ -92,12 +88,12 @@ class SharedAppBar extends StatelessWidget implements PreferredSizeWidget {
       top: 0.23.sw,
       child: GestureDetector(
         onTap: () async {
-          if (title != null && isForm) {
-            !isReviewForm ? await showDiaLog(context) : context.pop(context);
-          } else if (currentPage == Routers.historyPage) {
-            context.go(Routers.homePage);
-          } else {
-            context.pop(context);
+          switch (currentPage) {
+            case Routers.historyPage:
+              context.go(Routers.homePage); // Điều hướng đến trang home
+              break;
+            default:
+              context.pop(context); // Quay lại trang trước
           }
         },
         child: Column(
@@ -116,98 +112,4 @@ class SharedAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
-
-  Future<dynamic> showDiaLog(BuildContext originContext) {
-    return showDialog(
-        context: originContext,
-        builder: (context) => AlertDialog(
-              backgroundColor: Colors.white,
-              content: Container(
-                width: 1.sw,
-                height: 0.3.sh,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(12)),
-                ),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Gap(10),
-                      Image.asset(
-                        AppIcons.warning,
-                        height: 60,
-                        width: 60,
-                        fit: BoxFit.fill,
-                      ),
-                      const Gap(10),
-                      Text(
-                        "Cảnh báo",
-                        style: AppTextStyle.bold20,
-                      ),
-                      const Gap(10),
-                      Text(
-                        "Mọi thay đổi sẽ không được lưu.",
-                        style:
-                            AppTextStyle.regular14.copyWith(color: Colors.grey),
-                      ),
-                      Text(
-                        "Bạn có chắc muốn thoát không?",
-                        style:
-                            AppTextStyle.regular14.copyWith(color: Colors.grey),
-                      ),
-                      const Gap(20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              originContext.pop();
-                            },
-                            child: Container(
-                              width: 140.w,
-                              height: 40.h,
-                              margin: const EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFffffff),
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(100)),
-                                border: Border.all(
-                                  color: const Color(0xffdb1e39),
-                                  width: 1,
-                                ),
-                              ),
-                              child: const Center(
-                                  child: TextButtonCustom(
-                                      text: "Huỷ", color: Color(0xffdb1e39))),
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).pop();
-                              GoRouter.of(originContext).go(Routers.homePage);
-                            },
-                            child: Container(
-                              width: 140.w,
-                              height: 40.h,
-                              margin: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: const Color(0xffdb1e39),
-                                borderRadius: BorderRadius.circular(100),
-                                border: Border.all(
-                                  color: const Color(0xffdb1e39),
-                                  width: 1,
-                                ),
-                              ),
-                              child: const Center(
-                                  child: TextButtonCustom(
-                                      text: "Thoát", color: Colors.white)),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ]),
-              ),
-            ));
-  }
 }

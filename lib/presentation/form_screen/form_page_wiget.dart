@@ -1,5 +1,5 @@
+import 'package:dsoft_form_application/shared/widget/dialog_widget.dart';
 import '../../core/styles/app_text_style.dart';
-import '../../shared/widget/share_app_bar.dart';
 import '/common/extensions/conver_string_to_enum.dart';
 import '/common/logger/app_logger.dart';
 import '/data/model/entities/post_model_entity.dart';
@@ -49,192 +49,235 @@ class ReviewFormPageWidget extends StatelessWidget {
 
   List<ItemModel>? answers;
 
+  bool isHaveValid = false;
+
   @override
   Widget build(BuildContext context) {
     String? currentRoute = GoRouterState.of(context).name;
-    return SafeArea(
-      child: Scaffold(
-        appBar: SharedAppBar(
-          isForm: true,
-          isReviewForm: currentRoute == Routers.reviewFormPage ? true : false,
-          title: context.select<DetailPageBloc, String>((bloc) {
-            final state = bloc.state;
-            return state is DetailPageLoaded
-                ? state.post.metaData.title
-                : ". . .";
-          }),
-        ),
-        backgroundColor: const Color(0xFFf7f7f7),
-        body: Stack(
-          children: [
-            BlocBuilder<DetailPageBloc, DetailPageState>(// load post detail
-                builder: (context, state) {
-              if (state is DetailPageInitial) {
-                final bloc = context.read<DetailPageBloc>();
-                switch (currentRoute) {
-                  case Routers.formPage:
-                    bloc.add(LoadDetailPost(postId));
-                    break;
-                  case Routers.reviewFormPage:
-                    bloc.add(LoadDetailPostLocal(postId));
-                    break;
-                  default:
-                    break;
-                }
-                return const LoadingWidget();
-              }
-              if (state is DetailPageLoaded) {
-                if (!blocAlreadyInit) {
-                  initializeBlocs(state.post.itemModels);
-                  blocAlreadyInit = true;
-                }
-                return BlocBuilder<FormPageBloc, FormPageState>(// load answer
-                    builder: (context, stateAnswers) {
-                  if (stateAnswers is FormPageInitial) {
-                    String idMetaDataPost = state.post.metaData.id;
-                    context
-                        .read<FormPageBloc>()
-                        .add(LoadAnswerLocal(idMetaDataPost));
-                  }
-                  if (stateAnswers is FormPageLoaded &&
-                      currentRoute == Routers.reviewFormPage) {
-                    List<ItemModel>? answers =
-                        stateAnswers.post?.itemModels ?? [];
-                    // lấy kết quả đã điền
-                    if (answers.isNotEmpty) {
-                      answersControllers.forEach((key, value) {
-                        if (answers[key].result != null &&
-                            answers[key].result!.isNotEmpty) {
-                          int length = answers[key].result?.length ?? 0;
-                          if (length > 1) {
-                            value.text = answers[key].result.toString();
-                          } else {
-                            value.text = answers[key].result![0];
-                          }
-                        }
-                      });
-                    }
-                  }
-                  return Column(
-                    children: [
-                      Expanded(
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: state.post.itemModels.length,
-                          itemBuilder: (context, index) {
-                            return FormWidget(
-                              key: ValueKey(index),
-                              textFieldsBloc: textFieldsBloc,
-                              answersControllers: answersControllers,
-                              radioButtonsBloc: radioButtonsBloc,
-                              checkBoxBloc: checkBoxBloc,
-                              customDropBloc: customDropBloc,
-                              timePickerBloc: timePickerBloc,
-                              isError: isError,
-                              datePickerBloc: datePickerBloc,
-                              state: state,
-                              index: index,
-                              ratingBloc: ratingBloc,
-                            );
-                          },
-                        ),
-                      ),
-                      if (currentRoute != Routers.reviewFormPage)
-                        SizedBox(
-                          height: 0.1.sh,
-                        )
-                    ],
-                  );
-                });
-              }
-              return const Text("");
-            }),
-            //Button action
-            if (currentRoute != Routers.reviewFormPage)
-              BlocBuilder<FormPageBloc, FormPageState>(
-                builder: (context, formState) {
-                  if (formState is FormPageLoading) {
-                    return const Positioned(
-                        bottom: 0, left: 0, right: 0, child: LoadingWidget());
-                  } else {
-                    return BlocBuilder<DetailPageBloc, DetailPageState>(
-                      builder: (context, state) {
-                        return Positioned(
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          child: Column(
-                            children: [
-                              Container(
-                                color: const Color(0xFFffffff),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    // ReturnButtonWidget(size: size), // button return
-                                    BlocListener<FormPageBloc, FormPageState>(
-                                      listener: (context, state) {
-                                        if (state
-                                            is FormPageSaveGoogleSheetSuccess) {
-                                          String baseUrl = currentRoute ==
-                                                  Routers.formPage
-                                              ? "/homePage/detailPage/$postId/formPage/successPage"
-                                              : '/historyPage/detailPage/$postId/formPage/successPage';
-                                          context.go(baseUrl);
-                                        }
-                                      },
-                                      child: GestureDetector(
-                                        onTap: () async {
-                                          if (state is DetailPageLoaded) {
-                                            final PostModelEntity postEntity =
-                                                state.post.toEntity();
-                                            checkValidForEachElementInForm(
-                                                postEntity);
-                                            // Hiển thị thông báo dựa trên kết quả
-                                            if (checkValidToSubmit) {
-                                              //save to local
-                                              context
-                                                  .read<FormPageBloc>()
-                                                  .add(SaveForm((postEntity)));
-                                              // save to google form
-                                              context.read<FormPageBloc>().add(
-                                                  SaveAnswerToGoogleSheet(
-                                                      (postEntity.toDomain())));
-                                              //route to success page
-                                              //        Map<String, dynamic> queryParams = {
-                                              //   "title": state.post.metaData.title,
-                                              //   "title2": state.post.metaData
-                                              //       .confirmationMessage,
-                                              //   "content": state.post.metaData
-                                              //       .customClosedFormMessage
-                                              // }; // handle with custom messange
-                                              // String url = baseUrl.toUrl(queryParams);
-                                              showDiaLogLoading(context);
-                                            } else {
-                                              showMessenger(context);
-                                            }
-                                          }
-                                        },
-                                        child:
-                                            const SubmitButtonWidget(), // interface button
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Gap(10.h),
-                            ],
-                          ),
-                        );
-                      },
-                    );
-                  }
+
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, result) async {
+        if (didPop) return;
+        await onPop(context);
+      },
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            title: Text(
+              context.select<DetailPageBloc, String>(
+                (bloc) {
+                  final state = bloc.state;
+                  return state is DetailPageLoaded
+                      ? state.post.metaData.title
+                      : ". . .";
                 },
               ),
-          ],
+              style: AppTextStyle.bold14,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+              textAlign: TextAlign.center,
+              textWidthBasis: TextWidthBasis.longestLine,
+            ),
+            centerTitle: true,
+            titleSpacing: 70,
+            leading: IconButton(
+              onPressed: () => onPop(context),
+              icon: Icon(Icons.arrow_back_ios_new, size: 20.h),
+            ),
+          ),
+          backgroundColor: const Color(0xFFf7f7f7),
+          body: Stack(
+            children: [
+              BlocBuilder<DetailPageBloc, DetailPageState>(// load post detail
+                  builder: (context, state) {
+                if (state is DetailPageInitial) {
+                  final bloc = context.read<DetailPageBloc>();
+                  switch (currentRoute) {
+                    case Routers.formPage:
+                      bloc.add(LoadDetailPost(postId));
+                      break;
+                    case Routers.reviewFormPage:
+                      bloc.add(LoadDetailPostLocal(postId));
+                      break;
+                    default:
+                      break;
+                  }
+                  return const LoadingWidget();
+                }
+                if (state is DetailPageLoaded) {
+                  if (!blocAlreadyInit) {
+                    initializeBlocs(state.post.itemModels);
+                    blocAlreadyInit = true;
+                  }
+                  return BlocBuilder<FormPageBloc, FormPageState>(// load answer
+                      builder: (context, stateAnswers) {
+                    if (stateAnswers is FormPageInitial) {
+                      String idMetaDataPost = state.post.metaData.id;
+                      context
+                          .read<FormPageBloc>()
+                          .add(LoadAnswerLocal(idMetaDataPost));
+                    }
+                    if (stateAnswers is FormPageLoaded &&
+                        currentRoute == Routers.reviewFormPage) {
+                      List<ItemModel>? answers =
+                          stateAnswers.post?.itemModels ?? [];
+                      // lấy kết quả đã điền
+                      if (answers.isNotEmpty) {
+                        answersControllers.forEach((key, value) {
+                          if (answers[key].result != null &&
+                              answers[key].result!.isNotEmpty) {
+                            int length = answers[key].result?.length ?? 0;
+                            if (length > 1) {
+                              value.text = answers[key].result.toString();
+                            } else {
+                              value.text = answers[key].result![0];
+                            }
+                          }
+                        });
+                      }
+                    }
+                    return Column(
+                      children: [
+                        Expanded(
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: state.post.itemModels.length,
+                            itemBuilder: (context, index) {
+                              return FormWidget(
+                                key: ValueKey(index),
+                                textFieldsBloc: textFieldsBloc,
+                                answersControllers: answersControllers,
+                                radioButtonsBloc: radioButtonsBloc,
+                                checkBoxBloc: checkBoxBloc,
+                                customDropBloc: customDropBloc,
+                                timePickerBloc: timePickerBloc,
+                                isError: isError,
+                                datePickerBloc: datePickerBloc,
+                                state: state,
+                                index: index,
+                                ratingBloc: ratingBloc,
+                              );
+                            },
+                          ),
+                        ),
+                        if (currentRoute != Routers.reviewFormPage)
+                          SizedBox(
+                            height: 0.1.sh,
+                          )
+                      ],
+                    );
+                  });
+                }
+                return const Text("");
+              }),
+              //Button action
+              if (currentRoute != Routers.reviewFormPage)
+                BlocBuilder<FormPageBloc, FormPageState>(
+                  builder: (context, formState) {
+                    if (formState is FormPageLoading) {
+                      return const Positioned(
+                          bottom: 0, left: 0, right: 0, child: LoadingWidget());
+                    } else {
+                      return BlocBuilder<DetailPageBloc, DetailPageState>(
+                        builder: (context, state) {
+                          return Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: Column(
+                              children: [
+                                Container(
+                                  color: const Color(0xFFffffff),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      // ReturnButtonWidget(size: size), // button return
+                                      BlocListener<FormPageBloc, FormPageState>(
+                                        listener: (context, state) {
+                                          if (state
+                                              is FormPageSaveGoogleSheetSuccess) {
+                                            String baseUrl = currentRoute ==
+                                                    Routers.formPage
+                                                ? "/homePage/detailPage/$postId/formPage/successPage"
+                                                : '/historyPage/detailPage/$postId/formPage/successPage';
+                                            context.go(baseUrl);
+                                          }
+                                        },
+                                        child: GestureDetector(
+                                          onTap: () async {
+                                            if (state is DetailPageLoaded) {
+                                              final PostModelEntity postEntity =
+                                                  state.post.toEntity();
+                                              checkValidForEachElementInForm(
+                                                  postEntity);
+                                              // Hiển thị thông báo dựa trên kết quả
+                                              if (checkValidToSubmit) {
+                                                //save to local
+                                                context
+                                                    .read<FormPageBloc>()
+                                                    .add(
+                                                        SaveForm((postEntity)));
+                                                // save to google form
+                                                context
+                                                    .read<FormPageBloc>()
+                                                    .add(
+                                                        SaveAnswerToGoogleSheet(
+                                                            (postEntity
+                                                                .toDomain())));
+                                                //route to success page
+                                                //        Map<String, dynamic> queryParams = {
+                                                //   "title": state.post.metaData.title,
+                                                //   "title2": state.post.metaData
+                                                //       .confirmationMessage,
+                                                //   "content": state.post.metaData
+                                                //       .customClosedFormMessage
+                                                // }; // handle with custom messange
+                                                // String url = baseUrl.toUrl(queryParams);
+                                                showDiaLogLoading(context);
+                                              } else {
+                                                showMessenger(context);
+                                              }
+                                            }
+                                          },
+                                          child:
+                                              const SubmitButtonWidget(), // interface button
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Gap(10.h),
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    }
+                  },
+                ),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  Future<void> onPop(BuildContext context) async {
+    final check = await checkValidWhenGetOutAnyTime();
+    // ignore: unrelated_type_equality_checks
+    if (check == true) {
+      final result = await showDiaLogToExist(context);
+      if (result == true) {
+        // ignore: use_build_context_synchronously
+        context.pop(context);
+      }
+    } else {
+      // ignore: use_build_context_synchronously
+      context.pop(context);
+    }
   }
 
   // check validate in form
@@ -369,16 +412,16 @@ class ReviewFormPageWidget extends StatelessWidget {
     for (var entry in customDropBloc.entries) {
       final key = entry.key;
       final bloc = entry.value as CustomDropButtonBloc;
-      final String value = bloc.state.isSelected;
+      final String? value = bloc.state.isSelected;
       AppLogger.instance.i("submit value drop button is  $value");
-      if (value.isEmpty && isRequired[key] == true) {
+      if (value == null && isRequired[key] == true) {
         bloc.validate('');
         bloc.state.isError = true;
         isValid = false;
       } else {
         bloc.state.isError = false;
         postEntity.items[key].result ??= [""];
-        postEntity.items[key].result![0] = value;
+        postEntity.items[key].result![0] = value ?? "";
       }
     }
     return isValid;
@@ -389,7 +432,7 @@ class ReviewFormPageWidget extends StatelessWidget {
     for (var entry in timePickerBloc.entries) {
       final key = entry.key;
       final bloc = entry.value as TimePickerCustomBloc;
-      final String? value = bloc.getState;
+      final String? value = bloc.getTime;
       AppLogger.instance.i("submit Time picker $value");
       if ((value?.isEmpty ?? true) && isRequired[key] == true) {
         isError[key] = true;
@@ -479,5 +522,58 @@ class ReviewFormPageWidget extends StatelessWidget {
                     ]),
               ),
             ));
+  }
+
+  Future<bool> checkValidWhenGetOutAnyTime() {
+    for (var entry in textFieldsBloc.entries) {
+      final bloc = entry.value as TextFieldBloc;
+      if (bloc.value != null) {
+        isHaveValid = true;
+        return Future.value(true);
+      }
+    }
+    for (var entry in radioButtonsBloc.entries) {
+      final bloc = entry.value as RadioButtonBloc;
+      if (bloc.value != null) {
+        isHaveValid = true;
+        return Future.value(true);
+      }
+    }
+    for (var entry in customDropBloc.entries) {
+      final bloc = entry.value as CustomDropButtonBloc;
+      if (bloc.isValid == true) {
+        isHaveValid = true;
+        return Future.value(true);
+      }
+    }
+    for (var entry in checkBoxBloc.entries) {
+      final bloc = entry.value as CheckboxButtonBloc;
+      if (bloc.values.isNotEmpty) {
+        isHaveValid = true;
+        return Future.value(true);
+      }
+    }
+    for (var entry in timePickerBloc.entries) {
+      final bloc = entry.value as TimePickerCustomBloc;
+      if (bloc.getTime != "") {
+        isHaveValid = true;
+        return Future.value(true);
+      }
+    }
+    for (var entry in datePickerBloc.entries) {
+      final bloc = entry.value as DatePickerBloc;
+      if (bloc.getValue != null) {
+        isHaveValid = true;
+        return Future.value(true);
+      }
+    }
+    for (var entry in ratingBloc.entries) {
+      final bloc = entry.value as RatingBloc;
+      if (bloc.value != null) {
+        isHaveValid = true;
+        return Future.value(true);
+      }
+    }
+    return Future.value(false);
   }
 }

@@ -83,6 +83,11 @@ class _CustomDropButtonState extends State<CustomDropButton>
                                     : Colors.black,
                                 fontWeight: FontWeight.w400),
                           ),
+                          const Icon(
+                            Icons.keyboard_arrow_down_rounded,
+                            size: 24,
+                            color: Colors.black,
+                          ),
                         ],
                       ),
                     ),
@@ -146,17 +151,31 @@ class _CustomDropButtonState extends State<CustomDropButton>
                     final bool isSelected = item == selectedValue;
                     return GestureDetector(
                       onTap: () {
-                        // Cập nhật UI cho BottomSheet
-                        setBottomSheetState(() {
-                          selectedValue = item;
-                        });
-                        // update ui widget
-                        setState(() {
-                          selectedValue = item;
-                        });
-                        originContext
-                            .read<CustomDropButtonBloc>()
-                            .validate(selectedValue!);
+                        if (selectedValue != item) {
+                          // Cập nhật UI cho BottomSheet
+                          setBottomSheetState(() {
+                            selectedValue = item;
+                          });
+                          // update ui widget
+                          setState(() {
+                            selectedValue = item;
+                          });
+                          originContext
+                              .read<CustomDropButtonBloc>()
+                              .validate(selectedValue!);
+                        } else {
+                          setBottomSheetState(() {
+                            selectedValue = null;
+                          });
+                          // update ui widget
+                          setState(() {
+                            selectedValue = null;
+                          });
+                          originContext
+                              .read<CustomDropButtonBloc>()
+                              .validate(null);
+                        }
+                        Navigator.pop(context);
                       },
                       child: Container(
                         decoration: BoxDecoration(

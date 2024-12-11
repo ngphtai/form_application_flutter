@@ -5,13 +5,17 @@ class CustomDropButtonBloc extends Cubit<CustomDropButtonState> {
   CustomDropButtonBloc()
       : super(CustomDropButtonState(isError: false, isSelected: ""));
 
-  void validate(String value) {
+  bool isValid = false;
+  bool get getValue => isValid;
+
+  void validate(String? value) {
     try {
       if (!isClosed) {
-        if (value != '') {
+        if (value != null) {
+          isValid = true;
           emit(CustomDropButtonState(isError: false, isSelected: value));
         } else {
-          emit(CustomDropButtonState(isError: true, isSelected: ""));
+          emit(CustomDropButtonState(isError: true, isSelected: null));
         }
       }
     } catch (e) {
@@ -22,7 +26,7 @@ class CustomDropButtonBloc extends Cubit<CustomDropButtonState> {
 
 class CustomDropButtonState {
   late bool isError;
-  final String isSelected;
+  final String? isSelected;
 
   CustomDropButtonState({required this.isError, required this.isSelected});
 }

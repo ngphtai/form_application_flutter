@@ -11,11 +11,11 @@ class HistoryPageScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => HistoryPageBloc(),
-      child: SafeArea(
+      child: const SafeArea(
         child: Scaffold(
             appBar: SharedAppBar(),
-            backgroundColor: const Color(0xfff7f7f7),
-            body: const HistoryPageWidget()),
+            backgroundColor: Color(0xfff7f7f7),
+            body: HistoryPageWidget()),
       ),
     );
   }

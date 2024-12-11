@@ -87,7 +87,6 @@ class _TextFieldCustomWithBlocState extends State<TextFieldCustomWithBloc> {
 
   @override
   void dispose() {
-    // Loại bỏ listener khi widget bị hủy
     widget.textController.removeListener(() {});
     super.dispose();
   }
