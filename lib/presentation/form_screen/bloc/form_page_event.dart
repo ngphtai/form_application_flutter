@@ -17,7 +17,7 @@ class SaveForm extends FormPageEvent {
 }
 
 class SaveAnswerToGoogleSheet extends FormPageEvent {
-  final PostsModel post;
+  final PostModelEntity post;
 
   const SaveAnswerToGoogleSheet(this.post);
 

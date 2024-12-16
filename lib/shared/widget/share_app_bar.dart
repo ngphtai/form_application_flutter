@@ -31,7 +31,7 @@ class SharedAppBar extends StatelessWidget implements PreferredSizeWidget {
               ? _buttonBack(context, currentPage)
               : Positioned(
                   right: 0,
-                  top: 0.25.sw,
+                  top: 0.3.sw,
                   child: currentPage == Routers.homePage
                       ? GestureDetector(
                           onTap: () {
@@ -85,7 +85,7 @@ class SharedAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget _buttonBack(BuildContext context, String? currentPage) {
     return Positioned(
       left: 0,
-      top: 0.23.sw,
+      top: 0.3.sw,
       child: GestureDetector(
         onTap: () async {
           switch (currentPage) {

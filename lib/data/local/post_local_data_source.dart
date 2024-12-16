@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import '/common/constant/constants.dart';
 import '/core/locators/locators.dart';
 import '/data/model/entities/post_model_entity.dart';
@@ -39,7 +41,11 @@ class PostLocalDataSourceImpl extends PostLocalDataSource {
       //   AppLogger.instance.e("Posts was saved in local device!!!!!");
       //   return true;
       // }
-      await _postEntityBox!.put(post.metaData.id, post);
+
+      //handle temporary to get new id
+      String id = "${post.metaData.id} ${Random().nextInt(100)}";
+      post.metaData.id = id;
+      await _postEntityBox!.put(id, post);
       AppLogger.instance.i("Posts is saved in local device");
       return true;
     } catch (e) {
@@ -64,6 +70,20 @@ class PostLocalDataSourceImpl extends PostLocalDataSource {
           return _postEntityBox.get(key);
         }),
       );
+
+      posts.sort((a, b) {
+        final updateAtA = a?.metaData.updateAt;
+        final updateAtB = b?.metaData.updateAt;
+        if (updateAtA == null && updateAtB == null) {
+          return 0;
+        } else if (updateAtA == null) {
+          return -1;
+        } else if (updateAtB == null) {
+          return 1;
+        } else {
+          return updateAtB.compareTo(updateAtA);
+        }
+      });
 
       // filter to remove element which is null (if it have that)
       return posts

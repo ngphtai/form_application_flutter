@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import '../../shared/widget/share_app_bar.dart';
 import '/presentation/history_screen/bloc/history_page_bloc.dart';
 import '/presentation/history_screen/history_page_widget.dart';
@@ -11,8 +13,10 @@ class HistoryPageScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => HistoryPageBloc(),
-      child: const SafeArea(
-        child: Scaffold(
+      child: SafeArea(
+        top: false,
+        bottom: Platform.isAndroid ? true : false,
+        child: const Scaffold(
             appBar: SharedAppBar(),
             backgroundColor: Color(0xfff7f7f7),
             body: HistoryPageWidget()),

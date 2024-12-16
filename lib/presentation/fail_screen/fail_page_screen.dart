@@ -8,49 +8,23 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/routing/route_path.dart';
 
-import 'dart:async';
-
-class SuccessPageScreen extends StatefulWidget {
-  const SuccessPageScreen({
+class FailPageScreen extends StatefulWidget {
+  const FailPageScreen({
     super.key,
     required this.title,
   });
-  final String title;
+
+  final String? title;
+
   @override
-  State<SuccessPageScreen> createState() => _SuccessPageScreenState();
+  State<FailPageScreen> createState() => _FailPageScreenState();
 }
 
-class _SuccessPageScreenState extends State<SuccessPageScreen>
+class _FailPageScreenState extends State<FailPageScreen>
     with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
-
   @override
   void initState() {
     super.initState();
-
-    // Initialize AnimationController
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 800),
-      vsync: this,
-    );
-
-    // Define animation curve
-    _scaleAnimation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOut,
-    );
-
-    // Delay 1 second before starting the animation
-    Future.delayed(const Duration(seconds: 1), () {
-      _controller.forward();
-    });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 
   @override
@@ -77,27 +51,17 @@ class _SuccessPageScreenState extends State<SuccessPageScreen>
                 SizedBox(
                   height: 0.2.sh,
                 ),
-                Stack(
-                  children: [
-                    ScaleTransition(
-                      scale: _scaleAnimation,
-                      child: Image.asset(AppIcons.tassel),
-                    ),
-                    Positioned(
-                      left: 0.01.sw,
-                      right: 0,
-                      bottom: 0,
-                      top: 0,
-                      child: Image.asset(AppIcons.success),
-                    ),
-                  ],
+                Image.asset(
+                  AppIcons.fail,
+                  height: 90.w,
+                  width: 90.w,
                 ),
                 const Padding(
                   padding: EdgeInsets.all(8.0),
                   child: Column(
                     children: [
                       Text(
-                        "Bạn đã hoàn thành!",
+                        "Form chưa được hoàn thành!",
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 16),
                       ),
@@ -118,7 +82,7 @@ class _SuccessPageScreenState extends State<SuccessPageScreen>
   }
 
   bool handlePop(BuildContext context) {
-    if (GoRouterState.of(context).name == Routers.formPage) {
+    if (GoRouterState.of(context).name == Routers.failPage) {
       context.go(Routers.homePage);
     } else {
       context.go(Routers.historyPage);

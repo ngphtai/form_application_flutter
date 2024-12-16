@@ -1,32 +1,50 @@
+import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
+
 import '/common/logger/app_logger.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CustomDropButtonBloc extends Cubit<CustomDropButtonState> {
-  CustomDropButtonBloc()
-      : super(CustomDropButtonState(isError: false, isSelected: ""));
+  CustomDropButtonBloc() : super(CustomDropButtonInitial());
 
-  bool isValid = false;
-  bool get getValue => isValid;
+  String? isSelected;
+  String? get getValue => isSelected;
+  set values(String? value) => isSelected = value;
 
   void validate(String? value) {
     try {
       if (!isClosed) {
-        if (value != null) {
-          isValid = true;
-          emit(CustomDropButtonState(isError: false, isSelected: value));
+        if (value != null || value != "") {
+          isSelected = value;
+          emit(CustomDropButtonValid(
+              isSelected: null)); // Reset trạng thái trước
+          emit(CustomDropButtonValid(isSelected: value)); // Gửi trạng thái mới
         } else {
-          emit(CustomDropButtonState(isError: true, isSelected: null));
+          emit(CustomDropButtonValid(isSelected: null));
         }
       }
     } catch (e) {
       AppLogger.instance.e('Error in custom drop button: ${e.toString()}');
     }
   }
+
+  void isError() {
+    emit(CustomDropButtonValid(isSelected: null));
+  }
 }
 
-class CustomDropButtonState {
-  late bool isError;
+@immutable
+abstract class CustomDropButtonState extends Equatable {
+  @override
+  List<Object?> get props => [];
+}
+
+class CustomDropButtonInitial extends CustomDropButtonState {}
+
+class CustomDropButtonValid extends CustomDropButtonState {
   final String? isSelected;
 
-  CustomDropButtonState({required this.isError, required this.isSelected});
+  CustomDropButtonValid({required this.isSelected});
+  @override
+  List<Object?> get props => [isSelected];
 }

@@ -1,3 +1,4 @@
+// ignore: file_names
 import '/common/constant/app_errors/app_error.dart';
 import '/core/locators/locators.dart';
 import '/domain/repositories/posts_repository.dart';

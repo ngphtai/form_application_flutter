@@ -172,11 +172,13 @@ class _PickImageState extends State<PickImage>
             ),
           ),
         ),
-        widget.isError
-            ? const Text(
-                "Câu hỏi này bắt buộc *",
-                style: TextStyle(color: Color(0xffdb1e39)),
-              )
+        widget.isRequest == true
+            ? widget.isError
+                ? const Text(
+                    "Câu hỏi này bắt buộc *",
+                    style: TextStyle(color: Color(0xffdb1e39)),
+                  )
+                : const SizedBox()
             : const SizedBox(),
       ],
     );

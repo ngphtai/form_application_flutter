@@ -1,5 +1,7 @@
+import 'dart:io';
+import 'package:dsoft_form_application/common/extensions/url_conver.dart';
 import 'package:dsoft_form_application/shared/widget/dialog_widget.dart';
-import '../../core/styles/app_text_style.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '/common/extensions/conver_string_to_enum.dart';
 import '/common/logger/app_logger.dart';
 import '/data/model/entities/post_model_entity.dart';
@@ -9,9 +11,7 @@ import '/presentation/form_screen/component/bloc/text_field_bloc.dart';
 import '/presentation/form_screen/component/screen/form_widget.dart';
 import '/presentation/form_screen/component/screen/loading_widget.dart';
 import '/presentation/form_screen/component/screen/submit_button_widget.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
-import 'package:loading_indicator/loading_indicator.dart';
 import '../../domain/models/item_model.dart';
 import '../detail_screen/bloc/detail_page_bloc.dart';
 import 'bloc/form_page_bloc.dart';
@@ -24,6 +24,10 @@ import '../../common/enums/form_page_enums.dart';
 import 'component/bloc/date_picker_bloc.dart';
 import 'component/bloc/rating_bloc.dart';
 import 'component/bloc/time_picker_custom_bloc.dart';
+import 'component/screen/check_bloc.dart';
+import 'component/screen/form_app_bar.dart';
+import 'component/screen/form_snake_bar.dart';
+import 'component/screen/show_popup_loading.dart';
 
 // ignore: must_be_immutable
 class ReviewFormPageWidget extends StatelessWidget {
@@ -46,47 +50,33 @@ class ReviewFormPageWidget extends StatelessWidget {
   Map<int, Cubit> datePickerBloc = {};
   Map<int, Cubit> timePickerBloc = {};
   Map<int, Cubit> ratingBloc = {};
-
   List<ItemModel>? answers;
-
   bool isHaveValid = false;
+  String title = "";
 
   @override
   Widget build(BuildContext context) {
     String? currentRoute = GoRouterState.of(context).name;
-
+    context.select<DetailPageBloc, String>(
+      (bloc) {
+        final state = bloc.state;
+        if (state is DetailPageLoaded) {
+          title = state.post.metaData.title;
+        }
+        return state is DetailPageLoaded ? title : ". . .";
+      },
+    );
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (bool didPop, result) async {
         if (didPop) return;
-        await onPop(context);
+        await onPop(context, currentRoute ?? "");
       },
       child: SafeArea(
+        top: false,
+        bottom: Platform.isAndroid ? true : false,
         child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.white,
-            title: Text(
-              context.select<DetailPageBloc, String>(
-                (bloc) {
-                  final state = bloc.state;
-                  return state is DetailPageLoaded
-                      ? state.post.metaData.title
-                      : ". . .";
-                },
-              ),
-              style: AppTextStyle.bold14,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 2,
-              textAlign: TextAlign.center,
-              textWidthBasis: TextWidthBasis.longestLine,
-            ),
-            centerTitle: true,
-            titleSpacing: 70,
-            leading: IconButton(
-              onPressed: () => onPop(context),
-              icon: Icon(Icons.arrow_back_ios_new, size: 20.h),
-            ),
-          ),
+          appBar: formAppBar(context, currentRoute, onPop, title),
           backgroundColor: const Color(0xFFf7f7f7),
           body: Stack(
             children: [
@@ -111,7 +101,8 @@ class ReviewFormPageWidget extends StatelessWidget {
                     initializeBlocs(state.post.itemModels);
                     blocAlreadyInit = true;
                   }
-                  return BlocBuilder<FormPageBloc, FormPageState>(// load answer
+                  return BlocBuilder<FormPageBloc, FormPageState>(
+                      // load answer
                       builder: (context, stateAnswers) {
                     if (stateAnswers is FormPageInitial) {
                       String idMetaDataPost = state.post.metaData.id;
@@ -145,26 +136,32 @@ class ReviewFormPageWidget extends StatelessWidget {
                             shrinkWrap: true,
                             itemCount: state.post.itemModels.length,
                             itemBuilder: (context, index) {
-                              return FormWidget(
-                                key: ValueKey(index),
-                                textFieldsBloc: textFieldsBloc,
-                                answersControllers: answersControllers,
-                                radioButtonsBloc: radioButtonsBloc,
-                                checkBoxBloc: checkBoxBloc,
-                                customDropBloc: customDropBloc,
-                                timePickerBloc: timePickerBloc,
-                                isError: isError,
-                                datePickerBloc: datePickerBloc,
-                                state: state,
-                                index: index,
-                                ratingBloc: ratingBloc,
+                              return AbsorbPointer(
+                                absorbing:
+                                    currentRoute == Routers.reviewFormPage
+                                        ? true
+                                        : false,
+                                child: FormWidget(
+                                  key: ValueKey(index),
+                                  textFieldsBloc: textFieldsBloc,
+                                  answersControllers: answersControllers,
+                                  radioButtonsBloc: radioButtonsBloc,
+                                  checkBoxBloc: checkBoxBloc,
+                                  customDropBloc: customDropBloc,
+                                  timePickerBloc: timePickerBloc,
+                                  isError: isError,
+                                  datePickerBloc: datePickerBloc,
+                                  state: state,
+                                  index: index,
+                                  ratingBloc: ratingBloc,
+                                ),
                               );
                             },
                           ),
                         ),
-                        if (currentRoute != Routers.reviewFormPage)
+                        if (currentRoute == Routers.formPage)
                           SizedBox(
-                            height: 0.1.sh,
+                            height: 0.05.sh,
                           )
                       ],
                     );
@@ -176,86 +173,71 @@ class ReviewFormPageWidget extends StatelessWidget {
               if (currentRoute != Routers.reviewFormPage)
                 BlocBuilder<FormPageBloc, FormPageState>(
                   builder: (context, formState) {
-                    if (formState is FormPageLoading) {
-                      return const Positioned(
-                          bottom: 0, left: 0, right: 0, child: LoadingWidget());
-                    } else {
-                      return BlocBuilder<DetailPageBloc, DetailPageState>(
-                        builder: (context, state) {
-                          return Positioned(
-                            bottom: 0,
-                            left: 0,
-                            right: 0,
-                            child: Column(
-                              children: [
-                                Container(
-                                  color: const Color(0xFFffffff),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      // ReturnButtonWidget(size: size), // button return
-                                      BlocListener<FormPageBloc, FormPageState>(
-                                        listener: (context, state) {
-                                          if (state
-                                              is FormPageSaveGoogleSheetSuccess) {
-                                            String baseUrl = currentRoute ==
-                                                    Routers.formPage
-                                                ? "/homePage/detailPage/$postId/formPage/successPage"
-                                                : '/historyPage/detailPage/$postId/formPage/successPage';
-                                            context.go(baseUrl);
+                    final bloc = context.read<FormPageBloc>();
+                    return BlocBuilder<DetailPageBloc, DetailPageState>(
+                      builder: (context, detailState) {
+                        return Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: Column(
+                            children: [
+                              Container(
+                                color: const Color(0xFFffffff),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    BlocListener<FormPageBloc, FormPageState>(
+                                      listener: (context, state) {
+                                        AppLogger.instance.d(state.toString());
+                                        if (state is FormPageSaveSuccess) {
+                                          String baseUrl =
+                                              "/homePage/detailPage/$postId/formPage/successPage";
+                                          final param = {
+                                            "title": title,
+                                          };
+                                          final url = baseUrl.toUrl(param);
+                                          context.go(url);
+                                        } else if (state
+                                            is FormPageSaveGoogleSheetFailed) {
+                                          String baseUrl =
+                                              "/homePage/detailPage/$postId/formPage/failPage";
+                                          context.go(baseUrl, extra: title);
+                                        }
+                                      },
+                                      child: GestureDetector(
+                                        onTap: () async {
+                                          if (detailState is DetailPageLoaded) {
+                                            final PostModelEntity postEntity =
+                                                detailState.post.toEntity();
+                                            checkValidForEachElementInForm(
+                                                postEntity);
+                                            // Hiển thị thông báo dựa trên kết quả
+                                            if (checkValidToSubmit) {
+                                              showDiaLogLoading(context);
+                                              // save to google form
+                                              bloc.add(SaveAnswerToGoogleSheet(
+                                                  (postEntity)));
+                                            } else {
+                                              showMessenger(
+                                                  context, checkValidToSubmit);
+                                            }
                                           }
                                         },
-                                        child: GestureDetector(
-                                          onTap: () async {
-                                            if (state is DetailPageLoaded) {
-                                              final PostModelEntity postEntity =
-                                                  state.post.toEntity();
-                                              checkValidForEachElementInForm(
-                                                  postEntity);
-                                              // Hiển thị thông báo dựa trên kết quả
-                                              if (checkValidToSubmit) {
-                                                //save to local
-                                                context
-                                                    .read<FormPageBloc>()
-                                                    .add(
-                                                        SaveForm((postEntity)));
-                                                // save to google form
-                                                context
-                                                    .read<FormPageBloc>()
-                                                    .add(
-                                                        SaveAnswerToGoogleSheet(
-                                                            (postEntity
-                                                                .toDomain())));
-                                                //route to success page
-                                                //        Map<String, dynamic> queryParams = {
-                                                //   "title": state.post.metaData.title,
-                                                //   "title2": state.post.metaData
-                                                //       .confirmationMessage,
-                                                //   "content": state.post.metaData
-                                                //       .customClosedFormMessage
-                                                // }; // handle with custom messange
-                                                // String url = baseUrl.toUrl(queryParams);
-                                                showDiaLogLoading(context);
-                                              } else {
-                                                showMessenger(context);
-                                              }
-                                            }
-                                          },
-                                          child:
-                                              const SubmitButtonWidget(), // interface button
-                                        ),
+                                        child:
+                                            const SubmitButtonWidget(), // interface button
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
-                                Gap(10.h),
-                              ],
-                            ),
-                          );
-                        },
-                      );
-                    }
+                              ),
+                              Gap(10.h),
+                            ],
+                          ),
+                        );
+                      },
+                    );
                   },
                 ),
             ],
@@ -265,23 +247,29 @@ class ReviewFormPageWidget extends StatelessWidget {
     );
   }
 
-  Future<void> onPop(BuildContext context) async {
-    final check = await checkValidWhenGetOutAnyTime();
-    // ignore: unrelated_type_equality_checks
-    if (check == true) {
-      final result = await showDiaLogToExist(context);
-      if (result == true) {
+  Future<void> onPop(BuildContext context, String currentRouter) async {
+    if (currentRouter == Routers.formPage) {
+      final check = await checkValidWhenGetOutAnyTime();
+      // ignore: unrelated_type_equality_checks
+      if (check == true) {
+        // ignore: use_build_context_synchronously
+        final result = await showDiaLogToExist(context);
+        if (result == true) {
+          // ignore: use_build_context_synchronously
+          context.pop(context);
+        }
+      } else {
         // ignore: use_build_context_synchronously
         context.pop(context);
       }
     } else {
-      // ignore: use_build_context_synchronously
       context.pop(context);
     }
   }
 
   // check validate in form
   void checkValidForEachElementInForm(PostModelEntity postEntity) {
+    postEntity.metaData.updateAt = DateTime.now();
     final List<bool> listValid = List.filled(7, true);
     listValid[0] = checkTextFieldsBloc(postEntity);
     listValid[1] = checkRadioButtonsBloc(postEntity);
@@ -297,20 +285,6 @@ class ReviewFormPageWidget extends StatelessWidget {
         break;
       }
     }
-  }
-
-// hiển thị thông báo gửi
-  void showMessenger(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(checkValidToSubmit
-            ? "Đã lưu thành công"
-            : "Vui lòng điền đầy đủ thông tin"),
-        backgroundColor:
-            checkValidToSubmit ? Colors.green : const Color(0xffdb1e39),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
   }
 
   // Khởi tạo các mảng chứa các giá trị bloc và controller
@@ -350,21 +324,19 @@ class ReviewFormPageWidget extends StatelessWidget {
   }
 
   bool checkTextFieldsBloc(PostModelEntity postEntity) {
-    bool isValid = true;
-    for (var entry in textFieldsBloc.entries) {
-      final key = entry.key;
-      final textFieldBloc = entry.value as TextFieldBloc;
-      final String? values = textFieldBloc.value;
-      AppLogger.instance.i("submit values text field is $values");
-      if (values == null && isRequired[key] == true) {
-        textFieldBloc.setError();
-        isValid = false;
-      } else {
-        postEntity.items[key].result ??= [""];
-        postEntity.items[key].result![0] = values ?? "";
-      }
-    }
-    return isValid;
+    return checkBloc<TextFieldBloc>(
+      blocMap: textFieldsBloc,
+      postEntity: postEntity,
+      validateBloc: (bloc, key) {
+        bloc = bloc as TextFieldBloc;
+        return bloc.value != null || isRequired[key] != true;
+      },
+      handleError: (bloc, _) {
+        bloc = bloc as TextFieldBloc;
+        return bloc.setError();
+      },
+      getValue: (bloc) => (bloc as TextFieldBloc).value,
+    );
   }
 
   bool checkRadioButtonsBloc(PostModelEntity postEntity) {
@@ -412,14 +384,12 @@ class ReviewFormPageWidget extends StatelessWidget {
     for (var entry in customDropBloc.entries) {
       final key = entry.key;
       final bloc = entry.value as CustomDropButtonBloc;
-      final String? value = bloc.state.isSelected;
+      final String? value = bloc.getValue;
       AppLogger.instance.i("submit value drop button is  $value");
       if (value == null && isRequired[key] == true) {
-        bloc.validate('');
-        bloc.state.isError = true;
+        bloc.isError();
         isValid = false;
       } else {
-        bloc.state.isError = false;
         postEntity.items[key].result ??= [""];
         postEntity.items[key].result![0] = value ?? "";
       }
@@ -486,44 +456,6 @@ class ReviewFormPageWidget extends StatelessWidget {
     return isValid;
   }
 
-  Future<dynamic> showDiaLogLoading(BuildContext originContext) {
-    return showDialog(
-        context: originContext,
-        builder: (context) => AlertDialog(
-              backgroundColor: Colors.white,
-              content: Container(
-                width: 1.sw,
-                height: 0.3.sh,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(12)),
-                ),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Vui lòng đợi trong giây lát",
-                        style: AppTextStyle.bold20
-                            .copyWith(color: const Color(0xffdb1e39)),
-                      ),
-                      Gap(20.w),
-                      Container(
-                        color: Colors.white,
-                        height: 100.w,
-                        width: 100.w,
-                        child: LoadingIndicator(
-                            indicatorType: Indicator.circleStrokeSpin,
-                            colors: const [Color(0xffdb1e39)],
-                            strokeWidth: 4.0,
-                            pathBackgroundColor: Colors.red[200],
-                            backgroundColor: Colors.white),
-                      ),
-                    ]),
-              ),
-            ));
-  }
-
   Future<bool> checkValidWhenGetOutAnyTime() {
     for (var entry in textFieldsBloc.entries) {
       final bloc = entry.value as TextFieldBloc;
@@ -541,7 +473,8 @@ class ReviewFormPageWidget extends StatelessWidget {
     }
     for (var entry in customDropBloc.entries) {
       final bloc = entry.value as CustomDropButtonBloc;
-      if (bloc.isValid == true) {
+
+      if (bloc.isSelected != null) {
         isHaveValid = true;
         return Future.value(true);
       }

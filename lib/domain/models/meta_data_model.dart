@@ -60,6 +60,7 @@ class MetaDataModel extends MapperEntity<MetadataModelEntity> {
         enable: enable,
         spreadsheetId: spreadsheetId,
         createAt: createAt,
-        expireAt: expireAt);
+        expireAt: expireAt,
+        updateAt: null);
   }
 }

@@ -7,6 +7,7 @@ class AppIcons {
   static const String logoApp = 'assets/icons/logo-app.png';
   static const String logo2 = 'assets/icons/logo2.png';
   static const String success = 'assets/icons/success.png';
+  static const String fail = 'assets/icons/fail.png';
   static const String tassel = 'assets/icons/tua_rua.png';
   static const String folder = 'assets/icons/folder.png';
   static const String calendar = 'assets/icons/calendar.png';

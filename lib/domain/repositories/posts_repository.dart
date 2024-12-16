@@ -55,13 +55,9 @@ class PostRepositoryImpl extends PostsRepository {
   @override
   Future<Either<AppError, bool>> saveAnswerToGoogleSheet(
       PostsModel post) async {
-    try {
-      final result = await _fetchPosts.saveAnswerToGoogleSheet(post);
-
-      return Right(result);
-    } on DioException catch (e) {
-      return LeftAPI(e);
-    }
+    final Either<AppError, bool> result =
+        await _fetchPosts.saveAnswerToGoogleSheet(post);
+    return result;
   }
 
   //Local

@@ -24,8 +24,8 @@ showDiaLogToExist(BuildContext originContext) {
                     const Gap(10),
                     Image.asset(
                       AppIcons.warning,
-                      height: 60,
-                      width: 60,
+                      height: 80.w,
+                      width: 80.w,
                       fit: BoxFit.fill,
                     ),
                     const Gap(10),
@@ -53,7 +53,7 @@ showDiaLogToExist(BuildContext originContext) {
                             Navigator.of(context).pop(false);
                           },
                           child: Container(
-                            width: 140.w,
+                            width: 0.3.sw,
                             height: 40.h,
                             margin: const EdgeInsets.all(5),
                             decoration: BoxDecoration(
@@ -75,7 +75,7 @@ showDiaLogToExist(BuildContext originContext) {
                             Navigator.of(context).pop(true);
                           },
                           child: Container(
-                            width: 140.w,
+                            width: 0.3.sw,
                             height: 40.h,
                             margin: const EdgeInsets.all(8),
                             decoration: BoxDecoration(

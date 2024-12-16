@@ -12,6 +12,7 @@ class DatePickerBloc extends Cubit<DatePickerState> {
       selected = value;
       emit(DatePickerChangedValue(value));
     } else {
+      selected = null;
       emit(const DatePickerChangedValue(null));
     }
   }

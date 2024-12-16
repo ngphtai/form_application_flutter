@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -39,7 +41,11 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      body: SafeArea(child: widget.child),
+      body: SafeArea(
+        top: false,
+        bottom: Platform.isAndroid ? true : false,
+        child: widget.child,
+      ),
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
           splashColor: Colors.transparent,

@@ -1,3 +1,5 @@
+import 'package:dsoft_form_application/presentation/fail_screen/fail_page_screen.dart';
+
 import '/presentation/history_screen/history_page_screen.dart';
 
 import '../../initializer.dart';
@@ -57,17 +59,25 @@ class AppRouter {
                     name: Routers.successPage,
                     path: Routers.successPage,
                     pageBuilder: (context, state) {
-                      // Lấy queryParameters từ URI
                       String title = state.uri.queryParameters['title'] ?? '';
-                      String title2 = state.uri.queryParameters['title2'] ?? '';
-                      String content =
-                          state.uri.queryParameters['content'] ?? '';
-
+                      return NoTransitionPage(
+                        key: state.pageKey,
+                        restorationId: state.pageKey.value,
+                        child: SuccessPageScreen(title: title),
+                      );
+                    },
+                  ),
+                  GoRoute(
+                    name: Routers.failPage,
+                    path: Routers.failPage,
+                    pageBuilder: (context, state) {
+                      String title = state.uri.queryParameters['title'] ?? '';
                       return NoTransitionPage(
                           key: state.pageKey,
                           restorationId: state.pageKey.value,
-                          child: SuccessPageScreen(
-                              title: title, title2: title2, content: content));
+                          child: FailPageScreen(
+                            title: title,
+                          ));
                     },
                   )
                 ],
@@ -108,30 +118,11 @@ class AppRouter {
                       restorationId: state.pageKey.value,
                       child: ReviewFormPageScreen(postId: postId));
                 },
-                routes: [
-                  GoRoute(
-                    name: Routers.reviewSuccessPage,
-                    path: Routers.successPage,
-                    pageBuilder: (context, state) {
-                      // Lấy queryParameters từ URI
-                      String title = state.uri.queryParameters['title'] ?? '';
-                      String title2 = state.uri.queryParameters['title2'] ?? '';
-                      String content =
-                          state.uri.queryParameters['content'] ?? '';
-
-                      return NoTransitionPage(
-                          key: state.pageKey,
-                          restorationId: state.pageKey.value,
-                          child: SuccessPageScreen(
-                              title: title, title2: title2, content: content));
-                    },
-                  )
-                ],
               )
             ],
           )
         ],
-      )
+      ),
     ],
     redirect: (context, state) {
       return null;

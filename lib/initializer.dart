@@ -51,6 +51,7 @@ class Initializer {
         FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
         return true;
       };
+
       runApp();
     }, (
       error,
@@ -70,8 +71,8 @@ class Initializer {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge,
         overlays: SystemUiOverlay.values);
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
-      statusBarColor: Colors.orange,
-      systemNavigationBarColor: Colors.red,
+      statusBarColor: Colors.transparent,
+      systemNavigationBarColor: const Color(0xfff7f7f7),
       statusBarIconBrightness: Brightness.light,
     ));
   }

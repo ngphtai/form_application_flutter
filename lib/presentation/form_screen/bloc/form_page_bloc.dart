@@ -10,36 +10,43 @@ part 'form_page_state.dart';
 
 class FormPageBloc extends Bloc<FormPageEvent, FormPageState> {
   FormPageBloc() : super(FormPageInitial()) {
-    on<SaveForm>(_saveForm);
+    // on<SaveForm>(_saveForm);
     on<SaveAnswerToGoogleSheet>(_saveAnswersToGoogleSheet);
     on<LoadAnswerLocal>(_loadAnswerLocal);
   }
 
   final seviceable = diPostSeviceable;
-  Future<void> _saveForm(SaveForm event, Emitter<FormPageState> emit) async {
-    final result = await seviceable.saveResultPostToLocal(event.postsEntity);
-    result.fold((left) {
-      AppLogger.instance.e(left.toString());
-      AppLogger.instance.e("Post submit failed! ");
-    }, (result) {
-      emit(FormPageSaveSuccess(event.postsEntity));
-      AppLogger.instance.e("Post submit success!!!");
-    });
-  }
 
   Future<void> _saveAnswersToGoogleSheet(
       SaveAnswerToGoogleSheet event, Emitter<FormPageState> emit) async {
-    emit(FormPageLoading());
+    emit(FormPageLoading()); // Đặt trạng thái loading trước
 
+    // Lưu Google Sheet
     final result = await seviceable.saveAnswerToGoogleSheet(event.post);
 
-    result.fold(
-      (left) {
-        AppLogger.instance.e(left.toString());
+    await result.fold(
+      (left) async {
+        // Lưu thất bại Google Sheet
+        if (!emit.isDone) {
+          emit(const FormPageSaveGoogleSheetFailed(
+              errorMessage: "Bugggggggggg"));
+        }
       },
-      (post) {
-        emit(FormPageSaveGoogleSheetSuccess());
-        AppLogger.instance.w("Answer is saved in google sheet success!!");
+      (success) async {
+        AppLogger.instance.i("Answer is saved to google sheet success!!");
+        final resultLocal = await seviceable.saveResultPostToLocal(event.post);
+
+        await resultLocal.fold(
+          (left) async {
+            AppLogger.instance.e(left.toString());
+          },
+          (right) async {
+            if (!emit.isDone) {
+              emit(FormPageSaveSuccess(event.post));
+              AppLogger.instance.i("Answer is saved to local success!!");
+            }
+          },
+        );
       },
     );
   }

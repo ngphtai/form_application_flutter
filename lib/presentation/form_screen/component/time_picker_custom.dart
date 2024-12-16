@@ -111,11 +111,13 @@ class _TimePickerCustomState extends State<TimePickerCustom>
                       ],
                     ),
                   ),
-                  widget.isError
-                      ? const Text(
-                          "Câu hỏi này bắt buộc *",
-                          style: TextStyle(color: Color(0xffdb1e39)),
-                        )
+                  widget.isRequest
+                      ? widget.isError
+                          ? const Text(
+                              "Câu hỏi này bắt buộc *",
+                              style: TextStyle(color: Color(0xffdb1e39)),
+                            )
+                          : const SizedBox()
                       : const SizedBox(),
                 ],
               ),

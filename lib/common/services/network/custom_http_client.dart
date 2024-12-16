@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:dio_smart_retry/dio_smart_retry.dart';
 import '../../../core/locators/locators.dart';
 import '../../constant/constants.dart';
 import '../../logger/app_logger.dart';
@@ -79,13 +78,13 @@ class HttpClientImpl implements CustomHttpClient {
     _dio
       ..interceptors.clear()
       ..interceptors.add(ErrorsInterceptor.instance)
-      ..interceptors.add(AuthorizationInterceptor.instance)
-      ..interceptors.add(RetryInterceptor(
-        // reconect when error
-        dio: _dio,
-        retries: 3,
-        retryDelays: [const Duration(seconds: 2), const Duration(seconds: 4)],
-      ));
+      ..interceptors.add(AuthorizationInterceptor.instance);
+    // ..interceptors.add(RetryInterceptor(
+    //   // reconect when error
+    //   dio: _dio,
+    //   retries: 3,
+    //   retryDelays: [const Duration(seconds: 2), const Duration(seconds: 4)],
+    // ));
   }
 
   @override

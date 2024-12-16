@@ -1,6 +1,10 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:dsoft_form_application/common/constant/app_errors/api_error.dart';
+import 'package:dsoft_form_application/common/constant/app_errors/app_orther_error.dart';
+import 'package:either_dart/either.dart';
+import '../../common/constant/app_errors/app_error.dart';
 import '/common/constant/constants.dart';
 import '/common/logger/app_logger.dart';
 import '/core/locators/locators.dart';
@@ -18,7 +22,7 @@ abstract class PostRemoteDataResource {
   Future<List<MetadataModelDTO>> getPosts();
   Future<PostsResponseModelDto> getDetailPost(String index);
 
-  Future<bool> saveAnswerToGoogleSheet(PostsModel post);
+  Future<Either<AppError, bool>> saveAnswerToGoogleSheet(PostsModel post);
 }
 
 class PostsRemoteDataResourceImpl extends PostRemoteDataResource {
@@ -72,7 +76,8 @@ class PostsRemoteDataResourceImpl extends PostRemoteDataResource {
   }
 
   @override
-  Future<bool> saveAnswerToGoogleSheet(PostsModel post) async {
+  Future<Either<AppError, bool>> saveAnswerToGoogleSheet(
+      PostsModel post) async {
     try {
       // Load credentials from assets
       final credentialsJson =
@@ -88,30 +93,26 @@ class PostsRemoteDataResourceImpl extends PostRemoteDataResource {
           await clientViaServiceAccount(serviceAccountCredentials, scopes);
       final sheetsApi = sheets.SheetsApi(client);
 
-      // Format sheet name to be valid
-      // String sheetName = post.metaData.id.replaceAll(' ', '-');
+      // Validate spreadsheetId
+      final spreadsheetId = post.metaData.spreadsheetId;
+      if (spreadsheetId.isEmpty) {
+        return Left(APIError(message: "Spreadsheet ID is empty."));
+      }
 
-      // // Check if spreadsheet exists
-      // final spreadsheet = await sheetsApi.spreadsheets.get(spreadsheetId);
-
-      // if (!spreadsheet.sheets!
-      //     .any((sheet) => sheet.properties!.title == sheetName)) {
-      //   // Create new sheet
-      //   await createNewSheet(sheetName, sheetsApi, spreadsheetId, post);
-      //   await addValueToSheet(post, sheetsApi, spreadsheetId, sheetName);
-      // } else {
-      //   await addValueToSheet(post, sheetsApi, spreadsheetId, sheetName);
-      // }
-
-      await addValueToSheet(post, sheetsApi, post.metaData.spreadsheetId,
-          "Câu trả lời biểu mẫu 1");
+      // Add values to the sheet
+      await addValueToSheet(
+          post, sheetsApi, spreadsheetId, "Câu trả lời biểu mẫu 1");
 
       // Close client
       client.close();
-      return true;
+      return const Right(true);
+    } on sheets.DetailedApiRequestError catch (e) {
+      // Handle Google Sheets-specific errors
+      return Left(APIError(message: e.message ?? "An error occurred."));
     } catch (e) {
-      AppLogger.instance.e(e.toString());
-      return false;
+      // Handle any other generic errors
+      return Left(
+          AppOtherError(messageError: e.toString(), exception: e as Exception));
     }
   }
 }

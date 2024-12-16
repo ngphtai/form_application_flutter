@@ -29,13 +29,14 @@ class MetadataModelEntityAdapter extends TypeAdapter<MetadataModelEntity> {
       spreadsheetId: fields[9] as String,
       createAt: fields[10] as DateTime,
       expireAt: fields[11] as DateTime,
+      updateAt: fields[12] as DateTime?,
     );
   }
 
   @override
   void write(BinaryWriter writer, MetadataModelEntity obj) {
     writer
-      ..writeByte(12)
+      ..writeByte(13)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -59,7 +60,9 @@ class MetadataModelEntityAdapter extends TypeAdapter<MetadataModelEntity> {
       ..writeByte(10)
       ..write(obj.createAt)
       ..writeByte(11)
-      ..write(obj.expireAt);
+      ..write(obj.expireAt)
+      ..writeByte(12)
+      ..write(obj.updateAt);
   }
 
   @override

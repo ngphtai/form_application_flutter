@@ -31,6 +31,7 @@ class _AppToastWidget extends State<AppToastWidget> {
   Widget build(BuildContext context) {
     var marginToast = 12.h;
     return SafeArea(
+      bottom: false,
       left: false,
       right: false,
       top: false,

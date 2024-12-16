@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import '../../shared/widget/share_app_bar.dart';
 import '/core/routing/route_path.dart';
 import '/core/styles/app_icons.dart';
@@ -28,6 +30,8 @@ class _DetailPageWidgetState extends State<DetailPageWidget> {
   Widget build(BuildContext context) {
     final currentRouter = GoRouterState.of(context).name;
     return SafeArea(
+      top: false,
+      bottom: Platform.isAndroid ? true : false,
       child: Scaffold(
         appBar: SharedAppBar(
           title: context.select<DetailPageBloc, String>((bloc) {
@@ -200,8 +204,8 @@ class _DetailPageWidgetState extends State<DetailPageWidget> {
                       const Gap(10),
                       Image.asset(
                         AppIcons.warning,
-                        height: 60,
-                        width: 60,
+                        height: 80.w,
+                        width: 80.w,
                         fit: BoxFit.fill,
                       ),
                       const Gap(10),

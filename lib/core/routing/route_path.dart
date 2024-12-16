@@ -27,4 +27,6 @@ class Routers {
   static const reviewFormPage = 'reviewFormPage';
 
   static var reviewSuccessPage = 'reviewSuccessPage';
+
+  static const failPage = 'failPage';
 }

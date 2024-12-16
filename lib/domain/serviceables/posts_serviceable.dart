@@ -1,3 +1,5 @@
+import 'package:dsoft_form_application/common/constant/app_errors/api_error.dart';
+
 import '/common/constant/app_errors/app_error.dart';
 import '/common/logger/app_logger.dart';
 import '/core/locators/locators.dart';
@@ -47,15 +49,20 @@ class PostsServiceable {
   }
 
   Future<Either<AppError, bool>> saveAnswerToGoogleSheet(
-      PostsModel post) async {
-    var result = await _saveAnswerToGoogleSheet.call(post);
+      PostModelEntity post) async {
+    try {
+      var result = await _saveAnswerToGoogleSheet.call(post);
 
-    return result.fold((context) {
-      AppLogger.instance.e(context.toString());
-      return Left(context);
-    }, (result) {
-      return Right(result);
-    });
+      return result.fold((context) {
+        AppLogger.instance.e(context.toString());
+        return Left(context);
+      }, (result) {
+        return Right(result);
+      });
+    } catch (e) {
+      AppLogger.instance.e(e.toString());
+      return Left(APIError(message: e.toString()));
+    }
   }
 
   //Local

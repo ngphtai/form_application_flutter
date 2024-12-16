@@ -8,7 +8,7 @@ part 'metadata_model_entity.g.dart';
 @HiveType(typeId: 0)
 class MetadataModelEntity extends MapperDomain<MetaDataModel> {
   @HiveField(0)
-  final String id;
+  late String id;
   @HiveField(1)
   final bool enable;
   @HiveField(2)
@@ -31,6 +31,8 @@ class MetadataModelEntity extends MapperDomain<MetaDataModel> {
   final DateTime createAt;
   @HiveField(11)
   final DateTime expireAt;
+  @HiveField(12)
+  late DateTime? updateAt;
 
   MetadataModelEntity({
     required this.id,
@@ -45,6 +47,7 @@ class MetadataModelEntity extends MapperDomain<MetaDataModel> {
     required this.spreadsheetId,
     required this.createAt,
     required this.expireAt,
+    required this.updateAt,
   });
 
   @override

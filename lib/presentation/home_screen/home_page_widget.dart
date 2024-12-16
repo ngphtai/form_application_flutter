@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import '../../shared/widget/share_app_bar.dart';
 import '/core/styles/app_icons.dart';
 import '/presentation/form_screen/component/screen/loading_widget.dart';
@@ -16,6 +18,8 @@ class HomePageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
+      top: false,
+      bottom: Platform.isAndroid ? true : false,
       child: Scaffold(
         appBar: const SharedAppBar(),
         backgroundColor: const Color(0xFFF7F7F7),

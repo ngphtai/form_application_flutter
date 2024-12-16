@@ -6,8 +6,9 @@ import 'package:gap/gap.dart';
 
 import 'bloc/custom_drop_button_bloc.dart';
 
+// ignore: must_be_immutable
 class CustomDropButton extends StatefulWidget {
-  const CustomDropButton({
+  CustomDropButton({
     super.key,
     required this.listDropDown,
     this.isRequest = false,
@@ -21,6 +22,7 @@ class CustomDropButton extends StatefulWidget {
   _CustomDropButtonState createState() => _CustomDropButtonState();
   final List<String> listDropDown;
   final bool? isRequest;
+  bool isError = false;
   final TextEditingController controller;
   final CustomDropButtonBloc customDropButtonBloc;
   final String title;
@@ -38,6 +40,13 @@ class _CustomDropButtonState extends State<CustomDropButton>
         create: (context) => widget.customDropButtonBloc,
         child: BlocBuilder<CustomDropButtonBloc, CustomDropButtonState>(
             builder: (context, state) {
+          if (state is CustomDropButtonInitial) {
+            widget.isError = false;
+          } else {
+            bool isValid =
+                context.read<CustomDropButtonBloc>().getValue == null;
+            !isValid ? widget.isError = false : widget.isError = true;
+          }
           // handle get answer and set answer to default
           if (widget.controller.text.isNotEmpty && !isClose) {
             String value = widget.controller.text;
@@ -64,7 +73,7 @@ class _CustomDropButtonState extends State<CustomDropButton>
                       decoration: BoxDecoration(
                         border: Border.all(
                             color: widget.isRequest == true
-                                ? !state.isError
+                                ? !widget.isError
                                     ? const Color(0xffe8e8e8)
                                     : const Color(0xffdb1e39)
                                 : const Color(0xffe8e8e8),
@@ -91,11 +100,13 @@ class _CustomDropButtonState extends State<CustomDropButton>
                         ],
                       ),
                     ),
-                    state.isError
-                        ? const Text(
-                            "Câu hỏi này bắt buộc *",
-                            style: TextStyle(color: Color(0xffdb1e39)),
-                          )
+                    widget.isRequest == true
+                        ? widget.isError
+                            ? const Text(
+                                "Câu hỏi này bắt buộc *",
+                                style: TextStyle(color: Color(0xffdb1e39)),
+                              )
+                            : const SizedBox()
                         : const SizedBox(),
                   ],
                 ),
@@ -151,29 +162,18 @@ class _CustomDropButtonState extends State<CustomDropButton>
                     final bool isSelected = item == selectedValue;
                     return GestureDetector(
                       onTap: () {
-                        if (selectedValue != item) {
+                        if (true) {
                           // Cập nhật UI cho BottomSheet
                           setBottomSheetState(() {
-                            selectedValue = item;
+                            selectedValue = isSelected ? null : item;
                           });
                           // update ui widget
                           setState(() {
-                            selectedValue = item;
+                            selectedValue = isSelected ? null : item;
                           });
                           originContext
                               .read<CustomDropButtonBloc>()
-                              .validate(selectedValue!);
-                        } else {
-                          setBottomSheetState(() {
-                            selectedValue = null;
-                          });
-                          // update ui widget
-                          setState(() {
-                            selectedValue = null;
-                          });
-                          originContext
-                              .read<CustomDropButtonBloc>()
-                              .validate(null);
+                              .validate(isSelected ? null : selectedValue!);
                         }
                         Navigator.pop(context);
                       },
