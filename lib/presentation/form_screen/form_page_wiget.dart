@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:dsoft_form_application/common/extensions/url_conver.dart';
 import 'package:dsoft_form_application/shared/widget/dialog_widget.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '/common/extensions/conver_string_to_enum.dart';
 import '/common/logger/app_logger.dart';
@@ -11,7 +12,6 @@ import '/presentation/form_screen/component/bloc/text_field_bloc.dart';
 import '/presentation/form_screen/component/screen/form_widget.dart';
 import '/presentation/form_screen/component/screen/loading_widget.dart';
 import '/presentation/form_screen/component/screen/submit_button_widget.dart';
-import 'package:gap/gap.dart';
 import '../../domain/models/item_model.dart';
 import '../detail_screen/bloc/detail_page_bloc.dart';
 import 'bloc/form_page_bloc.dart';
@@ -57,6 +57,7 @@ class ReviewFormPageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String? currentRoute = GoRouterState.of(context).name;
+    final ScrollController scrollController = ScrollController();
     context.select<DetailPageBloc, String>(
       (bloc) {
         final state = bloc.state;
@@ -76,6 +77,7 @@ class ReviewFormPageWidget extends StatelessWidget {
         top: false,
         bottom: Platform.isAndroid ? true : false,
         child: Scaffold(
+          resizeToAvoidBottomInset: true,
           appBar: formAppBar(context, currentRoute, onPop, title),
           backgroundColor: const Color(0xFFf7f7f7),
           body: Stack(
@@ -132,37 +134,43 @@ class ReviewFormPageWidget extends StatelessWidget {
                     return Column(
                       children: [
                         Expanded(
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: state.post.itemModels.length,
-                            itemBuilder: (context, index) {
-                              return AbsorbPointer(
-                                absorbing:
-                                    currentRoute == Routers.reviewFormPage
-                                        ? true
-                                        : false,
-                                child: FormWidget(
-                                  key: ValueKey(index),
-                                  textFieldsBloc: textFieldsBloc,
-                                  answersControllers: answersControllers,
-                                  radioButtonsBloc: radioButtonsBloc,
-                                  checkBoxBloc: checkBoxBloc,
-                                  customDropBloc: customDropBloc,
-                                  timePickerBloc: timePickerBloc,
-                                  isError: isError,
-                                  datePickerBloc: datePickerBloc,
-                                  state: state,
-                                  index: index,
-                                  ratingBloc: ratingBloc,
-                                ),
-                              );
-                            },
+                          child: Padding(
+                            padding: EdgeInsets.only(bottom: 0.05.sh),
+                            child: ListView.builder(
+                              controller: scrollController,
+                              shrinkWrap: true,
+                              itemCount: state.post.itemModels.length + 1,
+                              itemBuilder: (context, index) {
+                                if (index == state.post.itemModels.length) {
+                                  return Container(
+                                    height: 0.02.sh,
+                                    color: Colors.transparent,
+                                  );
+                                }
+                                return AbsorbPointer(
+                                  absorbing:
+                                      currentRoute == Routers.reviewFormPage
+                                          ? true
+                                          : false,
+                                  child: FormWidget(
+                                    key: ValueKey(index),
+                                    textFieldsBloc: textFieldsBloc,
+                                    answersControllers: answersControllers,
+                                    radioButtonsBloc: radioButtonsBloc,
+                                    checkBoxBloc: checkBoxBloc,
+                                    customDropBloc: customDropBloc,
+                                    timePickerBloc: timePickerBloc,
+                                    isError: isError,
+                                    datePickerBloc: datePickerBloc,
+                                    state: state,
+                                    index: index,
+                                    ratingBloc: ratingBloc,
+                                  ),
+                                );
+                              },
+                            ),
                           ),
                         ),
-                        if (currentRoute == Routers.formPage)
-                          SizedBox(
-                            height: 0.05.sh,
-                          )
                       ],
                     );
                   });
@@ -224,6 +232,9 @@ class ReviewFormPageWidget extends StatelessWidget {
                                                   context, checkValidToSubmit);
                                             }
                                           }
+                                          await FirebaseAnalytics.instance
+                                              .logEvent(
+                                                  name: "tap_submit_button");
                                         },
                                         child:
                                             const SubmitButtonWidget(), // interface button
@@ -232,7 +243,6 @@ class ReviewFormPageWidget extends StatelessWidget {
                                   ],
                                 ),
                               ),
-                              Gap(10.h),
                             ],
                           ),
                         );
@@ -380,21 +390,19 @@ class ReviewFormPageWidget extends StatelessWidget {
   }
 
   bool checkCustomDropBloc(PostModelEntity postEntity) {
-    bool isValid = true;
-    for (var entry in customDropBloc.entries) {
-      final key = entry.key;
-      final bloc = entry.value as CustomDropButtonBloc;
-      final String? value = bloc.getValue;
-      AppLogger.instance.i("submit value drop button is  $value");
-      if (value == null && isRequired[key] == true) {
-        bloc.isError();
-        isValid = false;
-      } else {
-        postEntity.items[key].result ??= [""];
-        postEntity.items[key].result![0] = value ?? "";
-      }
-    }
-    return isValid;
+    return checkBloc<CustomDropButtonBloc>(
+      blocMap: customDropBloc,
+      postEntity: postEntity,
+      validateBloc: (bloc, key) {
+        bloc = bloc as CustomDropButtonBloc;
+        return bloc.getValue != null || isRequired[key] != true;
+      },
+      handleError: (bloc, _) {
+        bloc = bloc as CustomDropButtonBloc;
+        return bloc.isError();
+      },
+      getValue: (bloc) => (bloc as CustomDropButtonBloc).getValue,
+    );
   }
 
   bool checkTimePickerBloc(PostModelEntity postEntity) {

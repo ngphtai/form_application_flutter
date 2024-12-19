@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 /// {@template app_font_family}
 /// Get font family using in app based on device type, OS type
 /// {@endtemplate}
@@ -24,5 +27,15 @@ class AppFontFamily {
   /// }
   String getFontFamily() {
     return appFont;
+  }
+
+  TextStyle getGoogleFontTextStyle({
+    double fontSize = 14,
+    FontWeight fontWeight = FontWeight.w400,
+  }) {
+    return GoogleFonts.roboto(
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+    );
   }
 }

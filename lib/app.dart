@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
-
 import 'common/constant/constants.dart';
 import 'core/locators/locators.dart';
 import 'core/styles/app_design_size.dart';

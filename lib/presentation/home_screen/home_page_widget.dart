@@ -1,5 +1,9 @@
 import 'dart:io';
 
+import 'package:dsoft_form_application/core/styles/app_text_style.dart';
+import 'package:dsoft_form_application/shared/widget/no_data_from_local.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+
 import '../../shared/widget/share_app_bar.dart';
 import '/core/styles/app_icons.dart';
 import '/presentation/form_screen/component/screen/loading_widget.dart';
@@ -39,9 +43,13 @@ class HomePageWidget extends StatelessWidget {
                     return Column(
                       children: [
                         GestureDetector(
-                          onTap: () {
+                          onTap: () async {
                             context.push(
                                 '${Routers.homePage}/${Routers.detailPage}/${post.id}');
+                            await FirebaseAnalytics.instance.logEvent(
+                              name: 'tap_form_button',
+                              parameters: {"id form": post.id},
+                            );
                           },
                           child: Center(
                             child: Container(
@@ -66,15 +74,11 @@ class HomePageWidget extends StatelessWidget {
                                             Image.asset(AppIcons.folder),
                                             const Gap(10),
                                             Expanded(
-                                              child: Text(
-                                                post.title,
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: const TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
+                                              child: Text(post.title,
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: AppTextStyle.bold14),
                                             ),
                                           ],
                                         ),
@@ -83,11 +87,10 @@ class HomePageWidget extends StatelessWidget {
                                           post.description,
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(
-                                            fontSize: 12,
-                                            fontStyle: FontStyle.normal,
-                                            color: Colors.grey,
-                                          ),
+                                          style: AppTextStyle.regular12
+                                              .copyWith(
+                                                  color:
+                                                      const Color(0xff6f6f6f)),
                                         ),
                                         const Gap(10),
                                         Row(
@@ -95,13 +98,11 @@ class HomePageWidget extends StatelessWidget {
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
-                                              "Hết hạn: ${DateFormat('dd/MM/yyyy').format(post.expireAt)}",
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                                fontStyle: FontStyle.normal,
-                                                color: Color(0xff6f6f6f),
-                                              ),
-                                            ),
+                                                "Hết hạn: ${DateFormat('dd/MM/yyyy').format(post.expireAt)}",
+                                                style: AppTextStyle.regular12
+                                                    .copyWith(
+                                                        color: const Color(
+                                                            0xff6f6f6f))),
                                             DateTime.now().isAfter(
                                                         post.expireAt) ==
                                                     true
@@ -118,12 +119,12 @@ class HomePageWidget extends StatelessWidget {
                                                               Radius.circular(
                                                                   100)),
                                                     ),
-                                                    child: const Text(
-                                                      "Đã hết hạn",
-                                                      style: TextStyle(
-                                                          color: Color(
-                                                              0xffdb1e39)),
-                                                    ))
+                                                    child: Text("Đã hết hạn",
+                                                        style: AppTextStyle
+                                                            .bold12
+                                                            .copyWith(
+                                                                color: const Color(
+                                                                    0xffdb1e39))))
                                                 : const Text("")
                                           ],
                                         ),
@@ -144,7 +145,7 @@ class HomePageWidget extends StatelessWidget {
               );
             }
             if (state is HomePageLoadFailed) {
-              return const Text("error");
+              return const noDataFromLocal();
             }
             return const LoadingWidget();
           },

@@ -1,3 +1,4 @@
+import 'package:dsoft_form_application/core/styles/app_text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -32,17 +33,12 @@ class ShareContainer extends StatelessWidget {
                   text: TextSpan(children: [
                 TextSpan(
                   text: title,
-                  style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black),
+                  style: AppTextStyle.bold14.copyWith(color: Colors.black),
                 ),
                 TextSpan(
                     text: isRequest ? " *" : "",
-                    style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xffdb1e39))),
+                    style: AppTextStyle.bold14
+                        .copyWith(color: const Color(0xffdb1e39))),
               ]))),
           Container(
               margin: const EdgeInsets.fromLTRB(8, 2, 8, 2),

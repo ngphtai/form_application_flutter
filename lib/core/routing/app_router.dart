@@ -1,21 +1,21 @@
 import 'package:dsoft_form_application/presentation/fail_screen/fail_page_screen.dart';
-
+import 'package:firebase_analytics/firebase_analytics.dart';
 import '/presentation/history_screen/history_page_screen.dart';
-
 import '../../initializer.dart';
 import '../../presentation/form_screen/form_page_screen.dart';
-
 import '../../presentation/success_screen/success_page_screen.dart';
 import '../../presentation/detail_screen/detail_page_screen.dart';
 import '../../presentation/home_screen/home_page_screen.dart';
-
 import '../../presentation/splash_screen/splash_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'route_path.dart';
 
 class AppRouter {
+  static FirebaseAnalyticsObserver observer =
+      FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance);
   late final router = GoRouter(
     debugLogDiagnostics: true,
+    observers: [observer], // Observer Firebase Analytics
     navigatorKey: Initializer.instance.navigatorKey,
     routes: [
       GoRoute(

@@ -1,3 +1,5 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
+
 import '/core/styles/app_text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -60,9 +62,11 @@ class _CustomDropButtonState extends State<CustomDropButton>
             children: [
               const SizedBox(height: 8),
               GestureDetector(
-                onTap: () {
+                onTap: () async {
                   _showDropDownBottomSheet(context);
                   context.read<CustomDropButtonBloc>().validate("");
+                  await FirebaseAnalytics.instance
+                      .logEvent(name: "tap_dropdown_button");
                 },
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,7 +90,7 @@ class _CustomDropButtonState extends State<CustomDropButton>
                         children: [
                           Text(
                             selectedValue ?? 'Nhập câu trả lời',
-                            style: TextStyle(
+                            style: AppTextStyle.regular14.copyWith(
                                 color: selectedValue == null
                                     ? const Color(0xff8C8C8C)
                                     : Colors.black,
@@ -102,9 +106,10 @@ class _CustomDropButtonState extends State<CustomDropButton>
                     ),
                     widget.isRequest == true
                         ? widget.isError
-                            ? const Text(
+                            ? Text(
                                 "Câu hỏi này bắt buộc *",
-                                style: TextStyle(color: Color(0xffdb1e39)),
+                                style: AppTextStyle.regular14
+                                    .copyWith(color: const Color(0xffdb1e39)),
                               )
                             : const SizedBox()
                         : const SizedBox(),
@@ -121,6 +126,8 @@ class _CustomDropButtonState extends State<CustomDropButton>
     final originContext = context;
     showModalBottomSheet(
       context: context,
+      enableDrag: true,
+      isDismissible: true,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
@@ -129,95 +136,105 @@ class _CustomDropButtonState extends State<CustomDropButton>
       )),
       builder: (context) => StatefulBuilder(
         builder: (BuildContext context, StateSetter setBottomSheetState) {
-          return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(16),
-                topRight: Radius.circular(16),
+          return SafeArea(
+            child: SingleChildScrollView(
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16),
+                    topRight: Radius.circular(16),
+                  ),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // cross bar
+                    Container(
+                      width: 100.h,
+                      height: 5,
+                      decoration: const BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.all(Radius.circular(10))),
+                      margin: const EdgeInsets.only(top: 10, bottom: 20),
+                    ),
+                    // title
+                    Text(
+                      widget.title,
+                      textAlign: TextAlign.center,
+                      style:
+                          AppTextStyle.regular14.copyWith(color: Colors.grey),
+                    ),
+                    Gap(10.h),
+                    Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ...widget.listDropDown.map((item) {
+                            final bool isSelected = item == selectedValue;
+                            return GestureDetector(
+                              onTap: () async {
+                                if (true) {
+                                  // Cập nhật UI cho BottomSheet
+                                  setBottomSheetState(() {
+                                    selectedValue = isSelected ? null : item;
+                                  });
+                                  // update ui widget
+                                  setState(() {
+                                    selectedValue = isSelected ? null : item;
+                                  });
+                                  originContext
+                                      .read<CustomDropButtonBloc>()
+                                      .validate(
+                                          isSelected ? null : selectedValue!);
+                                }
+                                Navigator.pop(context);
+                                await FirebaseAnalytics.instance
+                                    .logEvent(name: "tap_select_dropdown");
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: isSelected
+                                      ? const Color(0xFFFDEEEE)
+                                      : Colors.white,
+                                  border: Border.all(
+                                    color: isSelected
+                                        ? const Color(0xffdb1e39)
+                                        : const Color(0xffe8e8e8),
+                                    width: 1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                width: double.infinity,
+                                margin: const EdgeInsets.symmetric(vertical: 4),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 12),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      item,
+                                      style: AppTextStyle.regular14.copyWith(
+                                          color: isSelected
+                                              ? const Color(0xffdb1e39)
+                                              : Colors.black),
+                                    ),
+                                    if (isSelected)
+                                      const Icon(
+                                        Icons.check_circle,
+                                        color: Color(0xffdb1e39),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }),
+                        ]),
+                  ],
+                ),
               ),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // cross bar
-                Container(
-                  width: 100.h,
-                  height: 5,
-                  decoration: const BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.all(Radius.circular(10))),
-                  margin: const EdgeInsets.only(top: 10, bottom: 20),
-                ),
-                // title
-                Text(
-                  widget.title,
-                  style: AppTextStyle.regular16.copyWith(color: Colors.grey),
-                ),
-                Gap(10.h),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: widget.listDropDown.map((item) {
-                    final bool isSelected = item == selectedValue;
-                    return GestureDetector(
-                      onTap: () {
-                        if (true) {
-                          // Cập nhật UI cho BottomSheet
-                          setBottomSheetState(() {
-                            selectedValue = isSelected ? null : item;
-                          });
-                          // update ui widget
-                          setState(() {
-                            selectedValue = isSelected ? null : item;
-                          });
-                          originContext
-                              .read<CustomDropButtonBloc>()
-                              .validate(isSelected ? null : selectedValue!);
-                        }
-                        Navigator.pop(context);
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? const Color(0xFFFDEEEE)
-                              : Colors.white,
-                          border: Border.all(
-                            color: isSelected
-                                ? const Color(0xffdb1e39)
-                                : const Color(0xffe8e8e8),
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        width: double.infinity,
-                        margin: const EdgeInsets.symmetric(vertical: 4),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 12),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              item,
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: isSelected
-                                    ? const Color(0xffdb1e39)
-                                    : Colors.black,
-                              ),
-                            ),
-                            if (isSelected)
-                              const Icon(
-                                Icons.check_circle,
-                                color: Color(0xffdb1e39),
-                              ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ],
             ),
           );
         },

@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:dsoft_form_application/core/styles/app_text_style.dart';
+
 import '/core/styles/app_icons.dart';
 import '/shared/widget/share_app_bar.dart';
 import 'package:flutter/material.dart';
@@ -56,19 +58,18 @@ class _FailPageScreenState extends State<FailPageScreen>
                   height: 90.w,
                   width: 90.w,
                 ),
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
                   child: Column(
                     children: [
                       Text(
                         "Form chưa được hoàn thành!",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
+                        style: AppTextStyle.bold16,
                       ),
                       Text(
                         "Cảm ơn bạn đã dành thời gian điền form khảo sát.",
-                        style:
-                            TextStyle(color: Color(0xFF858585), fontSize: 14),
+                        style: AppTextStyle.regular14
+                            .copyWith(color: const Color(0xff727272)),
                       ),
                     ],
                   ),

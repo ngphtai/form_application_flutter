@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/styles/app_text_style.dart';
+
 class TextButtonCustom extends StatelessWidget {
   const TextButtonCustom({
     super.key,
@@ -10,13 +12,6 @@ class TextButtonCustom extends StatelessWidget {
   final Color color;
   @override
   Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: TextStyle(
-        color: color, // Colors.white,
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-      ),
-    );
+    return Text(text, style: AppTextStyle.bold14.copyWith(color: color));
   }
 }

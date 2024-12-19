@@ -1,7 +1,8 @@
+import 'package:go_router/go_router.dart';
+
 import '/core/styles/app_icons.dart';
 import '/core/styles/app_text_style.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 
@@ -15,7 +16,7 @@ Future<dynamic> showDiaLogInterruptedInternet(BuildContext originContext) {
       ),
       contentPadding: EdgeInsets.zero,
       content: Container(
-        width: 0.9.sw, // 90% chiều rộng màn hình
+        width: 0.9.sw,
         padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
         decoration: const BoxDecoration(
           color: Colors.white,
@@ -48,8 +49,7 @@ Future<dynamic> showDiaLogInterruptedInternet(BuildContext originContext) {
             Center(
               child: GestureDetector(
                 onTap: () {
-                  // Thoát ứng dụng
-                  SystemNavigator.pop();
+                  context.pop();
                 },
                 child: Container(
                   padding:
@@ -65,7 +65,7 @@ Future<dynamic> showDiaLogInterruptedInternet(BuildContext originContext) {
                   child: Center(
                     child: Text(
                       "OK",
-                      style: AppTextStyle.bold16.copyWith(color: Colors.white),
+                      style: AppTextStyle.bold14.copyWith(color: Colors.white),
                     ),
                   ),
                 ),

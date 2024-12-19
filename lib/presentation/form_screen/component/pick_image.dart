@@ -1,4 +1,5 @@
 import 'dart:io';
+import '../../../core/styles/app_text_style.dart';
 import '/common/logger/app_logger.dart';
 import '/common/services/image_picker_service.dart';
 import '/core/styles/app_icons.dart';
@@ -174,9 +175,10 @@ class _PickImageState extends State<PickImage>
         ),
         widget.isRequest == true
             ? widget.isError
-                ? const Text(
+                ? Text(
                     "Câu hỏi này bắt buộc *",
-                    style: TextStyle(color: Color(0xffdb1e39)),
+                    style: AppTextStyle.regular14
+                        .copyWith(color: const Color(0xffdb1e39)),
                   )
                 : const SizedBox()
             : const SizedBox(),

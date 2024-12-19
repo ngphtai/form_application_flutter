@@ -2,7 +2,7 @@ import '/common/extensions/conver_string_to_enum.dart';
 import '/presentation/form_screen/component/bloc/checkbox_button_bloc.dart';
 import '/presentation/form_screen/component/date_picker.dart';
 import '/presentation/form_screen/component/share_container.dart';
-import '/presentation/form_screen/component/text_field_custom_without_bloc.dart';
+import '../text_field_custom.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../common/enums/form_page_enums.dart';
@@ -175,16 +175,19 @@ class FormWidget extends StatelessWidget {
         }
       case FormType.RATING:
         {
-          return ShareContainer(
-              title: item.title,
-              isRequest: isRequired,
-              widget: Rating(
-                controller:
-                    answersControllers[item.index] ?? TextEditingController(),
-                ratingBloc: ratingBloc[item.index] as RatingBloc,
-                isError: isError[item.index] ?? false,
+          return BlocProvider(
+            create: (context) => ratingBloc[item.index] as RatingBloc,
+            child: ShareContainer(
+                title: item.title,
                 isRequest: isRequired,
-              ));
+                widget: Rating(
+                  controller:
+                      answersControllers[item.index] ?? TextEditingController(),
+                  ratingBloc: ratingBloc[item.index] as RatingBloc,
+                  isError: isError[item.index] ?? false,
+                  isRequest: isRequired,
+                )),
+          );
         }
       default:
         return const SizedBox.shrink();

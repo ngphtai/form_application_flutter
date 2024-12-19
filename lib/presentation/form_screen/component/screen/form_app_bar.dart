@@ -1,3 +1,4 @@
+import 'package:dsoft_form_application/core/styles/app_text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -37,10 +38,7 @@ AppBar formAppBar(BuildContext context, String? currentRoute, onPop, title) {
                     textAlign: TextAlign.center,
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
+                    style: AppTextStyle.bold14,
                   ),
                 )),
           ),

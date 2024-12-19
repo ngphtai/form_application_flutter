@@ -31,7 +31,8 @@ showDiaLogToExist(BuildContext originContext) {
                     const Gap(10),
                     Text(
                       "Cảnh báo",
-                      style: AppTextStyle.bold20,
+                      style: AppTextStyle.bold20
+                          .copyWith(fontWeight: FontWeight.w700),
                     ),
                     const Gap(10),
                     Text(
@@ -46,14 +47,14 @@ showDiaLogToExist(BuildContext originContext) {
                     ),
                     const Gap(20),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         GestureDetector(
                           onTap: () {
                             Navigator.of(context).pop(false);
                           },
                           child: Container(
-                            width: 0.3.sw,
+                            width: 0.27.sw,
                             height: 40.h,
                             margin: const EdgeInsets.all(5),
                             decoration: BoxDecoration(
@@ -75,7 +76,7 @@ showDiaLogToExist(BuildContext originContext) {
                             Navigator.of(context).pop(true);
                           },
                           child: Container(
-                            width: 0.3.sw,
+                            width: 0.27.sw,
                             height: 40.h,
                             margin: const EdgeInsets.all(8),
                             decoration: BoxDecoration(

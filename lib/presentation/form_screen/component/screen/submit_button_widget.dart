@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'text_button.dart';
+import '../../../../core/styles/app_text_style.dart';
 
 class SubmitButtonWidget extends StatelessWidget {
   const SubmitButtonWidget({
@@ -21,9 +21,9 @@ class SubmitButtonWidget extends StatelessWidget {
           width: 1,
         ),
       ),
-      child: const Center(
-        child: TextButtonCustom(text: "Gửi", color: Colors.white),
-      ),
+      child: Text("Gửi",
+          textAlign: TextAlign.center,
+          style: AppTextStyle.bold14.copyWith(color: Colors.white)),
     );
   }
 }

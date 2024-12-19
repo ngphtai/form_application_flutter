@@ -1,3 +1,6 @@
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
+
 import '/core/styles/app_icons.dart';
 import '/core/styles/app_text_style.dart';
 import 'package:flutter/material.dart';
@@ -12,17 +15,18 @@ class noDataFromLocal extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
+          Gap(0.3.sh),
           Image.asset(
             AppIcons.emptyData,
-            height: 150,
-            width: 150,
+            height: 150.h,
+            width: 150.h,
             fit: BoxFit.cover,
           ),
           Text(
             "Không có dữ liệu",
-            style: AppTextStyle.bold16,
+            style: AppTextStyle.bold16.copyWith(fontWeight: FontWeight.w700),
           ),
           Text(
             "Chưa có form nào được hoàn thành",

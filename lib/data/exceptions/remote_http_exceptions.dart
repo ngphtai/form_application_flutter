@@ -43,6 +43,7 @@ class RemoteHttpException implements Exception {
         return _handleOtherError(error);
       case DioExceptionType.connectionError:
         return _handleOtherError(error);
+
       default:
         return _handleResponseError(error);
     }

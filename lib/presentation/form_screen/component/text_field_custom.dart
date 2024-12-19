@@ -1,3 +1,6 @@
+import 'package:dsoft_form_application/core/styles/app_text_style.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+
 import '/presentation/form_screen/component/bloc/text_field_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -63,10 +66,14 @@ class _TextFieldCustomWithBlocState extends State<TextFieldCustomWithBloc> {
                 ),
               ),
               child: TextField(
+                onTap: () async => await FirebaseAnalytics.instance.logEvent(
+                  name: 'tap_text_field',
+                ),
                 controller: widget.textController,
                 decoration: InputDecoration(
                   hintText: "Nhập câu trả lời",
-                  hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
+                  hintStyle:
+                      AppTextStyle.regular14.copyWith(color: Colors.grey[400]),
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.only(left: 10),
                 ),
@@ -75,9 +82,10 @@ class _TextFieldCustomWithBlocState extends State<TextFieldCustomWithBloc> {
             ),
             widget.isRequest
                 ? widget.isError
-                    ? const Text(
+                    ? Text(
                         "Câu hỏi này bắt buộc *",
-                        style: TextStyle(color: Color(0xffdb1e39)),
+                        style: AppTextStyle.regular14
+                            .copyWith(color: const Color(0xffdb1e39)),
                       )
                     : const SizedBox()
                 : const SizedBox(),

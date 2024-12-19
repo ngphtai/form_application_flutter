@@ -29,7 +29,10 @@ abstract class RatingState extends Equatable {
   List<Object?> get props => [];
 }
 
-class RatingInitial extends RatingState {}
+class RatingInitial extends RatingState {
+  @override
+  List<Object> get props => [];
+}
 
 class RatingValidate extends RatingState {
   final bool isValid;

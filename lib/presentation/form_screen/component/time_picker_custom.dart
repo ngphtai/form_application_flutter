@@ -1,5 +1,8 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:firebase_analytics/firebase_analytics.dart';
+
+import '../../../core/styles/app_text_style.dart';
 import '/presentation/form_screen/component/bloc/time_picker_custom_bloc.dart';
 
 import 'package:flutter/material.dart';
@@ -95,28 +98,41 @@ class _TimePickerCustomState extends State<TimePickerCustom>
                         const Gap(10),
                         Expanded(
                           child: TextField(
-                            controller: controller.text.isEmpty
-                                ? TextEditingController(text: "Giờ")
-                                : controller,
+                            controller: controller,
                             style: const TextStyle(color: Colors.black),
-                            keyboardType: null,
-                            onTap: () {
+                            //không cho phép nhập bằng bàn phím
+                            enabled: false,
+                            onTap: () async {
                               _showTimePickerBottomSheet(context);
+                              await FirebaseAnalytics.instance
+                                  .logEvent(name: "tap_time_picker");
                             },
-                            decoration: const InputDecoration(
-                              border: InputBorder.none,
-                            ),
+                            decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: "Giờ",
+                                hintStyle: AppTextStyle.regular14),
                           ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.cancel_outlined,
+                              color: Color(0xff818688)),
+                          onPressed: () {
+                            context
+                                .read<TimePickerCustomBloc>()
+                                .changeValue("false");
+                            widget.isError = true;
+                            controller.text = "";
+                          },
                         ),
                       ],
                     ),
                   ),
                   widget.isRequest
                       ? widget.isError
-                          ? const Text(
-                              "Câu hỏi này bắt buộc *",
-                              style: TextStyle(color: Color(0xffdb1e39)),
-                            )
+                          ? Text("Câu hỏi này bắt buộc *",
+                              style: AppTextStyle.regular14.copyWith(
+                                color: const Color(0xffdb1e39),
+                              ))
                           : const SizedBox()
                       : const SizedBox(),
                 ],
@@ -129,7 +145,7 @@ class _TimePickerCustomState extends State<TimePickerCustom>
   }
 
   void _showTimePickerBottomSheet(BuildContext context) {
-    // Parse current text to set initial values
+    String? selectTime = context.read<TimePickerCustomBloc>().getTime;
     if (controller.text.isNotEmpty && controller.text != "Giờ") {
       List<String> parts = controller.text.split(" ");
       if (parts.length == 2) {
@@ -153,109 +169,121 @@ class _TimePickerCustomState extends State<TimePickerCustom>
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setBottomSheetState) {
-            return Container(
-              height: 250.h,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  topRight: Radius.circular(16),
-                ),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 100.w,
-                    height: 5.h,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 10),
-                    decoration: const BoxDecoration(
-                        color: Colors.black,
-                        borderRadius:
-                            BorderRadius.all(Radius.elliptical(10, 10))),
-                    margin: const EdgeInsets.only(top: 10),
+            return SafeArea(
+              child: SingleChildScrollView(
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      topRight: Radius.circular(16),
+                    ),
                   ),
-                  Gap(10.h),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      NumberPicker(
-                        minValue: 0,
-                        maxValue: 12,
-                        value: hour,
-                        zeroPad: true,
-                        infiniteLoop: true,
-                        itemWidth: 80,
-                        itemHeight: 60,
-                        onChanged: (value) {
-                          setBottomSheetState(() {
-                            hour = value;
-                            _updateControllerText();
-                          });
-                        },
-                        textStyle:
-                            const TextStyle(color: Colors.grey, fontSize: 20),
-                        selectedTextStyle:
-                            const TextStyle(color: Colors.black, fontSize: 30),
+                      Container(
+                        width: 100.w,
+                        height: 5.h,
+                        margin: const EdgeInsets.symmetric(vertical: 10),
+                        decoration: const BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                        ),
                       ),
-                      const Text(":",
-                          style: TextStyle(
-                            fontSize: 30,
-                          )),
-                      NumberPicker(
-                        minValue: 0,
-                        maxValue: 59,
-                        value: minute,
-                        zeroPad: true,
-                        infiniteLoop: true,
-                        itemWidth: 80,
-                        itemHeight: 60,
-                        onChanged: (value) {
-                          setBottomSheetState(() {
-                            minute = value;
-                            _updateControllerText();
-                          });
-                        },
-                        textStyle:
-                            const TextStyle(color: Colors.grey, fontSize: 20),
-                        selectedTextStyle:
-                            const TextStyle(color: Colors.black, fontSize: 30),
-                      ),
-                      Column(
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          GestureDetector(
-                            onTap: () {
+                          NumberPicker(
+                            minValue: 0,
+                            maxValue: 23,
+                            value: hour,
+                            zeroPad: true,
+                            infiniteLoop: true,
+                            itemWidth: 100,
+                            itemHeight: 60,
+                            onChanged: (value) {
                               setBottomSheetState(() {
-                                timeFormat = "AM";
-                                _updateControllerText();
+                                hour = value;
+                                _updateControllerText(null);
                               });
                             },
-                            child: _timeFormatButton(
-                              "AM",
-                              isSelected: timeFormat == "AM",
-                            ),
+                            textStyle: const TextStyle(
+                                color: Colors.grey, fontSize: 18),
+                            selectedTextStyle: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold),
                           ),
-                          const SizedBox(height: 15),
-                          GestureDetector(
-                            onTap: () {
+                          const Text(" : ",
+                              style: TextStyle(
+                                  fontSize: 30, fontWeight: FontWeight.bold)),
+                          NumberPicker(
+                            minValue: 0,
+                            maxValue: 59,
+                            value: minute,
+                            zeroPad: true,
+                            infiniteLoop: true,
+                            itemWidth: 100,
+                            itemHeight: 60,
+                            onChanged: (value) {
                               setBottomSheetState(() {
-                                timeFormat = "PM";
-                                _updateControllerText();
+                                minute = value;
+                                _updateControllerText(null);
                               });
                             },
-                            child: _timeFormatButton(
-                              "PM",
-                              isSelected: timeFormat == "PM",
+                            textStyle: const TextStyle(
+                                color: Colors.grey, fontSize: 18),
+                            selectedTextStyle: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          TextButton(
+                              onPressed: () async {
+                                _updateControllerText(selectTime ?? "");
+                                Navigator.pop(context);
+                                await FirebaseAnalytics.instance
+                                    .logEvent(name: "tap_cancel_time_picker");
+                              },
+                              style: TextButton.styleFrom(
+                                side:
+                                    const BorderSide(color: Color(0xffdb1e39)),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 0.19.sw, vertical: 10.h),
+                              ),
+                              child: Text("Huỷ",
+                                  style: AppTextStyle.bold16.copyWith(
+                                      color: const Color(0xffdb1e39)))),
+                          ElevatedButton(
+                            onPressed: () async {
+                              Navigator.pop(context);
+                              _updateControllerText(null);
+                              await FirebaseAnalytics.instance
+                                  .logEvent(name: "tap_ok_time_picker");
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xffdb1e39),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 0.19.sw, vertical: 10.h),
+                            ),
+                            child: Text(
+                              "OK",
+                              style: AppTextStyle.bold16
+                                  .copyWith(color: Colors.white),
                             ),
                           ),
                         ],
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
             );
           },
@@ -264,27 +292,10 @@ class _TimePickerCustomState extends State<TimePickerCustom>
     );
   }
 
-  Widget _timeFormatButton(String format, {required bool isSelected}) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      decoration: BoxDecoration(
-        color: isSelected ? const Color(0xffdb1e39) : const Color(0xFFc7c7c7),
-        border: Border.all(
-          color: isSelected ? Colors.grey : const Color(0xFFc7c7c7),
-        ),
-      ),
-      child: Text(
-        format,
-        style: const TextStyle(color: Colors.white, fontSize: 25),
-      ),
-    );
-  }
-
-  void _updateControllerText() {
-    controller.text = timeFormat != null
-        ? "${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $timeFormat"
-        : "Giờ";
-    context.read<TimePickerCustomBloc>().changeValue(controller.text);
+  void _updateControllerText(String? value) {
+    controller.text = value ??
+        "${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}";
+    context.read<TimePickerCustomBloc>().changeValue(value ?? controller.text);
   }
 
   @override

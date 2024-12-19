@@ -1,8 +1,10 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/routing/route_path.dart';
 import '../../core/styles/app_icons.dart';
+import '../../core/styles/app_text_style.dart';
 
 class SharedAppBar extends StatelessWidget implements PreferredSizeWidget {
   const SharedAppBar({
@@ -34,16 +36,15 @@ class SharedAppBar extends StatelessWidget implements PreferredSizeWidget {
                   top: 0.3.sw,
                   child: currentPage == Routers.homePage
                       ? GestureDetector(
-                          onTap: () {
+                          onTap: () async {
                             context.go(Routers.historyPage);
+                            await FirebaseAnalytics.instance.logEvent(
+                              name: 'tap_filled_button',
+                            );
                           },
-                          child: const Text(
-                            "Đã điền",
-                            style: TextStyle(
-                              color: Color(0xffe03a52),
-                              fontSize: 14,
-                            ),
-                          ),
+                          child: Text("Đã điền",
+                              style: AppTextStyle.bold14
+                                  .copyWith(color: const Color(0xffe03a52))),
                         )
                       : const SizedBox(),
                 ),
@@ -53,23 +54,18 @@ class SharedAppBar extends StatelessWidget implements PreferredSizeWidget {
               child: title != null
                   ? SizedBox(
                       width: 0.55.sw,
-                      child: Text(
-                        title ?? "",
-                        textAlign: TextAlign.center,
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
-                      ),
+                      child: Text(title ?? "",
+                          textAlign: TextAlign.center,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTextStyle.bold14),
                     )
                   : Center(
                       widthFactor: 100.w,
                       child: Transform.translate(
                         offset: const Offset(-10, 0),
                         child: Image.asset(
-                          AppIcons.logo2,
+                          AppIcons.logo,
                           height: 100.w,
                           width: 100.w,
                         ),
@@ -95,6 +91,9 @@ class SharedAppBar extends StatelessWidget implements PreferredSizeWidget {
             default:
               context.pop(context); // Quay lại trang trước
           }
+          await FirebaseAnalytics.instance.logEvent(
+            name: 'tap_back_icon',
+          );
         },
         child: Column(
           children: [

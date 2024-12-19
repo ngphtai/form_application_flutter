@@ -1,18 +1,16 @@
 import 'dart:io';
-
+import 'package:dsoft_form_application/core/styles/app_text_style.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import '../../shared/widget/share_app_bar.dart';
 import '/core/routing/route_path.dart';
-import '/core/styles/app_icons.dart';
-import '/core/styles/app_text_style.dart';
 import '/presentation/detail_screen/bloc/detail_page_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import '../form_screen/component/screen/loading_widget.dart';
-import '../form_screen/component/screen/text_button.dart';
+import 'widget/show_dialog.dart';
 
 class DetailPageWidget extends StatefulWidget {
   const DetailPageWidget({
@@ -76,10 +74,9 @@ class _DetailPageWidgetState extends State<DetailPageWidget> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text(
+                                  Text(
                                     "Giới thiệu",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
+                                    style: AppTextStyle.bold16,
                                   ),
                                   const SizedBox(height: 10),
                                   const Divider(
@@ -89,10 +86,11 @@ class _DetailPageWidgetState extends State<DetailPageWidget> {
                                   const SizedBox(height: 10),
                                   Text(
                                     state.post.metaData.title,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold),
+                                    style: AppTextStyle.bold14,
                                   ),
-                                  Html(data: state.post.metaData.description),
+                                  Gap(10.h),
+                                  Text(state.post.metaData.description,
+                                      style: AppTextStyle.regular14),
                                 ],
                               ),
                             ),
@@ -128,7 +126,7 @@ class _DetailPageWidgetState extends State<DetailPageWidget> {
                               children: [
                                 // ReturnButtonWidget(size: size), // button return
                                 GestureDetector(
-                                  onTap: () {
+                                  onTap: () async {
                                     if (state.post.metaData.expireAt
                                             .isBefore(DateTime.now()) &&
                                         currentRouter !=
@@ -139,6 +137,12 @@ class _DetailPageWidgetState extends State<DetailPageWidget> {
                                               Routers.reviewDetailPage
                                           ? '/historyPage/reviewDetailPage/${widget.postId}/formPage'
                                           : '/homePage/detailPage/${widget.postId}/formPage');
+                                      await FirebaseAnalytics.instance.logEvent(
+                                        name: currentRouter ==
+                                                Routers.reviewDetailPage
+                                            ? 'tap_fill_from_button'
+                                            : 'tap_review_form_button',
+                                      );
                                     }
                                   },
                                   child: Container(
@@ -154,17 +158,15 @@ class _DetailPageWidgetState extends State<DetailPageWidget> {
                                       ),
                                     ),
                                     child: Center(
-                                        child: currentRouter ==
-                                                Routers.reviewDetailPage
-                                            ? const TextButtonCustom(
-                                                text: "Xem lại",
-                                                color: Colors.white)
-                                            : const TextButtonCustom(
-                                                text: "Điền form ngay",
-                                                color: Colors.white)),
+                                        child: Text(
+                                            currentRouter ==
+                                                    Routers.reviewDetailPage
+                                                ? "Xem lại"
+                                                : "Điền form ngay",
+                                            style: AppTextStyle.bold14.copyWith(
+                                                color: Colors.white))),
                                   ),
                                 ),
-                                Gap(10.h),
                               ],
                             ),
                           ),
@@ -175,76 +177,16 @@ class _DetailPageWidgetState extends State<DetailPageWidget> {
                 ),
               );
             } else {
-              return const Center(
-                child: Text("Có lỗi xảy ra"),
+              return Center(
+                child: Text(
+                  "Có lỗi xảy ra",
+                  style: AppTextStyle.bold14,
+                ),
               );
             }
           },
         ),
       ),
     );
-  }
-
-  Future<dynamic> showDiaLog(BuildContext originContext) {
-    return showDialog(
-        context: originContext,
-        builder: (context) => AlertDialog(
-              backgroundColor: Colors.white,
-              content: Container(
-                width: 1.sw,
-                height: 0.3.sh,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(12)),
-                ),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Gap(10),
-                      Image.asset(
-                        AppIcons.warning,
-                        height: 80.w,
-                        width: 80.w,
-                        fit: BoxFit.fill,
-                      ),
-                      const Gap(10),
-                      Text(
-                        "Cảnh báo",
-                        style: AppTextStyle.bold20,
-                      ),
-                      const Gap(10),
-                      Text(
-                        "Form form này đã hết hạn!",
-                        style:
-                            AppTextStyle.regular14.copyWith(color: Colors.grey),
-                      ),
-                      const Gap(20),
-                      Center(
-                        child: GestureDetector(
-                          onTap: () {
-                            // GoRouter.of(originContext).go(Routers.homePage);
-                            context.pop();
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.fromLTRB(55, 10, 55, 10),
-                            margin: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: const Color(0xffdb1e39),
-                              borderRadius: BorderRadius.circular(100),
-                              border: Border.all(
-                                color: const Color(0xffdb1e39),
-                                width: 1,
-                              ),
-                            ),
-                            child: const Center(
-                                child: TextButtonCustom(
-                                    text: "Ok", color: Colors.white)),
-                          ),
-                        ),
-                      ),
-                    ]),
-              ),
-            ));
   }
 }

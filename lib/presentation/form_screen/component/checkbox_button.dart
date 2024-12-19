@@ -1,4 +1,5 @@
 import 'package:dsoft_form_application/core/styles/app_text_style.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -73,7 +74,10 @@ class _CheckboxButtonState extends State<CheckboxButton>
                   overlayColor: WidgetStatePropertyAll(Colors.red[100]),
                   value: selectedCheckboxes.contains(options),
                   controlAffinity: ListTileControlAffinity.leading,
-                  onChanged: (value) {
+                  onChanged: (value) async {
+                    await FirebaseAnalytics.instance.logEvent(
+                      name: 'tap_checkbox',
+                    );
                     setState(() {
                       if (value == true) {
                         selectedCheckboxes.add(options);
@@ -91,16 +95,19 @@ class _CheckboxButtonState extends State<CheckboxButton>
                       }
                     });
                   },
-                  title: Text(options.toString(), style: AppTextStyle.regular14.copyWith(fontWeight: FontWeight.w400)),
+                  title: Text(options.toString(),
+                      style: AppTextStyle.regular14
+                          .copyWith(fontWeight: FontWeight.w400)),
                 );
               }).toList(),
             ),
           ),
           widget.isRequest == true
               ? widget.isError
-                  ? const Text(
+                  ? Text(
                       "Câu hỏi này bắt buộc *",
-                      style: TextStyle(color: Color(0xffdb1e39)),
+                      style: AppTextStyle.regular12
+                          .copyWith(color: const Color(0xffdb1e39)),
                     )
                   : const SizedBox()
               : const SizedBox(),

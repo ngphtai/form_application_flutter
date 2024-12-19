@@ -106,6 +106,7 @@ class HttpClientImpl implements CustomHttpClient {
       return response.data;
     } on DioException catch (e) {
       AppLogger.instance.e(e.message!);
+
       rethrow;
     } on Exception catch (e) {
       throw Exception(e);

@@ -7,7 +7,7 @@ bool checkBloc<T>({
   required PostModelEntity postEntity,
   required bool Function(Cubit<dynamic> bloc, int key) validateBloc,
   required void Function(Cubit<dynamic> bloc, int key) handleError,
-  required String? Function(Cubit<dynamic> bloc)? getValue,
+  required dynamic Function(Cubit<dynamic> bloc)? getValue,
 }) {
   bool isValid = true;
 

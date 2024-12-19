@@ -1,3 +1,4 @@
+import '../../../core/styles/app_text_style.dart';
 import '/presentation/form_screen/component/bloc/checkbox_question_button_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -85,7 +86,8 @@ class _CheckboxQuestionButtonState extends State<CheckboxQuestionButton> {
                   },
                   title: Text(
                     widget.listCheckBox[index].toString(),
-                    style: const TextStyle(fontWeight: FontWeight.w500),
+                    style: AppTextStyle.regular14
+                        .copyWith(fontWeight: FontWeight.w500),
                   ),
                 ),
               );

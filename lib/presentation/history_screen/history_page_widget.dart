@@ -1,3 +1,6 @@
+import 'package:dsoft_form_application/core/styles/app_text_style.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+
 import '/shared/widget/no_data_from_local.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
@@ -48,9 +51,13 @@ class HistoryPageWidget extends StatelessWidget {
                 return Column(
                   children: [
                     GestureDetector(
-                      onTap: () {
+                      onTap: () async {
                         context.push(
                             '${Routers.historyPage}/${Routers.reviewDetailPage}/${post.id}');
+                        await FirebaseAnalytics.instance.logEvent(
+                          name: 'tap_review_fill_form_button',
+                          parameters: {"id form": post.id},
+                        );
                       },
                       child: Center(
                         child: Container(
@@ -75,23 +82,18 @@ class HistoryPageWidget extends StatelessWidget {
                                         Expanded(
                                           child: Text(
                                             post!.title,
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                            style: AppTextStyle.bold14,
                                           ),
                                         ),
                                       ],
                                     ),
+                                    const Gap(10),
                                     Text(
                                       post.description,
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        fontStyle: FontStyle.normal,
-                                        color: Colors.grey,
-                                      ),
+                                      style: AppTextStyle.regular12.copyWith(
+                                          color: const Color(0xff6f6f6f)),
                                     ),
                                     const Gap(10),
                                     Row(
@@ -100,11 +102,10 @@ class HistoryPageWidget extends StatelessWidget {
                                       children: [
                                         Text(
                                           "Hết hạn: ${DateFormat('dd/MM/yyyy').format(post.expireAt)}",
-                                          style: const TextStyle(
-                                            fontSize: 12,
-                                            fontStyle: FontStyle.normal,
-                                            color: Color(0xff6f6f6f),
-                                          ),
+                                          style: AppTextStyle.regular12
+                                              .copyWith(
+                                                  color:
+                                                      const Color(0xff6f6f6f)),
                                         ),
                                         Container(
                                           padding: const EdgeInsets.symmetric(
@@ -114,10 +115,10 @@ class HistoryPageWidget extends StatelessWidget {
                                             borderRadius: BorderRadius.all(
                                                 Radius.circular(100)),
                                           ),
-                                          child: const Text(
+                                          child: Text(
                                             "Đã điền",
-                                            style: TextStyle(
-                                                color: Color(0xff008549)),
+                                            style: AppTextStyle.bold12.copyWith(
+                                                color: const Color(0xff008549)),
                                           ),
                                         )
                                       ],

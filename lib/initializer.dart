@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dsoft_form_application/firebase_options.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
@@ -41,9 +42,9 @@ class Initializer {
       await ScreenUtil.ensureScreenSize();
 
       _initStatusBar();
-
+      //Crashlytics
       FlutterError.onError = (errorDetails) {
-        FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+        // FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
         FirebaseCrashlytics.instance.recordFlutterError(errorDetails);
       };
       // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
@@ -51,6 +52,12 @@ class Initializer {
         FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
         return true;
       };
+
+      //init Firebase Analytics
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+      FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
 
       runApp();
     }, (

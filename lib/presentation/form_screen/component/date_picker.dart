@@ -1,3 +1,6 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
+
+import '../../../core/styles/app_text_style.dart';
 import '/common/extensions/string_to_datetime.dart';
 import '/common/logger/app_logger.dart';
 import '/core/styles/app_icons.dart';
@@ -61,6 +64,8 @@ class _DatePickerState extends State<DatePicker>
         width: 1000.w,
         child: GestureDetector(
             onTap: () async {
+              await FirebaseAnalytics.instance
+                  .logEvent(name: "tap_date_picker");
               await _showBottomSheet();
             },
             child: Column(
@@ -90,22 +95,22 @@ class _DatePickerState extends State<DatePicker>
                         padding: const EdgeInsets.all(8),
                         child: dateRangePickerController.selectedDate != null
                             ? Text(
-                                "${dateRangePickerController.selectedDate!.day}/${dateRangePickerController.selectedDate!.month}/${dateRangePickerController.selectedDate!.year}")
-                            : const Text(
-                                "Tháng, ngày, năm ",
-                                style: TextStyle(
-                                  color: Color(0xff8C8C8C),
-                                ),
-                              ),
+                                "${dateRangePickerController.selectedDate!.day}/${dateRangePickerController.selectedDate!.month}/${dateRangePickerController.selectedDate!.year}",
+                                style: AppTextStyle.regular14)
+                            : Text("Tháng, ngày, năm ",
+                                style: AppTextStyle.regular14.copyWith(
+                                  color: const Color(0xff8C8C8C),
+                                )),
                       )
                     ],
                   ),
                 ),
                 widget.isRequest == true
                     ? widget.isError
-                        ? const Text(
+                        ? Text(
                             "Câu hỏi này bắt buộc *",
-                            style: TextStyle(color: Color(0xffdb1e39)),
+                            style: AppTextStyle.regular14
+                                .copyWith(color: const Color(0xffdb1e39)),
                           )
                         : const SizedBox()
                     : const SizedBox(),
@@ -116,8 +121,12 @@ class _DatePickerState extends State<DatePicker>
   }
 
   Future<void> _showBottomSheet() async {
+    DateTime? selectedTempDate = context.read<DatePickerBloc>().getValue;
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
+      enableDrag: true,
+      isDismissible: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(16),
@@ -129,124 +138,131 @@ class _DatePickerState extends State<DatePicker>
           value: widget.datePickerBloc,
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter setBottomSheetState) {
-              return Container(
-                height: 450.h,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    topRight: Radius.circular(16),
-                  ),
-                ),
-                child: Column(
-                  children: [
-                    // Thanh ngang bo tròn ở trên
-                    Container(
-                      width: 100,
-                      height: 5,
-                      decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      margin: const EdgeInsets.only(top: 10),
-                    ),
-                    const SizedBox(height: 10),
-                    // Widget SfDateRangePicker
-                    Expanded(
-                      child: SfDateRangePicker(
-                        view: DateRangePickerView.month,
-                        showNavigationArrow: true,
-                        selectionShape: DateRangePickerSelectionShape.rectangle,
-                        toggleDaySelection: true,
-                        controller: dateRangePickerController,
-                        todayHighlightColor: const Color(0xffdb1e39),
-                        selectionColor: const Color(0xffdb1e39),
-                        backgroundColor: Colors.white,
-                        headerStyle: const DateRangePickerHeaderStyle(
-                          textAlign: TextAlign.center,
-                          textStyle: TextStyle(
-                            color: Color(0xffdb1e39),
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        monthViewSettings:
-                            const DateRangePickerMonthViewSettings(
-                          dayFormat: 'EEE',
-                          firstDayOfWeek: 1,
-                        ),
-                        onSelectionChanged: (dateRange) {
-                          final selectedDate =
-                              dateRangePickerController.selectedDate;
-                          setState(() {
-                            widget.isError = selectedDate == null;
-                          });
-                          context.read<DatePickerBloc>().validate(selectedDate);
-                        },
+              return SafeArea(
+                child: SingleChildScrollView(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 10),
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(16),
+                        topRight: Radius.circular(16),
                       ),
                     ),
-                    // Nút "Huỷ" và "OK"
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        // Button "Huỷ"
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            minimumSize: Size(0.40.sw, 50),
-                            side: const BorderSide(
-                                color: Color(0xffdb1e39), width: 1),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(100),
-                            ),
+                        // Thanh ngang bo tròn ở trên
+                        Container(
+                          width: 100,
+                          height: 5,
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text(
-                            "Huỷ",
-                            style: TextStyle(
-                              color: Color(0xffdb1e39),
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          margin: const EdgeInsets.only(top: 10),
                         ),
-                        Gap(10.w),
-                        // Button "OK"
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xffdb1e39),
-                            minimumSize: Size(0.40.sw, 50),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(100),
-                            ),
+                        const SizedBox(height: 10),
+                        // Widget SfDateRangePicker
+                        SfDateRangePicker(
+                          view: DateRangePickerView.month,
+                          showNavigationArrow: true,
+                          selectionShape:
+                              DateRangePickerSelectionShape.rectangle,
+                          toggleDaySelection: true,
+                          controller: dateRangePickerController,
+                          todayHighlightColor: const Color(0xffdb1e39),
+                          selectionColor: const Color(0xffdb1e39),
+                          backgroundColor: Colors.white,
+                          headerStyle: DateRangePickerHeaderStyle(
+                            textAlign: TextAlign.center,
+                            textStyle: AppTextStyle.bold20
+                                .copyWith(color: const Color(0xffdb1e39)),
                           ),
-                          onPressed: () {
-                            AppLogger.instance.i(dateRangePickerController
-                                .selectedDate
-                                .toString());
-                            widget.controller.text = dateRangePickerController
-                                .selectedDate
-                                .toString();
-                            Navigator.pop(context);
+                          monthViewSettings:
+                              const DateRangePickerMonthViewSettings(
+                            dayFormat: 'EEE',
+                            firstDayOfWeek: 1,
+                          ),
+                          onSelectionChanged: (dateRange) async {
+                            _updateDatePicker(
+                              null,
+                              preEmpty: false,
+                            );
+                            await FirebaseAnalytics.instance
+                                .logEvent(name: "tap_select_date_picker");
                           },
-                          child: const Text(
-                            "OK",
-                            style: TextStyle(
-                              color: Colors.white, // Chữ màu trắng
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                        ),
+                        Gap(10.h),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                minimumSize: Size(0.40.sw, 50),
+                                side: const BorderSide(
+                                    color: Color(0xffdb1e39), width: 1),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(100),
+                                ),
+                              ),
+                              onPressed: () async {
+                                _updateDatePicker(
+                                  selectedTempDate,
+                                  preEmpty:
+                                      selectedTempDate.toString() == "null"
+                                          ? true
+                                          : false,
+                                );
+
+                                Navigator.pop(context);
+                                await FirebaseAnalytics.instance
+                                    .logEvent(name: "tap_cancel_date_picker");
+                              },
+                              child: Text(
+                                "Huỷ",
+                                style: AppTextStyle.bold16.copyWith(
+                                  color: const Color(0xffdb1e39),
+                                ),
+                              ),
                             ),
-                          ),
+                            Gap(10.w),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xffdb1e39),
+                                minimumSize: Size(0.40.sw, 50),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(100),
+                                ),
+                              ),
+                              onPressed: () async {
+                                AppLogger.instance.i(dateRangePickerController
+                                    .selectedDate
+                                    .toString());
+                                widget.controller.text =
+                                    dateRangePickerController.selectedDate
+                                        .toString();
+                                _updateDatePicker(
+                                  null,
+                                  preEmpty: false,
+                                );
+                                Navigator.pop(context);
+                                await FirebaseAnalytics.instance
+                                    .logEvent(name: "tap_ok_date_picker");
+                              },
+                              child: Text("OK",
+                                  style: AppTextStyle.bold16.copyWith(
+                                    color: Colors.white,
+                                  )),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-
-                    const SizedBox(height: 20), // Khoảng cách cuối
-                  ],
+                  ),
                 ),
               );
             },
@@ -254,6 +270,29 @@ class _DatePickerState extends State<DatePicker>
         );
       },
     );
+  }
+
+  void _updateDatePicker(DateTime? selectedTempDate, {required bool preEmpty}) {
+    final bloc = context.read<DatePickerBloc>();
+    if (preEmpty) {
+      //onCancel with previous of value is null
+      bloc.validate(null);
+      dateRangePickerController.selectedDate = null;
+      widget.controller.text = "";
+      setState(() => widget.isError = true);
+    } else if (selectedTempDate == null) {
+      // onChange
+      final selectedDate = dateRangePickerController.selectedDate;
+      bloc.validate(selectedDate);
+      widget.controller.text = selectedDate.toString();
+      setState(() => widget.isError = selectedDate == null);
+    } else {
+      // onCancel
+      bloc.validate(preEmpty ? null : selectedTempDate);
+      dateRangePickerController.selectedDate = selectedTempDate;
+      widget.controller.text = selectedTempDate.toString();
+      setState(() => widget.isError = true);
+    }
   }
 
   DateRangePickerController convertTextEditingToDateRange(
@@ -267,8 +306,6 @@ class _DatePickerState extends State<DatePicker>
 
       DateTime parsedDateTime =
           DateFormat("yyyy-MM-dd HH:mm:ss").parse("$datePart $timePart");
-
-      // Cập nhật DateRangePickerController
       dateRangePickerController.selectedDate = parsedDateTime;
       return dateRangePickerController;
     }

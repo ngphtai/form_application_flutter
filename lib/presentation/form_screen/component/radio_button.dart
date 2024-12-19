@@ -1,3 +1,5 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
+
 import '/core/styles/app_text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -70,7 +72,7 @@ class _RadioButtonState extends State<RadioButton>
               child: Column(
                 children: widget.listRadio.map((option) {
                   return GestureDetector(
-                    onTap: () {
+                    onTap: () async {
                       if (bloc.value == option) {
                         bloc.validate("");
                         widget.controller.text = "";
@@ -78,6 +80,8 @@ class _RadioButtonState extends State<RadioButton>
                         bloc.validate(option);
                         widget.controller.text = option;
                       }
+                      await FirebaseAnalytics.instance
+                          .logEvent(name: "tap_radio_button");
                     },
                     child: Container(
                       padding: const EdgeInsets.only(top: 8, bottom: 8),
@@ -123,10 +127,10 @@ class _RadioButtonState extends State<RadioButton>
             ),
             widget.isRequest == true
                 ? widget.isError
-                    ? const Text(
-                        "Câu hỏi này bắt buộc *",
-                        style: TextStyle(color: Color(0xffdb1e39)),
-                      )
+                    ? Text("Câu hỏi này bắt buộc *",
+                        style: AppTextStyle.regular14.copyWith(
+                          color: const Color(0xffdb1e39),
+                        ))
                     : const SizedBox()
                 : const SizedBox(),
           ],

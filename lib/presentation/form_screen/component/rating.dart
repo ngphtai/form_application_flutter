@@ -1,3 +1,5 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
+
 import '/core/styles/app_icons.dart';
 import '/core/styles/app_text_style.dart';
 import '/presentation/form_screen/component/bloc/rating_bloc.dart';
@@ -28,95 +30,107 @@ class Rating extends StatefulWidget {
 }
 
 class _RatingState extends State<Rating> with AutomaticKeepAliveClientMixin {
+  late int star = 0;
+  late bool isError;
+
+  @override
+  void initState() {
+    super.initState();
+    star = widget.star;
+    isError = widget.isError;
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return BlocProvider(
-      create: (context) => widget.ratingBloc,
-      child: BlocBuilder<RatingBloc, RatingState>(
-        builder: (context, state) {
-          if (widget.controller.text.isNotEmpty &&
-              widget.controller.text != "" &&
-              widget.controller.text != "null") {
-            int? value = int.parse(widget.controller.text);
-            widget.star = value;
+    debugPrint("Rating widget is rebuilding");
+    return BlocBuilder<RatingBloc, RatingState>(
+      bloc: widget.ratingBloc,
+      builder: (context, state) {
+        // Update local state based on controller
+        if (widget.controller.text.isNotEmpty &&
+            widget.controller.text != "" &&
+            widget.controller.text != "null") {
+          final value = int.tryParse(widget.controller.text) ?? 0;
+          if (value != star) {
+            star = value;
             context.read<RatingBloc>().validate(value);
           }
+        }
 
-          if (state is RatingInitial) {
-            widget.isError = false;
-          } else {
-            bool isNoEmpty = context.read<RatingBloc>().selected != null;
-            isNoEmpty ? widget.isError = false : widget.isError = true;
-          }
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(Radius.circular(4)),
-                  border: Border.fromBorderSide(BorderSide(
+        // Handle error state
+        if (state is RatingInitial) {
+          isError = false;
+        } else if (state is RatingValidate) {
+          isError = state.isValid ? false : true;
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.all(Radius.circular(4)),
+                border: Border.fromBorderSide(
+                  BorderSide(
                     color: widget.isRequest == true
-                        ? (!widget.isError
-                            ? Colors.white
-                            : const Color(0xffdb1e39))
+                        ? (!isError ? Colors.white : const Color(0xffdb1e39))
                         : Colors.white,
                     width: 1,
-                  )),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(
-                      5,
-                      (index) => Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Gap(10.h),
-                              Text((index + 1).toString(),
-                                  style: AppTextStyle.regular14),
-                              IconButton(
-                                icon: showStar(index),
-                                color: Colors.amber,
-                                iconSize: 16.0,
-                                onPressed: () {
-                                  if (index + 1 == widget.star) {
-                                    setState(() {
-                                      widget.star = 0;
-                                    });
-                                    context
-                                        .read<RatingBloc>()
-                                        .validate(widget.star);
-                                  } else {
-                                    setState(() {
-                                      widget.star = index + 1;
-                                    });
-                                    context
-                                        .read<RatingBloc>()
-                                        .validate(widget.star);
-                                  }
-                                },
-                              ),
-                            ],
-                          )).toList(),
+                  ),
                 ),
               ),
-              widget.isRequest == true
-                  ? widget.isError
-                      ? const Text(
-                          "Câu hỏi này bắt buộc *",
-                          style: TextStyle(color: Color(0xffdb1e39)),
-                        )
-                      : const SizedBox()
-                  : const SizedBox(),
-            ],
-          );
-        },
-      ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(
+                  5,
+                  (index) => Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Gap(10.h),
+                      Text((index + 1).toString(),
+                          style: AppTextStyle.regular14),
+                      IconButton(
+                        icon: showStar(index),
+                        color: Colors.amber,
+                        iconSize: 16.0,
+                        onPressed: () async {
+                          final newStar = (index + 1 == star) ? 0 : index + 1;
+                          if (newStar != star) {
+                            setState(() {
+                              star = newStar;
+                            });
+
+                            context.read<RatingBloc>().validate(newStar);
+                            await FirebaseAnalytics.instance.logEvent(
+                              name: 'tap_rating',
+                            );
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ).toList(),
+              ),
+            ),
+            widget.isRequest == true
+                ? isError
+                    ? Text(
+                        "Câu hỏi này bắt buộc *",
+                        style: AppTextStyle.regular14.copyWith(
+                          color: const Color(0xffdb1e39),
+                        ),
+                      )
+                    : const SizedBox()
+                : const SizedBox(),
+          ],
+        );
+      },
     );
   }
 
   Image showStar(int index) {
-    return index < widget.star
+    return index < star
         ? Image.asset(AppIcons.star)
         : Image.asset(AppIcons.emptyStar);
   }

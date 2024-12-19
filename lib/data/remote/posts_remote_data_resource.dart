@@ -33,21 +33,8 @@ class PostsRemoteDataResourceImpl extends PostRemoteDataResource {
       final response = await customHttpClient.get(APIConstants.methodPost);
       final List<MetadataModelDTO> forms =
           (response as List).map((e) => MetadataModelDTO.fromJson(e)).toList();
-      // sort form by exprire date :
-      forms.sort((a, b) {
-        final now = DateTime.now();
-        final isExpiredA = now.isAfter(a.expireAt);
-        final isExpiredB = now.isAfter(b.expireAt);
-
-        if (isExpiredA && !isExpiredB) {
-          return 1; // Bài A hết hạn, B không hết hạn
-        }
-        if (!isExpiredA && isExpiredB) {
-          return -1; // Bài B hết hạn, A không hết hạn
-        }
-        return a.expireAt
-            .compareTo(b.expireAt); // Nếu cùng trạng thái, sắp xếp theo ngày
-      });
+      //sort by expiry date
+      forms.sort((b, a) => a.expireAt.compareTo(b.expireAt));
       return forms;
     } on DioException catch (e) {
       final message = e.response?.data.message;
