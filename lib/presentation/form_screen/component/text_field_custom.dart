@@ -1,6 +1,6 @@
+import 'package:dsoft_form_application/common/constant/constants.dart';
+import 'package:dsoft_form_application/core/locators/locators.dart';
 import 'package:dsoft_form_application/core/styles/app_text_style.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
-
 import '/presentation/form_screen/component/bloc/text_field_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -66,9 +66,8 @@ class _TextFieldCustomWithBlocState extends State<TextFieldCustomWithBloc> {
                 ),
               ),
               child: TextField(
-                onTap: () async => await FirebaseAnalytics.instance.logEvent(
-                  name: 'tap_text_field',
-                ),
+                onTap: () async =>
+                    await diAnalytics.log(LogEvents.tap_text_field, null),
                 controller: widget.textController,
                 decoration: InputDecoration(
                   hintText: "Nhập câu trả lời",

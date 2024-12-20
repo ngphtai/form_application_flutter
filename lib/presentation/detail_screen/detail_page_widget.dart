@@ -1,6 +1,7 @@
 import 'dart:io';
+import 'package:dsoft_form_application/common/constant/constants.dart';
+import 'package:dsoft_form_application/core/locators/locators.dart';
 import 'package:dsoft_form_application/core/styles/app_text_style.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 import '../../shared/widget/share_app_bar.dart';
 import '/core/routing/route_path.dart';
 import '/presentation/detail_screen/bloc/detail_page_bloc.dart';
@@ -137,12 +138,13 @@ class _DetailPageWidgetState extends State<DetailPageWidget> {
                                               Routers.reviewDetailPage
                                           ? '/historyPage/reviewDetailPage/${widget.postId}/formPage'
                                           : '/homePage/detailPage/${widget.postId}/formPage');
-                                      await FirebaseAnalytics.instance.logEvent(
-                                        name: currentRouter ==
-                                                Routers.reviewDetailPage
-                                            ? 'tap_fill_from_button'
-                                            : 'tap_review_form_button',
-                                      );
+                                      await diAnalytics.log(
+                                          currentRouter ==
+                                                  Routers.reviewDetailPage
+                                              ? LogEvents.tap_fill_from_button
+                                              : LogEvents
+                                                  .tap_review_form_button,
+                                          null);
                                     }
                                   },
                                   child: Container(

@@ -1,8 +1,9 @@
 import 'package:dsoft_form_application/core/styles/app_text_style.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../common/constant/constants.dart';
+import '../../../core/locators/locators.dart';
 import 'bloc/checkbox_button_bloc.dart';
 
 // ignore: must_be_immutable
@@ -75,9 +76,7 @@ class _CheckboxButtonState extends State<CheckboxButton>
                   value: selectedCheckboxes.contains(options),
                   controlAffinity: ListTileControlAffinity.leading,
                   onChanged: (value) async {
-                    await FirebaseAnalytics.instance.logEvent(
-                      name: 'tap_checkbox',
-                    );
+                    await diAnalytics.log(LogEvents.tap_checkbox, null);
                     setState(() {
                       if (value == true) {
                         selectedCheckboxes.add(options);

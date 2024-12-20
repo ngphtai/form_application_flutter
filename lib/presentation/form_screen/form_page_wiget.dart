@@ -1,8 +1,9 @@
 import 'dart:io';
 import 'package:dsoft_form_application/common/extensions/url_conver.dart';
 import 'package:dsoft_form_application/shared/widget/dialog_widget.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../common/constant/constants.dart';
+import '../../core/locators/locators.dart';
 import '/common/extensions/conver_string_to_enum.dart';
 import '/common/logger/app_logger.dart';
 import '/data/model/entities/post_model_entity.dart';
@@ -232,9 +233,10 @@ class ReviewFormPageWidget extends StatelessWidget {
                                                   context, checkValidToSubmit);
                                             }
                                           }
-                                          await FirebaseAnalytics.instance
-                                              .logEvent(
-                                                  name: "tap_submit_button");
+
+                                          await diAnalytics.log(
+                                              LogEvents.tap_submit_button,
+                                              null);
                                         },
                                         child:
                                             const SubmitButtonWidget(), // interface button

@@ -3,6 +3,7 @@ library all_locators;
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import '../../common/constant/constants.dart';
+import '../../common/services/firebase_analytics_service.dart';
 import "../../common/services/network/custom_http_client.dart";
 import '../../common/shared_prefs/theme_preference.dart';
 import '../routing/app_router.dart';

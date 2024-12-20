@@ -1,5 +1,6 @@
-import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:dsoft_form_application/core/locators/locators.dart';
 
+import '../../../common/constant/constants.dart';
 import '/core/styles/app_text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -80,8 +81,7 @@ class _RadioButtonState extends State<RadioButton>
                         bloc.validate(option);
                         widget.controller.text = option;
                       }
-                      await FirebaseAnalytics.instance
-                          .logEvent(name: "tap_radio_button");
+                      await diAnalytics.log(LogEvents.tap_radio_button, null);
                     },
                     child: Container(
                       padding: const EdgeInsets.only(top: 8, bottom: 8),

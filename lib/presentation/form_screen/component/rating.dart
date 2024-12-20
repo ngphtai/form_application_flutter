@@ -1,5 +1,5 @@
-import 'package:firebase_analytics/firebase_analytics.dart';
-
+import 'package:dsoft_form_application/common/constant/constants.dart';
+import 'package:dsoft_form_application/core/locators/locators.dart';
 import '/core/styles/app_icons.dart';
 import '/core/styles/app_text_style.dart';
 import '/presentation/form_screen/component/bloc/rating_bloc.dart';
@@ -100,11 +100,9 @@ class _RatingState extends State<Rating> with AutomaticKeepAliveClientMixin {
                             setState(() {
                               star = newStar;
                             });
-
                             context.read<RatingBloc>().validate(newStar);
-                            await FirebaseAnalytics.instance.logEvent(
-                              name: 'tap_rating',
-                            );
+
+                            await diAnalytics.log(LogEvents.tap_rating, null);
                           }
                         },
                       ),

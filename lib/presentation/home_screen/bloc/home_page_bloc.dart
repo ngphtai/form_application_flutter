@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import '../../../common/constant/constants.dart';
 import '/common/logger/app_logger.dart';
 import '/core/locators/locators.dart';
 import 'package:equatable/equatable.dart';
@@ -22,6 +23,7 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
       await FirebaseAnalytics.instance.logEvent(
         name: 'api_get_form',
       );
+      await diAnalytics.log(LogEvents.api_get_form, null);
       final result = await _fetchPostSeviceable.fetchPostsFromRemote();
 
       result.fold(

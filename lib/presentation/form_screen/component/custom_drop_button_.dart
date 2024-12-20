@@ -1,5 +1,6 @@
-import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:dsoft_form_application/core/locators/locators.dart';
 
+import '../../../common/constant/constants.dart';
 import '/core/styles/app_text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -65,8 +66,7 @@ class _CustomDropButtonState extends State<CustomDropButton>
                 onTap: () async {
                   _showDropDownBottomSheet(context);
                   context.read<CustomDropButtonBloc>().validate("");
-                  await FirebaseAnalytics.instance
-                      .logEvent(name: "tap_dropdown_button");
+                  await diAnalytics.log(LogEvents.tap_dropdown_button, null);
                 },
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -190,8 +190,9 @@ class _CustomDropButtonState extends State<CustomDropButton>
                                           isSelected ? null : selectedValue!);
                                 }
                                 Navigator.pop(context);
-                                await FirebaseAnalytics.instance
-                                    .logEvent(name: "tap_select_dropdown");
+
+                                await diAnalytics.log(
+                                    LogEvents.tap_select_dropdown, null);
                               },
                               child: Container(
                                 decoration: BoxDecoration(

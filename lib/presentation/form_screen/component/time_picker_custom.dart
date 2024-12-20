@@ -1,7 +1,8 @@
 // ignore_for_file: must_be_immutable
 
-import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:dsoft_form_application/core/locators/locators.dart';
 
+import '../../../common/constant/constants.dart';
 import '../../../core/styles/app_text_style.dart';
 import '/presentation/form_screen/component/bloc/time_picker_custom_bloc.dart';
 
@@ -104,8 +105,8 @@ class _TimePickerCustomState extends State<TimePickerCustom>
                             enabled: false,
                             onTap: () async {
                               _showTimePickerBottomSheet(context);
-                              await FirebaseAnalytics.instance
-                                  .logEvent(name: "tap_time_picker");
+                              await diAnalytics.log(
+                                  LogEvents.tap_time_picker, null);
                             },
                             decoration: InputDecoration(
                                 border: InputBorder.none,
@@ -116,7 +117,7 @@ class _TimePickerCustomState extends State<TimePickerCustom>
                         IconButton(
                           icon: const Icon(Icons.cancel_outlined,
                               color: Color(0xff818688)),
-                          onPressed: () {
+                          onPressed: () async {
                             context
                                 .read<TimePickerCustomBloc>()
                                 .changeValue("false");
@@ -249,8 +250,9 @@ class _TimePickerCustomState extends State<TimePickerCustom>
                               onPressed: () async {
                                 _updateControllerText(selectTime ?? "");
                                 Navigator.pop(context);
-                                await FirebaseAnalytics.instance
-                                    .logEvent(name: "tap_cancel_time_picker");
+
+                                await diAnalytics.log(
+                                    LogEvents.tap_cancel_time_picker, null);
                               },
                               style: TextButton.styleFrom(
                                 side:
@@ -265,8 +267,8 @@ class _TimePickerCustomState extends State<TimePickerCustom>
                             onPressed: () async {
                               Navigator.pop(context);
                               _updateControllerText(null);
-                              await FirebaseAnalytics.instance
-                                  .logEvent(name: "tap_ok_time_picker");
+                              await diAnalytics.log(
+                                  LogEvents.tap_ok_time_picker, null);
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xffdb1e39),

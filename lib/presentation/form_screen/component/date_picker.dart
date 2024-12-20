@@ -1,4 +1,5 @@
-import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:dsoft_form_application/common/constant/constants.dart';
+import 'package:dsoft_form_application/core/locators/locators.dart';
 
 import '../../../core/styles/app_text_style.dart';
 import '/common/extensions/string_to_datetime.dart';
@@ -64,8 +65,7 @@ class _DatePickerState extends State<DatePicker>
         width: 1000.w,
         child: GestureDetector(
             onTap: () async {
-              await FirebaseAnalytics.instance
-                  .logEvent(name: "tap_date_picker");
+              await diAnalytics.log(LogEvents.tap_date_picker, null);
               await _showBottomSheet();
             },
             child: Column(
@@ -191,8 +191,9 @@ class _DatePickerState extends State<DatePicker>
                               null,
                               preEmpty: false,
                             );
-                            await FirebaseAnalytics.instance
-                                .logEvent(name: "tap_select_date_picker");
+
+                            await diAnalytics.log(
+                                LogEvents.tap_select_date_picker, null);
                           },
                         ),
                         Gap(10.h),
@@ -217,10 +218,9 @@ class _DatePickerState extends State<DatePicker>
                                           ? true
                                           : false,
                                 );
-
                                 Navigator.pop(context);
-                                await FirebaseAnalytics.instance
-                                    .logEvent(name: "tap_cancel_date_picker");
+                                await diAnalytics.log(
+                                    LogEvents.tap_cancel_date_picker, null);
                               },
                               child: Text(
                                 "Huỷ",
@@ -250,8 +250,8 @@ class _DatePickerState extends State<DatePicker>
                                   preEmpty: false,
                                 );
                                 Navigator.pop(context);
-                                await FirebaseAnalytics.instance
-                                    .logEvent(name: "tap_ok_date_picker");
+                                await diAnalytics.log(
+                                    LogEvents.tap_ok_date_picker, null);
                               },
                               child: Text("OK",
                                   style: AppTextStyle.bold16.copyWith(

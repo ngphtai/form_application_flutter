@@ -7,6 +7,8 @@ final diPermissionService = di<PermissionService>();
 ///creating [GetIt] for [CustomHttpClient]
 final diCustomHttpClient = di<CustomHttpClient>();
 
+final diAnalytics = di<FirebaseAnalyticsService>();
+
 /// setup locator related to services loaded before
 void setUpServicesLocatorBefore() {
   di.registerSingleton(PermissionService());
@@ -17,4 +19,6 @@ void setUpServicesLocatorBefore() {
       return httpClient;
     },
   );
+
+  di.registerSingleton<FirebaseAnalyticsService>(FirebaseAnalyticsService());
 }

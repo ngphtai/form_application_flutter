@@ -1,6 +1,7 @@
 import 'package:dsoft_form_application/core/styles/app_text_style.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 
+import '../../common/constant/constants.dart';
+import '../../core/locators/locators.dart';
 import '/shared/widget/no_data_from_local.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
@@ -54,10 +55,9 @@ class HistoryPageWidget extends StatelessWidget {
                       onTap: () async {
                         context.push(
                             '${Routers.historyPage}/${Routers.reviewDetailPage}/${post.id}');
-                        await FirebaseAnalytics.instance.logEvent(
-                          name: 'tap_review_fill_form_button',
-                          parameters: {"id form": post.id},
-                        );
+                        await diAnalytics.log(
+                            LogEvents.tap_review_fill_form_button,
+                            {"id form": post.id});
                       },
                       child: Center(
                         child: Container(

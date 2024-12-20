@@ -1,4 +1,5 @@
-import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:dsoft_form_application/common/constant/constants.dart';
+import 'package:dsoft_form_application/core/locators/locators.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -38,9 +39,9 @@ class SharedAppBar extends StatelessWidget implements PreferredSizeWidget {
                       ? GestureDetector(
                           onTap: () async {
                             context.go(Routers.historyPage);
-                            await FirebaseAnalytics.instance.logEvent(
-                              name: 'tap_filled_button',
-                            );
+
+                            await diAnalytics.log(
+                                LogEvents.tap_filled_button, null);
                           },
                           child: Text("Đã điền",
                               style: AppTextStyle.bold14
@@ -91,9 +92,7 @@ class SharedAppBar extends StatelessWidget implements PreferredSizeWidget {
             default:
               context.pop(context); // Quay lại trang trước
           }
-          await FirebaseAnalytics.instance.logEvent(
-            name: 'tap_back_icon',
-          );
+          await diAnalytics.log(LogEvents.tap_back_icon, null);
         },
         child: Column(
           children: [

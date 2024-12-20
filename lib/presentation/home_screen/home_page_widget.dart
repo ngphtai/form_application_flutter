@@ -1,9 +1,8 @@
 import 'dart:io';
-
 import 'package:dsoft_form_application/core/styles/app_text_style.dart';
 import 'package:dsoft_form_application/shared/widget/no_data_from_local.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
-
+import '../../common/constant/constants.dart';
+import '../../core/locators/locators.dart';
 import '../../shared/widget/share_app_bar.dart';
 import '/core/styles/app_icons.dart';
 import '/presentation/form_screen/component/screen/loading_widget.dart';
@@ -46,10 +45,9 @@ class HomePageWidget extends StatelessWidget {
                           onTap: () async {
                             context.push(
                                 '${Routers.homePage}/${Routers.detailPage}/${post.id}');
-                            await FirebaseAnalytics.instance.logEvent(
-                              name: 'tap_form_button',
-                              parameters: {"id form": post.id},
-                            );
+
+                            await diAnalytics.log(
+                                LogEvents.tap_form_button, null);
                           },
                           child: Center(
                             child: Container(
