@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dsoft_form_application/firebase_options.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -24,9 +25,12 @@ class Initializer {
 
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
+  late StreamSubscription<List<ConnectivityResult>> connectivitySubscription;
+
   void init(VoidCallback runApp) {
     runZonedGuarded(() async {
       WidgetsFlutterBinding.ensureInitialized();
+
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
@@ -37,17 +41,17 @@ class Initializer {
       setUpLocator();
       await preferredOrientations();
 
-      // await _fetchThemeApp();
-
       await ScreenUtil.ensureScreenSize();
 
       _initStatusBar();
+
+      _initConnectivityMonitor();
+
       //Crashlytics
       FlutterError.onError = (errorDetails) {
-        // FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
         FirebaseCrashlytics.instance.recordFlutterError(errorDetails);
       };
-      // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
+
       PlatformDispatcher.instance.onError = (error, stack) {
         FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
         return true;
@@ -65,12 +69,7 @@ class Initializer {
       stack,
     ) {
       AppLogger.instance.d('runZonedGuarded: ${error.toString()}');
-      final context = navigatorKey.currentContext;
-      if (context != null) {
-        showDiaLogInterruptedInternet(context);
-      } else {
-        AppLogger.instance.e("Navigator context is null. Cannot show dialog.");
-      }
+      _showNoInternetDialog();
     });
   }
 
@@ -95,8 +94,37 @@ class Initializer {
     Bloc.observer = AppBlocObserver(isLogEnable: isLogEnable);
   }
 
-  // Future<void> _fetchThemeApp() async {
-  //   await diThemePreference.initialize();
-  //   diThemePreference.fetchThemeApp();
-  // }
+  void _initConnectivityMonitor() {
+    final Connectivity connectivity = Connectivity();
+
+    // Check initial connectivity status
+    _checkInitialConnectivity(connectivity);
+
+    // Subscribe to connectivity changes
+    connectivitySubscription = connectivity.onConnectivityChanged
+        .listen((List<ConnectivityResult> result) {
+      if (result.contains(ConnectivityResult.none)) {
+        _showNoInternetDialog();
+      } else {
+        AppLogger.instance.d('Connected to network: $result');
+      }
+    });
+  }
+
+  Future<void> _checkInitialConnectivity(Connectivity connectivity) async {
+    final List<ConnectivityResult> result =
+        await connectivity.checkConnectivity();
+    if (result.contains(ConnectivityResult.none)) {
+      _showNoInternetDialog();
+    }
+  }
+
+  void _showNoInternetDialog() {
+    final context = navigatorKey.currentContext;
+    if (context != null) {
+      showDiaLogInterruptedInternet(context);
+    } else {
+      AppLogger.instance.e("Navigator context is null. Cannot show dialog.");
+    }
+  }
 }
