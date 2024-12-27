@@ -72,4 +72,8 @@ jobs:
         asset_path: app-release.apk
         asset_name: app-release.apk
         asset_content_type: application/apk
-    
+    - name: create Fastfile 
+      run: echo "${{ secrets.FASTFILE }}" > android/Fastfile
+      
+    - name: Fastlane upload firebase distribute
+      run: bundle exec fastlane firebase_distribute
