@@ -2,6 +2,8 @@ import 'package:dsoft_form_application/core/styles/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import '../../common/constant/constants.dart';
+import '../../core/locators/locators.dart';
 import '../../core/styles/app_text_style.dart';
 import '../../presentation/form_screen/component/screen/text_button.dart';
 
@@ -72,8 +74,10 @@ showDiaLogToExist(BuildContext originContext) {
                           ),
                         ),
                         GestureDetector(
-                          onTap: () {
+                          onTap: () async {
                             Navigator.of(context).pop(true);
+                            await diAnalytics.log(
+                                LogEvents.tap_cancel_fill_pop_up, null);
                           },
                           child: Container(
                             width: 0.27.sw,

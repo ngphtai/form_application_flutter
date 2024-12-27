@@ -466,57 +466,32 @@ class ReviewFormPageWidget extends StatelessWidget {
     return isValid;
   }
 
-  Future<bool> checkValidWhenGetOutAnyTime() {
-    for (var entry in textFieldsBloc.entries) {
-      final bloc = entry.value as TextFieldBloc;
-      if (bloc.value != null) {
-        isHaveValid = true;
-        return Future.value(true);
-      }
-    }
-    for (var entry in radioButtonsBloc.entries) {
-      final bloc = entry.value as RadioButtonBloc;
-      if (bloc.value != null) {
-        isHaveValid = true;
-        return Future.value(true);
-      }
-    }
-    for (var entry in customDropBloc.entries) {
-      final bloc = entry.value as CustomDropButtonBloc;
+  Future<bool> checkValidWhenGetOutAnyTime() async {
+    final List<Map<int, dynamic>> blocMaps = [
+      textFieldsBloc,
+      radioButtonsBloc,
+      customDropBloc,
+      checkBoxBloc,
+      timePickerBloc,
+      datePickerBloc,
+      ratingBloc,
+    ];
 
-      if (bloc.isSelected != null) {
-        isHaveValid = true;
-        return Future.value(true);
+    for (var blocMap in blocMaps) {
+      for (var entry in blocMap.entries) {
+        final bloc = entry.value;
+        if (bloc is TextFieldBloc && bloc.value != null ||
+            bloc is RadioButtonBloc && bloc.value != null ||
+            bloc is CustomDropButtonBloc && bloc.isSelected != null ||
+            bloc is CheckboxButtonBloc && bloc.values.isNotEmpty ||
+            bloc is TimePickerCustomBloc && bloc.getTime != null ||
+            bloc is DatePickerBloc && bloc.getValue != null ||
+            bloc is RatingBloc && bloc.value != null) {
+          isHaveValid = true;
+          return true;
+        }
       }
     }
-    for (var entry in checkBoxBloc.entries) {
-      final bloc = entry.value as CheckboxButtonBloc;
-      if (bloc.values.isNotEmpty) {
-        isHaveValid = true;
-        return Future.value(true);
-      }
-    }
-    for (var entry in timePickerBloc.entries) {
-      final bloc = entry.value as TimePickerCustomBloc;
-      if (bloc.getTime != "") {
-        isHaveValid = true;
-        return Future.value(true);
-      }
-    }
-    for (var entry in datePickerBloc.entries) {
-      final bloc = entry.value as DatePickerBloc;
-      if (bloc.getValue != null) {
-        isHaveValid = true;
-        return Future.value(true);
-      }
-    }
-    for (var entry in ratingBloc.entries) {
-      final bloc = entry.value as RatingBloc;
-      if (bloc.value != null) {
-        isHaveValid = true;
-        return Future.value(true);
-      }
-    }
-    return Future.value(false);
+    return false;
   }
 }

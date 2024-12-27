@@ -105,13 +105,18 @@ class LogEvents {
     "tap_submit_button",
     Type.normal
   ];
-  static List<String> api_submit_google_sheet = [
+  static List<String> tap_cancel_fill_pop_up = [
     "2x15",
+    "tap_cancel_fill_pop_up",
+    Type.local
+  ];
+  static List<String> api_submit_google_sheet = [
+    "2x16",
     "api_submit_google_sheet",
     Type.api
   ];
   static List<String> local_save_filled_form = [
-    "2x16",
+    "2x17",
     "local_save_filled_form",
     Type.local
   ];
