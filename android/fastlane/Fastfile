@@ -36,17 +36,17 @@ platform :android do
   #   upload_to_play_store
   # end
   desc "Distribute Android build to Firebase"
-  lane :firebase_distribute do
+  lane :run_firebase_distribute do
     # Build app bundle or APK
     gradle(task: "assembleRelease")
 
     # Firebase App Distribution
     firebase_app_distribution(
-      app: "1:211816411616:android:d886dd634725d9ee74fb85", 
+      app: ENV['FIREBASE_APP_ID'], 
       release_notes: "Đây là bản thử nghiệm mới.",
       groups: "D-SOFT",
       android_artifact_path: "../build/app/outputs/apk/release/app-release.apk",
-      firebase_cli_token: "1//0eeigQpuzOS0GCgYIARAAGA4SNwF-L9IrpU4vD_jd4MIkz88l3HeqG3wJneOh_FKm43Ir3HLjZpzlPf4QoH8DUlyefKl9JAVyD74",
+      firebase_cli_token: ENV["FIREBASE_CLI_TOKEN"],
       debug: true
     )
   end
